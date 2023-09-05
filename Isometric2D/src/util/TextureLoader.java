@@ -1,7 +1,6 @@
 package util;
 
 import static org.lwjgl.opengl.GL30.*;
-import static org.lwjgl.opengl.GL32.*;
 import static org.lwjgl.stb.STBImage.*;
 
 import java.nio.ByteBuffer;
@@ -47,27 +46,20 @@ public class TextureLoader {
 	}
 	
 	/**
-	 * Generate blank texture
+	 * Generate blank buffer texture
 	 * 
-	 * @param frameBuffer		Frame Buffer ID
+	 * @param fbo		Frame Buffer ID
 	 * @param width				Width of textures
 	 * @param height			Height of texture
 	 * @param attachement		OpenGL color attachement
 	 * @param type				Type of texture
 	 * @return					Texture ID
 	 */
-	public static Texture generateTexture(int frameBuffer, int width, int height, int attachment, int type) {
-		int texture = glGenTextures();
-		glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
-		glBindTexture(GL_TEXTURE_2D, texture);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, (ByteBuffer) null);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-		glFramebufferTexture(GL_FRAMEBUFFER, attachment, texture, 0);
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		return new Texture(type, texture, width, height);
+	public static Texture generateBufferTexture(int fbo, int width, int height, int attachment, int type) {
+		int textureID = glGenTextures();
+		Texture texture = new Texture(type, textureID, width, height);
+		BufferHelper.loadBufferTexture(fbo, texture, attachment);
+		return texture;
 	}
 	
 	/**

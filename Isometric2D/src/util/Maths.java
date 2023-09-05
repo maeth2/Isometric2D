@@ -26,7 +26,7 @@ public class Maths {
 	 */
 	public static Matrix4f createViewMatrix(Transform transform) {
 		Matrix4f matrix = new Matrix4f();
-		matrix = matrix.rotationX((float)Math.toRadians(transform.rotation.x))
+		matrix = matrix.rotationZ((float)Math.toRadians(transform.rotation.x))
 		         .rotateY((float)Math.toRadians(transform.rotation.y))
 		         .translate(-transform.position.x, -transform.position.y, 0);
 		return matrix;

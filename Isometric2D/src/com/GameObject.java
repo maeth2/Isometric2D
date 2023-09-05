@@ -113,5 +113,4 @@ public class GameObject {
 	public String getName() {
 		return name;
 	}
-	
 }

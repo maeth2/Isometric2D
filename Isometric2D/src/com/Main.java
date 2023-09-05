@@ -7,12 +7,12 @@ import static org.lwjgl.glfw.GLFW.glfwPollEvents;
 import static org.lwjgl.glfw.GLFW.glfwSwapBuffers;
 import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
 
-import org.lwjgl.opengl.GL11;
-
 import com.scenes.Scene;
 import com.scenes.TestScene;
 
 import listeners.KeyListener;
+import util.AssetManager;
+import util.BufferHelper;
 import util.Helper;
 
 public class Main {
@@ -23,9 +23,10 @@ public class Main {
 	public static void main(String[] args) {
 		Window.get().init();
 		Main main = new Main();
-		scene = new TestScene();
-		scene.start();
 		renderer = new Renderer();
+		scene = new TestScene();
+		scene.init();
+		scene.start();
 		main.loop();
 	}
 	
@@ -34,14 +35,13 @@ public class Main {
 		float endTime = (float)glfwGetTime();
 		float dt = -1;
 		
-		while(!glfwWindowShouldClose(Window.get().getGLFWWindow())) {
-			GL11.glClear(GL11.GL_COLOR_BUFFER_BIT|GL11.GL_DEPTH_BUFFER_BIT);
-			
+		while(!glfwWindowShouldClose(Window.get().getGLFWWindow())) {			
 			scene.update(dt);
 			renderer.render();
 			
 			glfwSwapBuffers(Window.get().getGLFWWindow());
 			glfwPollEvents();
+
 
 			if(KeyListener.isKeyPressed(GLFW_KEY_F)) {
 				System.out.println("FPS: " + 1/dt);
@@ -56,7 +56,25 @@ public class Main {
 			beginTime = endTime;
 		}
 		
+		BufferHelper.dispose();
 		Helper.dispose();
+		AssetManager.dispose();
+	}
+	
+	public static boolean checkInScreen(GameObject g, int width, int height) {
+		boolean isIn = false;
+		float x = g.transform.position.x;
+		float y = g.transform.position.y;
+		float nx = x - getScene().getCamera().transform.position.x;
+		float ny = y - getScene().getCamera().transform.position.y;
+		
+		float top = ny + height / 2;
+		float bottom = ny - height / 2;
+		float left = nx - width / 2;
+		float right = nx + width / 2;
+		
+		isIn = right >= -Window.WIDTH / 2 && left <= Window.WIDTH / 2 && top >= -Window.HEIGHT / 2 && bottom <= Window.HEIGHT / 2;
+		return isIn;
 	}
 	
 	public static Scene getScene(){

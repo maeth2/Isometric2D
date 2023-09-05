@@ -10,7 +10,7 @@ import util.Maths;
 public class Camera extends GameObject{
 	private Matrix4f projectionMatrix;
 	private GameObject target;
-	private float zoom = 100;
+	private float zoom = 1;
 	
 	public Camera(Vector2f position) {
 		super("Camera");
@@ -18,7 +18,7 @@ public class Camera extends GameObject{
 		this.transform.position = position;
 		this.projectionMatrix = new Matrix4f();
 		this.addComponent(new ControllerComponent());
-		createOrthographicProjection();
+		createOrthographicProjection(Window.WIDTH, Window.HEIGHT);
 	}
 	
 	@Override
@@ -29,10 +29,10 @@ public class Camera extends GameObject{
 		this.setPosition(target.transform.position);
 	}
 
-	public void createOrthographicProjection() {
-		float w = Window.WIDTH / 2 / zoom;
-		float h = Window.HEIGHT / 2 / zoom;
-	    projectionMatrix = new Matrix4f().ortho2D(-w, w, -h, h);
+	public void createOrthographicProjection(float width, float height) {
+		float w = width / 2 / zoom;
+		float h = height / 2 / zoom;
+	    projectionMatrix = new Matrix4f().ortho(-w, w, -h, h, 0, 1);
 	}
 	
 	public Matrix4f getViewMatrix() {
@@ -43,16 +43,21 @@ public class Camera extends GameObject{
 		return projectionMatrix;
 	}
 	
+	public GameObject getTarget() {
+		return this.target;
+	}
+	
 	public void setTarget(GameObject target) {
 		this.target = target;
+		this.setPosition(target.transform.position);
 	}
 	
 	public void changeZoom(float i) {
 		this.zoom += i;
 		if(this.zoom <= 0) {
-			this.zoom = 1;
+			this.zoom = 0.001f;
 		}
-		this.createOrthographicProjection();
+		this.createOrthographicProjection(Window.WIDTH, Window.HEIGHT);
 	}
 	
 	public void setPosition(Vector2f position) {

@@ -30,17 +30,18 @@ public class AssetManager {
 	}
 	
 	/**
-	 * Generates blank texture
+	 * Generates blank buffer texture
 	 * 
-	 * @param frameBuffer		Frame Buffer ID
-	 * @param width				Width of texture
-	 * @param height			Height of texture
-	 * @param attachement		OpenGL color attachement
-	 * @param type 				Type of texture
-	 * @return					Texture ID
+	 * @param frameBuffer			Frame Buffer ID
+	 * @param width					Width of texture
+	 * @param height				Height of texture
+	 * @param attachement			OpenGL color attachment
+	 * @param type 					Type of texture
+	 * 
+	 * @return						Texture ID
 	 */
-	public static Texture generateTexture(int frameBuffer, int width, int height, int attachment, int type) {
-		Texture texture = TextureLoader.generateTexture(frameBuffer, width, height, attachment, type);
+	public static Texture generateBufferTexture(int frameBuffer, int width, int height, int attachment, int type) {
+		Texture texture = TextureLoader.generateBufferTexture(frameBuffer, width, height, attachment, type);
 		textures.put(Integer.toString(type), texture);
 		return texture;
 	}

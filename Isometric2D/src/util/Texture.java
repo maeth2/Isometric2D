@@ -3,14 +3,10 @@ package util;
 public class Texture {
 	public static final int TYPE_OUTPUT = 0;
 	public static final int TYPE_COLOR = 1;
-	public static final int TYPE_NORMAL = 2;
-	public static final int TYPE_DEPTH = 3;
-	public static final int TYPE_OUTLINE = 4;
-	public static final int TYPE_LINEAR_DEPTH = 5;
-	public static final int TYPE_PIXEL = 6;
+	public static final int TYPE_ALPHA = 2;
 
 	private int id;
-	private int width, height;
+	private float width, height;
 	private int type;
 
 	public Texture(int id, int width, int height) {
@@ -34,8 +30,8 @@ public class Texture {
 	
 	public void copy(Texture t) {
 		this.id = t.getID();
-		this.width = t.getHeight();
-		this.height = t.getWidth();
+		this.width = t.getWidth();
+		this.height = t.getHeight();
 		this.type = t.getType();
 	}
 
@@ -47,7 +43,7 @@ public class Texture {
 		this.id = id;
 	}
 
-	public int getWidth() {
+	public float getWidth() {
 		return width;
 	}
 
@@ -55,7 +51,7 @@ public class Texture {
 		this.width = width;
 	}
 
-	public int getHeight() {
+	public float getHeight() {
 		return height;
 	}
 
@@ -65,5 +61,9 @@ public class Texture {
 	
 	public int getType() {
 		return this.type;
+	}
+	
+	public float getAspectRatio() {
+		return width / height;
 	}
 }
