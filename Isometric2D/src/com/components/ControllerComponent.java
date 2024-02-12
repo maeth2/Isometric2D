@@ -1,47 +1,89 @@
 package com.components;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.joml.Vector2f;
 import org.lwjgl.glfw.GLFW;
 
+import com.GameObject;
+import com.Main;
+
 import listeners.KeyListener;
+import util.Sort;
 
 public class ControllerComponent extends Component {
 	private float speed = 500f;
-	private float rotSpeed = 10f;
-	public Vector2f vel;
-	public Vector2f rot;
+	private Vector2f vel = new Vector2f(0, 0);
 	
-	public void updateController(float dt) {
+	@Override
+	public void update(float dt) {
 		vel.x = 0;
 		vel.y = 0;
-		rot.x = 0;
+		
 		if(KeyListener.isKeyPressed(GLFW.GLFW_KEY_W)){
-			vel.y = speed;
+			vel.y = speed * dt;
 		}else if(KeyListener.isKeyPressed(GLFW.GLFW_KEY_S)) {
-			vel.y = -speed;
+			vel.y = -speed * dt;
 		}
 		if(KeyListener.isKeyPressed(GLFW.GLFW_KEY_A)){
-			vel.x = -speed;
+			vel.x = -speed * dt;
 		}else if(KeyListener.isKeyPressed(GLFW.GLFW_KEY_D)) {
-			vel.x = speed;
+			vel.x = speed * dt;
 		}
-		if(KeyListener.isKeyPressed(GLFW.GLFW_KEY_Q)){
-			rot.x = -rotSpeed;
-		}else if(KeyListener.isKeyPressed(GLFW.GLFW_KEY_E)) {
-			rot.x = rotSpeed;
+		
+		if(this.gameObject.getComponent(AABB.class) !=  null) {
+			AABB aabb = this.gameObject.getComponent(AABB.class);
+			aabb.setTexture(AABB.HITBOX_TEXTURE);
+			
+			List<Vector2f> sorted = new ArrayList<Vector2f>();
+			List<GameObject> surrounding = Main.getScene().getSurroundingGridObjects(gameObject);
+			for(int i = 0; i < surrounding.size(); i++) {
+				GameObject o = surrounding.get(i);
+				if(o.getComponent(AABB.class) != null) {
+					float t = aabb.getAABBSweptCollision(vel, o.getComponent(AABB.class));
+					if(t != -1) {
+						sorted.add(new Vector2f(t, i));
+					}
+				}
+			}
+
+			sorted = Sort.sort(sorted, (a, b) -> {
+				return a.x >= b.x;
+			});
+
+//			if(surrounding.size() > 0) {
+//				for(Vector2f s : sorted) {
+//					GameObject i = surrounding.get((int)s.y);
+//					System.out.print("(" + i.getGridPosition().y + ", " + i.getGridPosition().x + ", " + s.x + ")");
+//				}
+//				System.out.print("\n");
+//			}
+			
+			for(Vector2f s : sorted){
+				GameObject i = surrounding.get((int) s.y);
+				i.getComponent(AABB.class).setTexture(AABB.HITBOX_TEXTURE);
+				if(i == this.gameObject) continue;
+				Vector2f contactNormal = new Vector2f();
+				float t = aabb.getAABBSweptCollision(vel, i.getComponent(AABB.class), contactNormal);
+				if(t != -1) {
+					vel.x += Math.abs(vel.x) * contactNormal.x * (1 - t);
+					vel.y += Math.abs(vel.y) * contactNormal.y * (1 - t);
+				}
+			}
 		}
-		gameObject.transform.rotation.x += rot.x * dt;
-		gameObject.transform.position.x += vel.x * dt;
-		gameObject.transform.position.y += vel.y * dt;
+		 
+		this.gameObject.transform.position.x += vel.x;
+		this.gameObject.transform.position.y += vel.y;
+		
+		Main.getScene().updateGrid(gameObject);
 	}
 	
-	@Override
-	public void update(float dt) {}
 
 	@Override
-	public void start() {
-		vel = new Vector2f();
-		rot = new Vector2f();
+	public void start() {}
+	
+	public void setSpeed(float speed) {
+		this.speed = speed;
 	}
-
 }

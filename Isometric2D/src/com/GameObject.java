@@ -1,7 +1,10 @@
 package com;
 
 import java.util.ArrayList;
+
 import java.util.List;
+
+import org.joml.Vector3i;
 
 import com.components.Component;
 
@@ -10,8 +13,9 @@ import util.Transform;
 
 public class GameObject {
 	private String name;
-	private List<Component> components = new ArrayList<Component>();
+	protected List<Component> components = new ArrayList<Component>();
 	public Transform transform;
+	private Vector3i gridPosition;
 	
 	/**
 	 * Initialize game object
@@ -43,6 +47,7 @@ public class GameObject {
 	public void init(String name, Transform transform) {
 		this.name = name;
 		this.transform = transform;
+		this.gridPosition = new Vector3i(0, 0, 0);
 	}
 	
 	/**
@@ -64,15 +69,17 @@ public class GameObject {
 	 * Remove component from object
 	 * 
 	 * @param componentClass			Component to detatch
+	 * @return							Detachment success
 	 */
-	public <T extends Component> void removeComponent(Class<T> componentClass) {
+	public <T extends Component> boolean removeComponent(Class<T> componentClass) {
 		for(int i = 0; i < components.size(); i++) {
 			Component c = components.get(i);
 			if(componentClass.isAssignableFrom(c.getClass())) {
 				components.remove(i);
-				return;
+				return true;
 			}
 		}
+		return false;
 	}
 	
 	/**
@@ -106,6 +113,27 @@ public class GameObject {
 		}
 	}
 	
+	/**
+	 * Get Grid Position of Object
+	 * 
+	 * @return Grid Position of Object
+	 */
+	public Vector3i getGridPosition() {
+		return this.gridPosition;
+	}
+	
+	/**
+	 * Set Grid Position of Object
+	 * 
+	 * @param x			Column of Object
+	 * @param y			Row of Object
+	 */
+	public void setGridPosition(int x, int y, int i) {
+		this.gridPosition.x = x;
+		this.gridPosition.y = y;
+		this.gridPosition.z = i;
+	}
+
 	/**
 	 * Get name of object
 	 * @return			Name of object

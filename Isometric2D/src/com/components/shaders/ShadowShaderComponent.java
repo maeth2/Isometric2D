@@ -8,6 +8,8 @@ import static org.lwjgl.opengl.GL11.glBlendFunc;
 import static org.lwjgl.opengl.GL11.GL_ONE;
 import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
+
+import com.Camera;
 import com.GameObject;
 import com.Main;
 import com.Renderer;
@@ -20,6 +22,7 @@ import util.Maths;
 import util.Quad;
 import util.ShaderLoader;
 import util.Texture;
+import util.Transform;
 
 public class ShadowShaderComponent extends ShaderComponent {
 	//TODO
@@ -100,8 +103,7 @@ public class ShadowShaderComponent extends ShaderComponent {
 			(int)texture.getHeight()
 		);
 		ShaderLoader.useShader(shader);
-		Main.getScene().getCamera().createOrthographicProjection(texture.getWidth(), texture.getHeight());
-		ShaderLoader.loadMatrix(shader, "uProjection", Main.getScene().getCamera().getProjectionMatrix());
+		ShaderLoader.loadMatrix(shader, "uProjection", Maths.createOrthographicProjection(texture.getWidth(), texture.getHeight()));
 	}
 	
 	public void unbind() {
@@ -110,14 +112,12 @@ public class ShadowShaderComponent extends ShaderComponent {
 	}
 	
 	public Texture renderShadow(LightStructure light, int i) {
-		Main.getScene().getCamera().setTarget(light.lightObject);
-		
-		System.out.println("Rendering Shadow: " + i);
-		
+		Camera tempCam = new Camera(light.lightObject.transform.position);
+
 		//Rendering all shadow objects
 		setup(light.occlusionFBO, occlusionShader, light.occlusionTexture);
 		Renderer.refresh();
-		ShaderLoader.loadMatrix(occlusionShader, "uView", Main.getScene().getCamera().getViewMatrix());	
+		ShaderLoader.loadMatrix(occlusionShader, "uView", tempCam.getViewMatrix());	
 		for(GameObject e : Main.getScene().getGameObjects()) {
 			TextureComponent tex = e.getComponent(TextureComponent.class);
 			if(tex != null) {
@@ -150,32 +150,30 @@ public class ShadowShaderComponent extends ShaderComponent {
 		setup(fbo, shader, texture);
 		Renderer.refresh();
 		unbind();
-		GameObject old = Main.getScene().getCamera().getTarget();
+		
 		int i = 0;
 		for(LightStructure light : lights) {
 			if(!Main.checkInScreen(light.lightObject, light.diameter, light.diameter) || !light.lightComponent.canCastShadow()){
 				continue;
 			}
-			boolean isDirty = light.lightObject.transform.position.x != light.lastPos.x || light.lightObject.transform.position.y != light.lastPos.y;
-			Texture shadow = isDirty ? renderShadow(light, i) : light.shadowTexture;
-			Main.getScene().getCamera().setTarget(old);
+			Transform lightTransform = new Transform(light.lightObject.transform.position, new Vector2f(light.diameter / 2, light.diameter / 2));
+
+			boolean isDirty = lightTransform.position.x != light.lastPos.x || lightTransform.position.y != light.lastPos.y;
+			Texture shadow = isDirty ? renderShadow(light, i) : light.shadowTexture; //Check if light has moved.
 			
 			//Scale down by half because the quad renderer vertices are from -1 to 1 not 0 to 1
-			light.lightObject.transform.scale.x = light.diameter / 2;
-			light.lightObject.transform.scale.y = light.diameter / 2;
-			
+
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 			setup(fbo, shader, texture);
 			ShaderLoader.loadBool(shader, "uManualAlpha", false);
 			ShaderLoader.loadMatrix(shader, "uView", Main.getScene().getCamera().getViewMatrix());
-			Quad.renderQuad(shader, shadow, Maths.createTransformationalMatrix(light.lightObject.transform));
+			Quad.renderQuad(shader, shadow, Maths.createTransformationalMatrix(lightTransform));
 			unbind();
 			
-			light.lastPos.x = light.lightObject.transform.position.x;
-			light.lastPos.y = light.lightObject.transform.position.y;
+			light.lastPos.x = lightTransform.position.x;
+			light.lastPos.y = lightTransform.position.y;
 			i++;
 		}
-		Main.getScene().getCamera().setTarget(old);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		return texture;
 	}

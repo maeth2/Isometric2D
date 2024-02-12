@@ -31,4 +31,18 @@ public class Maths {
 		         .translate(-transform.position.x, -transform.position.y, 0);
 		return matrix;
 	}
+	
+	/**
+	 * Creates a orthographic projection matrix from screen width and height
+	 * 
+	 * @param width				Screen width
+	 * @param height			Screen height
+	 * @return					Projection matrix
+	 */	
+	public static Matrix4f createOrthographicProjection(float width, float height) {
+		float w = width / 2;
+		float h = height / 2;
+	    Matrix4f ortho = new Matrix4f().ortho2D(-w, w, -h, h);
+	    return ortho;
+	}
 }

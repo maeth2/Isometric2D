@@ -26,32 +26,79 @@ public class Quad {
 	
 	private static Matrix4f base = Maths.createTransformationalMatrix(new Transform());
 	
+	/**
+	 * Render Quad
+	 * 
+	 * @param texture		Quad Texture
+	 */
 	public static void renderQuad(Texture texture) {
 		ShaderLoader.useShader(getShaderID());
 		renderQuad(getShaderID(), texture, null);
 		ShaderLoader.unbindShader();
 	}
 	
+	/**
+	 * Render Quad
+	 * 
+	 * @param shader		Shader ID to Use
+	 * @param texture		Quad Texture
+	 */
 	public static void renderQuad(int shader, Texture texture) {
 		renderQuad(shader, texture, null);
 	}
 	
+	/**
+	 * Render Quad
+	 * 
+	 * @param texture		Quad Texture
+	 * @param x				X Position
+	 * @param y				Y Position
+	 * @param width			Quad Width
+	 * @param height		Quad Height
+	 */
 	public static void renderQuad(Texture texture, float x, float y, float width, float height) {
 		ShaderLoader.useShader(getShaderID());
 		renderQuad(getShaderID(), texture, x, y, width, height, null);
 		ShaderLoader.unbindShader();
 	}
 	
+	/**
+	 * Render Quad
+	 * 
+	 * @param shader		Shader ID to Use
+	 * @param texture		Quad Texture
+	 * @param x				X Position
+	 * @param y				Y Position
+	 * @param width			Quad Width
+	 * @param height		Quad Height
+	 */
 	public static void renderQuad(int shader, Texture texture, float x, float y, float width, float height) {
 		renderQuad(shader, texture, x, y, width, height, null);
 	}
 	
+	/**
+	 * Render Quad
+	 * 
+	 * @param texture			Quad Texture
+	 * @param transformation	Transformation Matrix
+	 */
 	public static void renderQuad(Texture texture, Matrix4f transformation) {
 		ShaderLoader.useShader(getShaderID());
 		renderQuad(getShaderID(), texture, transformation);
 		ShaderLoader.unbindShader();
 	}
 
+	/**
+	 * Render Quad
+	 * 
+	 * @param shader			Shader ID to Use
+	 * @param texture			Quad Texture
+	 * @param x					X Position
+	 * @param y					Y Position
+	 * @param width				Quad Width
+	 * @param height			Quad Height
+	 * @param transformation	Transformation Matrix
+	 */
 	public static void renderQuad(int shader, Texture texture, float x, float y, float width, float height, Matrix4f transformation) {
 		glBindVertexArray(getVaoID());
 		glEnableVertexAttribArray(0); 
@@ -79,6 +126,13 @@ public class Quad {
 		glBindVertexArray(0);
 	}
 	
+	/**
+	 * Render Quad
+	 * 
+	 * @param shader			Shader ID to Use
+	 * @param texture			Quad Texture
+	 * @param transformation	Transformation Matrix
+	 */
 	public static void renderQuad(int shader, Texture texture, Matrix4f transformation) {
 		glBindVertexArray(getVaoID());
 		glEnableVertexAttribArray(0); 
@@ -97,16 +151,43 @@ public class Quad {
 		glBindVertexArray(0);
 	}
 	
-
+	
+	/**
+	 * Render Quad
+	 * 
+	 * @param shader		Shader ID to Use
+	 * @param texture		Quad Texture
+	 */
 	public static void renderQuad(int shader, Texture[] texture) {
 		renderQuad(shader, texture, 0, 0, Window.WIDTH, Window.HEIGHT, null);
 	}
 	
-	public static void renderQuad(int shader, Texture[] texture, float x, float y, float width, float height) {
-		renderQuad(shader, texture, x, y, width, height, null);
+	/**
+	 * Render Quad
+	 * 
+	 * @param shader			Shader ID to Use
+	 * @param textures			Textures to Load into Shader
+	 * @param x					X Position
+	 * @param y					Y Position
+	 * @param width				Quad Width
+	 * @param height			Quad Height
+	 */
+	public static void renderQuad(int shader, Texture[] textures, float x, float y, float width, float height) {
+		renderQuad(shader, textures, x, y, width, height, null);
 	}
 	
-	public static void renderQuad(int shader, Texture[] texture, float x, float y, float width, float height, Matrix4f transformation) {
+	/**
+	 * Render Quad
+	 * 
+	 * @param shader			Shader ID to Use
+	 * @param textures			Textures to Load into Shader
+	 * @param x					X Position
+	 * @param y					Y Position
+	 * @param width				Quad Width
+	 * @param height			Quad Height
+	 * @param transformation	Transformation Matrix
+	 */
+	public static void renderQuad(int shader, Texture[] textures, float x, float y, float width, float height, Matrix4f transformation) {
 		glBindVertexArray(getVaoID());
 		glEnableVertexAttribArray(0); 
 		
@@ -123,12 +204,13 @@ public class Quad {
 			);
 		}
 
-		for(int i = 0; i < texture.length; i++) {
-			if(texture[i] == null) continue;
-			TextureLoader.loadTextureToShader(shader, texture[i], i);
+		for(int i = 0; i < textures.length; i++) {
+			if(textures[i] == null) continue;
+			TextureLoader.loadTextureToShader(shader, textures[i], i);
 		}
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, vertices.length);
-		for(int i = 0; i < texture.length; i++) {
+		
+		for(int i = 0; i < textures.length; i++) {
 			TextureLoader.unbindTexture(shader, i);
 		}
 		

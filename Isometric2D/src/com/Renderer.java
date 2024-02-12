@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.lwjgl.opengl.GL11;
 
+import com.components.AABB;
 import com.components.TextureComponent;
 import com.components.shaders.ShaderComponent;
 
@@ -14,6 +15,7 @@ import util.Maths;
 import util.Quad;
 import util.ShaderLoader;
 import util.Texture;
+import util.Transform;
 
 public class Renderer {
 	private List<ShaderComponent> components = new ArrayList<ShaderComponent>();
@@ -24,7 +26,7 @@ public class Renderer {
 	private int sceneBuffer;
 	private Texture[] textures;
 	
-	boolean toggle = false;
+	private boolean toggleHitBox = false;
 	
 	public Renderer() {
 		this.sceneShaderID = AssetManager.getShader("assets/shaders/default");
@@ -45,19 +47,30 @@ public class Renderer {
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT|GL11.GL_DEPTH_BUFFER_BIT);
 	}
 
+	/**
+	 * Render All Game Objects in Scene to Screen
+	 * 
+	 * @return							Instance of component
+	 */
 	public void render() {
 		BufferHelper.bindFrameBuffer(sceneBuffer, Window.WIDTH, Window.HEIGHT);
 		refresh();
 		ShaderLoader.useShader(sceneShaderID);		
-		Main.getScene().getCamera().createOrthographicProjection(Renderer.WIDTH, Renderer.HEIGHT);
 		ShaderLoader.loadMatrix(sceneShaderID, "uProjection", Main.getScene().getCamera().getProjectionMatrix());
 		ShaderLoader.loadMatrix(sceneShaderID, "uView", Main.getScene().getCamera().getViewMatrix());	
-		ShaderLoader.loadBool(sceneShaderID, "uManualAlpha", true);
+		ShaderLoader.loadBool(sceneShaderID, "uManualAlpha", false);
 		for(GameObject e : Main.getScene().getGameObjects()) {
-			TextureComponent t = e.getComponent(TextureComponent.class);
-			if(t != null) {
-				ShaderLoader.loadFloat(sceneShaderID, "uAlpha", t.getAlpha());
-				Quad.renderQuad(sceneShaderID, t.getTexture(), Maths.createTransformationalMatrix(e.transform));
+			TextureComponent tex = e.getComponent(TextureComponent.class);
+			if(tex != null) {
+				ShaderLoader.loadFloat(sceneShaderID, "uAlpha", tex.getAlpha());
+				Quad.renderQuad(sceneShaderID, tex.getTexture(), Maths.createTransformationalMatrix(e.transform));
+			}
+			if(toggleHitBox) {
+				if(e.getComponent(AABB.class) != null) {
+					AABB aabb = e.getComponent(AABB.class);
+					Transform t = new Transform(aabb.getPosition(), aabb.getScale());
+					Quad.renderQuad(sceneShaderID, aabb.getTexture(), Maths.createTransformationalMatrix(t));
+				}
 			}
 		}
 		ShaderLoader.unbindShader();
@@ -70,8 +83,7 @@ public class Renderer {
 		}
 		refresh();
 		
-		toggle = toggle ? true : true;
-		Quad.renderQuad(toggle ? textures[Texture.TYPE_OUTPUT] : textures[Texture.TYPE_COLOR]);
+		Quad.renderQuad(textures[Texture.TYPE_OUTPUT]);
 	}
 	
 	/**

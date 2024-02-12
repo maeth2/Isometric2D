@@ -24,7 +24,7 @@ public class Main {
 		Window.get().init();
 		Main main = new Main();
 		renderer = new Renderer();
-		scene = new TestScene();
+		scene = new TestScene(100, 100);
 		scene.init();
 		scene.start();
 		main.loop();
