@@ -10,7 +10,7 @@ import com.GameObject;
 import com.Main;
 
 import listeners.KeyListener;
-import util.Sort;
+import util.Helper;
 
 public class ControllerComponent extends Component {
 	private float speed = 500f;
@@ -32,40 +32,32 @@ public class ControllerComponent extends Component {
 			vel.x = speed * dt;
 		}
 		
-		if(this.gameObject.getComponent(AABB.class) !=  null) {
-			AABB aabb = this.gameObject.getComponent(AABB.class);
-			aabb.setTexture(AABB.HITBOX_TEXTURE);
+		if(this.gameObject.getComponent(AABBComponent.class) !=  null) {
+			AABBComponent aabb = this.gameObject.getComponent(AABBComponent.class);
+			aabb.setTexture(AABBComponent.HITBOX_TEXTURE);
 			
 			List<Vector2f> sorted = new ArrayList<Vector2f>();
-			List<GameObject> surrounding = Main.getScene().getSurroundingGridObjects(gameObject);
+			List<GameObject> surrounding = Main.getScene().getSurroundingLevel(gameObject, 2, 2);
 			for(int i = 0; i < surrounding.size(); i++) {
 				GameObject o = surrounding.get(i);
-				if(o.getComponent(AABB.class) != null) {
-					float t = aabb.getAABBSweptCollision(vel, o.getComponent(AABB.class));
+				if(o.getComponent(AABBComponent.class) != null && o != this.gameObject) {
+					float t = aabb.getAABBSweptCollision(vel, o.getComponent(AABBComponent.class));
 					if(t != -1) {
 						sorted.add(new Vector2f(t, i));
 					}
 				}
 			}
 
-			sorted = Sort.sort(sorted, (a, b) -> {
+			sorted = Helper.sort(sorted, (a, b) -> {
 				return a.x >= b.x;
 			});
 
-//			if(surrounding.size() > 0) {
-//				for(Vector2f s : sorted) {
-//					GameObject i = surrounding.get((int)s.y);
-//					System.out.print("(" + i.getGridPosition().y + ", " + i.getGridPosition().x + ", " + s.x + ")");
-//				}
-//				System.out.print("\n");
-//			}
-			
 			for(Vector2f s : sorted){
 				GameObject i = surrounding.get((int) s.y);
-				i.getComponent(AABB.class).setTexture(AABB.HITBOX_TEXTURE);
+				i.getComponent(AABBComponent.class).setTexture(AABBComponent.HITBOX_TEXTURE);
 				if(i == this.gameObject) continue;
 				Vector2f contactNormal = new Vector2f();
-				float t = aabb.getAABBSweptCollision(vel, i.getComponent(AABB.class), contactNormal);
+				float t = aabb.getAABBSweptCollision(vel, i.getComponent(AABBComponent.class), contactNormal);
 				if(t != -1) {
 					vel.x += Math.abs(vel.x) * contactNormal.x * (1 - t);
 					vel.y += Math.abs(vel.y) * contactNormal.y * (1 - t);

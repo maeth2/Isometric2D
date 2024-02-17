@@ -24,7 +24,7 @@ public class Main {
 		Window.get().init();
 		Main main = new Main();
 		renderer = new Renderer();
-		scene = new TestScene(100, 100);
+		scene = new TestScene(10, 10);
 		scene.init();
 		scene.start();
 		main.loop();
@@ -59,6 +59,7 @@ public class Main {
 		BufferHelper.dispose();
 		Helper.dispose();
 		AssetManager.dispose();
+		System.gc();
 	}
 	
 	public static boolean checkInScreen(GameObject g, int width, int height) {

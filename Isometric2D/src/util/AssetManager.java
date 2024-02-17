@@ -1,10 +1,11 @@
 package util;
 
+import static org.lwjgl.opengl.GL11.glDeleteTextures;
+import static org.lwjgl.opengl.GL20.glDeleteShader;
+
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
-
-import static org.lwjgl.opengl.GL30.*;
 
 public class AssetManager {
 	public static Map<String, Texture> textures = new HashMap<>();

@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.lwjgl.opengl.GL11;
 
-import com.components.AABB;
+import com.components.AABBComponent;
 import com.components.TextureComponent;
 import com.components.shaders.ShaderComponent;
 
@@ -15,7 +15,6 @@ import util.Maths;
 import util.Quad;
 import util.ShaderLoader;
 import util.Texture;
-import util.Transform;
 
 public class Renderer {
 	private List<ShaderComponent> components = new ArrayList<ShaderComponent>();
@@ -59,20 +58,33 @@ public class Renderer {
 		ShaderLoader.loadMatrix(sceneShaderID, "uProjection", Main.getScene().getCamera().getProjectionMatrix());
 		ShaderLoader.loadMatrix(sceneShaderID, "uView", Main.getScene().getCamera().getViewMatrix());	
 		ShaderLoader.loadBool(sceneShaderID, "uManualAlpha", false);
-		for(GameObject e : Main.getScene().getGameObjects()) {
+
+		for(GameObject e : Main.getScene().getSurroundingLevel(Main.getScene().getCamera().getTarget(), 10, 10)) {
 			TextureComponent tex = e.getComponent(TextureComponent.class);
 			if(tex != null) {
-				ShaderLoader.loadFloat(sceneShaderID, "uAlpha", tex.getAlpha());
+				ShaderLoader.loadVector2f(sceneShaderID, "uDimensions", tex.getTexture().getDimensions());
+				ShaderLoader.loadVector2f(sceneShaderID, "uSpriteDimension", tex.getSpriteDimension());
+				ShaderLoader.loadVector2f(sceneShaderID, "uSpritePosition", tex.getSpritePosition());
 				Quad.renderQuad(sceneShaderID, tex.getTexture(), Maths.createTransformationalMatrix(e.transform));
 			}
 			if(toggleHitBox) {
-				if(e.getComponent(AABB.class) != null) {
-					AABB aabb = e.getComponent(AABB.class);
-					Transform t = new Transform(aabb.getPosition(), aabb.getScale());
-					Quad.renderQuad(sceneShaderID, aabb.getTexture(), Maths.createTransformationalMatrix(t));
+				if(e.getComponent(AABBComponent.class) != null) {
+					AABBComponent aabb = e.getComponent(AABBComponent.class);
+					Quad.renderQuad(sceneShaderID, aabb.getTexture(), Maths.createTransformationalMatrix(aabb.gameObject.transform));
 				}
 			}
 		}
+		
+		for(GameObject e : Main.getScene().getSurroundingGrid(Main.getScene().getCamera().getTarget(), 10, 10)) {
+			TextureComponent tex = e.getComponent(TextureComponent.class);
+			if(tex != null) {
+				ShaderLoader.loadVector2f(sceneShaderID, "uDimensions", tex.getTexture().getDimensions());
+				ShaderLoader.loadVector2f(sceneShaderID, "uSpriteDimension", tex.getSpriteDimension());
+				ShaderLoader.loadVector2f(sceneShaderID, "uSpritePosition", tex.getSpritePosition());
+				Quad.renderQuad(sceneShaderID, tex.getTexture(), Maths.createTransformationalMatrix(e.transform));
+			}
+		}
+
 		ShaderLoader.unbindShader();
 		BufferHelper.unbindFrameBuffer();
 		
@@ -130,8 +142,8 @@ public class Renderer {
 		}
 		c.renderer = this;
 		c.start();
-		c.addRequirements();
 		components.add(c);
+		c.addRequirements();
 		return this;
 	}
 	

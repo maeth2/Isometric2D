@@ -1,13 +1,25 @@
 package util;
 
+import static org.lwjgl.opengl.GL11.GL_FLOAT;
+import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
+import static org.lwjgl.opengl.GL15.GL_ELEMENT_ARRAY_BUFFER;
+import static org.lwjgl.opengl.GL15.GL_STATIC_DRAW;
+import static org.lwjgl.opengl.GL15.glBindBuffer;
+import static org.lwjgl.opengl.GL15.glBufferData;
+import static org.lwjgl.opengl.GL15.glGenBuffers;
+import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
+import static org.lwjgl.opengl.GL30.glBindVertexArray;
+import static org.lwjgl.opengl.GL30.glDeleteVertexArrays;
+import static org.lwjgl.opengl.GL30.glGenVertexArrays;
+
+import java.lang.reflect.Array;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BiFunction;
 
 import org.lwjgl.BufferUtils;
-
-import static org.lwjgl.opengl.GL30.*;
 
 public class Helper {
 	private static List<Integer> vaos = new ArrayList<Integer>();
@@ -79,6 +91,52 @@ public class Helper {
 		glBindVertexArray(0);
 		
 		return id;
+	}
+	
+	
+	/**
+	 * Reverse a given array
+	 * 
+	 * @param a 			Array to invert
+	 * 
+	 * @return				Reversed array
+	 */
+	public static <T> T[] reverse(T[] a){
+		@SuppressWarnings("unchecked")
+		T[] inverted = (T[]) Array.newInstance(a[0].getClass(), a.length);
+		for(int i = 0; i < a.length; i++) {
+			inverted[i] = a[a.length - i - 1];
+		}
+		return inverted;
+	}
+	
+	/**
+	 * Sort a given List
+	 * 
+	 * @param a				List to sort
+	 * @param compare		Comparator function
+	 * @return				Sorted list
+	 */
+	public static <T> List<T> sort(List<T> a, BiFunction<T, T, Boolean> compare){
+		List<T> sorted = new ArrayList<T>();
+		for(T i : a) {
+			int l = 0;
+			int r = sorted.size() - 1;
+			while(l <= r) {
+				int m = (l + r) / 2;
+				if(compare.apply(i, sorted.get(m))) {
+					l = m + 1;
+				}else {
+					r = m - 1;
+				}
+			}
+			if(sorted.size() == 0) {
+				sorted.add(i);
+			}else {
+				sorted.add(l, i);
+			}
+		}
+		return sorted;
 	}
 	
 	

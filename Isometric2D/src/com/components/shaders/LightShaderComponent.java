@@ -22,7 +22,8 @@ public class LightShaderComponent extends ShaderComponent {
 	
 	List<LightComponent> lights = new ArrayList<LightComponent>();
 	ShadowShaderComponent shadow;
-	Vector3f ambient = new Vector3f(0.5f, 0.5f, 0.4f);
+	Vector3f ambient = new Vector3f(0.6f, 0.6f, 0.6f);
+	Texture textures[] = new Texture[2];
 	
 	public LightShaderComponent(int width, int height) {
 		this.width = width;
@@ -69,7 +70,6 @@ public class LightShaderComponent extends ShaderComponent {
 	@Override
 	public Texture render(Texture[] t) {
 		Camera c = Main.getScene().getCamera();
-		Texture textures[] = new Texture[2];
 		textures[0] = t[Texture.TYPE_COLOR];
 		if(shadow != null) {
 			textures[1] = shadow.renderLights();
@@ -88,7 +88,7 @@ public class LightShaderComponent extends ShaderComponent {
 		ShaderLoader.loadVector3f(shader, "uAmbient", ambient);
 		TextureLoader.bindTextureToShader(shader, "uTexture", 0);
 		TextureLoader.bindTextureToShader(shader, "uShadow", 1);
-		//Quad.renderQuad(textures[1]);
+		
 		Quad.renderQuad(shader, textures, c.transform.position.x, c.transform.position.y, width, height);
 		ShaderLoader.unbindShader();
 		BufferHelper.unbindFrameBuffer();

@@ -1,12 +1,14 @@
 package util;
 
+import org.joml.Vector2f;
+
 public class Texture {
 	public static final int TYPE_OUTPUT = 0;
 	public static final int TYPE_COLOR = 1;
 	public static final int TYPE_ALPHA = 2;
 
 	private int id;
-	private float width, height;
+	private Vector2f dimensions;
 	private int type;
 
 	public Texture(int id, int width, int height) {
@@ -24,14 +26,12 @@ public class Texture {
 	public void init(int type, int id, int width, int height) {
 		this.type = type;
 		this.id = id;
-		this.width = width;
-		this.height = height;
+		this.dimensions = new Vector2f(width, height);
 	}
 	
 	public void copy(Texture t) {
 		this.id = t.getID();
-		this.width = t.getWidth();
-		this.height = t.getHeight();
+		this.dimensions = new Vector2f(t.getWidth(), t.getHeight());
 		this.type = t.getType();
 	}
 
@@ -42,21 +42,30 @@ public class Texture {
 	public void setID(int id) {
 		this.id = id;
 	}
-
+	
 	public float getWidth() {
-		return width;
+		return this.dimensions.x;
 	}
 
 	public void setWidth(int width) {
-		this.width = width;
+		this.dimensions.x = width;
 	}
 
 	public float getHeight() {
-		return height;
+		return this.dimensions.y;
 	}
 
 	public void setHeight(int height) {
-		this.height = height;
+		this.dimensions.y = height;
+	}
+
+	public Vector2f getDimensions() {
+		return this.dimensions;
+	}
+	
+	public void setDimensions(float width, float height) {
+		this.dimensions.x = width;
+		this.dimensions.y = height;
 	}
 	
 	public int getType() {
@@ -64,6 +73,6 @@ public class Texture {
 	}
 	
 	public float getAspectRatio() {
-		return width / height;
+		return this.dimensions.x / this.dimensions.y;
 	}
 }

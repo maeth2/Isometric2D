@@ -1,18 +1,20 @@
 package com.components.shaders;
 
+import static org.lwjgl.opengl.GL11.GL_ONE;
+import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
+import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
+import static org.lwjgl.opengl.GL11.glBlendFunc;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import org.joml.Vector2f;
-import static org.lwjgl.opengl.GL11.glBlendFunc;
-import static org.lwjgl.opengl.GL11.GL_ONE;
-import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
-import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
 
 import com.Camera;
 import com.GameObject;
 import com.Main;
 import com.Renderer;
+import com.Window;
 import com.components.LightComponent;
 import com.components.TextureComponent;
 
@@ -38,6 +40,8 @@ public class ShadowShaderComponent extends ShaderComponent {
 	int shadowShader;
 	
 	int rayNumber = 360 * 10;
+	
+	Camera tempCam = new Camera(new Vector2f(0, 0));
 		
 	List<LightStructure> lights = new ArrayList<LightStructure>();
 		
@@ -90,6 +94,13 @@ public class ShadowShaderComponent extends ShaderComponent {
 		this.texture = AssetManager.generateBufferTexture(fbo, width, height, 0, Texture.TYPE_ALPHA);
 	}
 	
+	@Override
+	public void addRequirements() {
+		if(this.renderer.getComponent(LightShaderComponent.class) == null) {
+			this.renderer.addComponent(new LightShaderComponent(Window.WIDTH, Window.HEIGHT));
+		}
+	}
+	
 	public void addLight(GameObject light) {
 		LightStructure l = new LightStructure(light);
 		lights.add(l);
@@ -112,13 +123,14 @@ public class ShadowShaderComponent extends ShaderComponent {
 	}
 	
 	public Texture renderShadow(LightStructure light, int i) {
-		Camera tempCam = new Camera(light.lightObject.transform.position);
-
+		tempCam.setPosition(light.lightObject.transform.position);
+		tempCam.setGridPosition(Main.getScene().getGridPosition(tempCam), i);
+		
 		//Rendering all shadow objects
 		setup(light.occlusionFBO, occlusionShader, light.occlusionTexture);
 		Renderer.refresh();
 		ShaderLoader.loadMatrix(occlusionShader, "uView", tempCam.getViewMatrix());	
-		for(GameObject e : Main.getScene().getGameObjects()) {
+		for(GameObject e : Main.getScene().getSurroundingLevel(tempCam, 5, 5)) {
 			TextureComponent tex = e.getComponent(TextureComponent.class);
 			if(tex != null) {
 				ShaderLoader.loadBool(occlusionShader, "uShadow", tex.canCastShadow());

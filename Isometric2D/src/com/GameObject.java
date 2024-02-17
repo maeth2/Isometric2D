@@ -1,9 +1,9 @@
 package com;
 
 import java.util.ArrayList;
-
 import java.util.List;
 
+import org.joml.Vector2i;
 import org.joml.Vector3i;
 
 import com.components.Component;
@@ -127,10 +127,24 @@ public class GameObject {
 	 * 
 	 * @param x			Column of Object
 	 * @param y			Row of Object
+	 * @param i			Index of Object in Grid
 	 */
 	public void setGridPosition(int x, int y, int i) {
 		this.gridPosition.x = x;
 		this.gridPosition.y = y;
+		this.gridPosition.z = i;
+	}
+	
+	/**
+	 * Set Grid Position of Object
+	 * 
+	 * @param x			Column of Object
+	 * @param y			Row of Object
+	 * @param i			Index of Object in Grid
+	 */
+	public void setGridPosition(Vector2i pos, int i) {
+		this.gridPosition.x = pos.x;
+		this.gridPosition.y = pos.y;
 		this.gridPosition.z = i;
 	}
 
