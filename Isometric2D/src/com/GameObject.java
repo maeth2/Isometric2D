@@ -16,6 +16,7 @@ public class GameObject {
 	protected List<Component> components = new ArrayList<Component>();
 	public Transform transform;
 	private Vector3i gridPosition;
+	private boolean isDirty = false;
 	
 	/**
 	 * Initialize game object
@@ -154,5 +155,23 @@ public class GameObject {
 	 */
 	public String getName() {
 		return name;
+	}
+	
+	/**
+	 * Get if game object is dirty
+	 * 
+	 * @return		Is dirty
+	 */
+	public boolean isDirty() {
+		return isDirty;
+	}
+
+	/**
+	 * Set if game object is dirty
+	 * 
+	 * @param isDirty
+	 */
+	public void setDirty(boolean isDirty) {
+		this.isDirty = isDirty;
 	}
 }

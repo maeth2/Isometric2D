@@ -5,13 +5,11 @@ import java.util.List;
 
 import org.lwjgl.opengl.GL11;
 
-import com.components.AABBComponent;
 import com.components.TextureComponent;
 import com.components.shaders.ShaderComponent;
 
 import util.AssetManager;
 import util.BufferHelper;
-import util.Maths;
 import util.Quad;
 import util.ShaderLoader;
 import util.Texture;
@@ -23,20 +21,19 @@ public class Renderer {
 	public static final float ASPECT_RATIO = (float) Window.WIDTH / (float) Window.HEIGHT;
 	private int sceneShaderID;
 	private int sceneBuffer;
-	private Texture[] textures;
-	
-	private boolean toggleHitBox = false;
-	
+	private Texture[] bufferTextures;
+	private List<RenderBatch> renderBatches = new ArrayList<RenderBatch>();
+		
 	public Renderer() {
-		this.sceneShaderID = AssetManager.getShader("assets/shaders/default");
+		this.sceneShaderID = AssetManager.getShader("assets/shaders/batch");
 		this.sceneBuffer = BufferHelper.createFrameBuffer(Window.WIDTH, Window.HEIGHT, 1);
 		
-		this.textures = new Texture[3];
-		for(int i = 0; i < textures.length; i++) {
-			textures[i] = new Texture();
+		this.bufferTextures = new Texture[3];
+		for(int i = 0; i < bufferTextures.length; i++) {
+			bufferTextures[i] = new Texture();
 		}
 
-		textures[Texture.TYPE_COLOR] = AssetManager.generateBufferTexture(sceneBuffer, Window.WIDTH, Window.HEIGHT, 0, Texture.TYPE_COLOR);
+		bufferTextures[Texture.TYPE_COLOR] = AssetManager.generateBufferTexture(sceneBuffer, Window.WIDTH, Window.HEIGHT, 0, Texture.TYPE_COLOR);
 	}
 	
 	/**
@@ -46,6 +43,16 @@ public class Renderer {
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT|GL11.GL_DEPTH_BUFFER_BIT);
 	}
 
+	/**
+	 * Render all batches
+	 * 
+	 * @param shaderID			Shader to use
+	 */
+	public void renderBatches(int shaderID) {
+		for(RenderBatch r : this.renderBatches) {
+			r.render(shaderID);
+		}
+	}
 	/**
 	 * Render All Game Objects in Scene to Screen
 	 * 
@@ -58,51 +65,47 @@ public class Renderer {
 		ShaderLoader.loadMatrix(sceneShaderID, "uProjection", Main.getScene().getCamera().getProjectionMatrix());
 		ShaderLoader.loadMatrix(sceneShaderID, "uView", Main.getScene().getCamera().getViewMatrix());	
 		ShaderLoader.loadBool(sceneShaderID, "uManualAlpha", false);
-
-		for(GameObject e : Main.getScene().getSurroundingLevel(Main.getScene().getCamera().getTarget(), 10, 10)) {
-			TextureComponent tex = e.getComponent(TextureComponent.class);
-			if(tex != null) {
-				ShaderLoader.loadVector2f(sceneShaderID, "uDimensions", tex.getTexture().getDimensions());
-				ShaderLoader.loadVector2f(sceneShaderID, "uSpriteDimension", tex.getSpriteDimension());
-				ShaderLoader.loadVector2f(sceneShaderID, "uSpritePosition", tex.getSpritePosition());
-				Quad.renderQuad(sceneShaderID, tex.getTexture(), Maths.createTransformationalMatrix(e.transform));
-			}
-			if(toggleHitBox) {
-				if(e.getComponent(AABBComponent.class) != null) {
-					AABBComponent aabb = e.getComponent(AABBComponent.class);
-					Quad.renderQuad(sceneShaderID, aabb.getTexture(), Maths.createTransformationalMatrix(aabb.gameObject.transform));
-				}
-			}
-		}
 		
-		for(GameObject e : Main.getScene().getSurroundingGrid(Main.getScene().getCamera().getTarget(), 10, 10)) {
-			TextureComponent tex = e.getComponent(TextureComponent.class);
-			if(tex != null) {
-				ShaderLoader.loadVector2f(sceneShaderID, "uDimensions", tex.getTexture().getDimensions());
-				ShaderLoader.loadVector2f(sceneShaderID, "uSpriteDimension", tex.getSpriteDimension());
-				ShaderLoader.loadVector2f(sceneShaderID, "uSpritePosition", tex.getSpritePosition());
-				Quad.renderQuad(sceneShaderID, tex.getTexture(), Maths.createTransformationalMatrix(e.transform));
-			}
-		}
-
+		renderBatches(sceneShaderID);
+		
 		ShaderLoader.unbindShader();
 		BufferHelper.unbindFrameBuffer();
 		
-		textures[Texture.TYPE_OUTPUT].copy(textures[Texture.TYPE_COLOR]);
+		bufferTextures[Texture.TYPE_OUTPUT].copy(bufferTextures[Texture.TYPE_COLOR]);
 		for(ShaderComponent c : components) {
 			if(c.canSkip()) continue;
-			textures[Texture.TYPE_OUTPUT].copy(c.render(textures));
+			bufferTextures[Texture.TYPE_OUTPUT].copy(c.render(bufferTextures));
 		}
 		refresh();
 		
-		Quad.renderQuad(textures[Texture.TYPE_OUTPUT]);
+		Quad.renderQuad(bufferTextures[Texture.TYPE_OUTPUT]);
+	}
+	
+
+	
+	/**
+	 * Add GameObejct to render batch
+	 * 
+	 * @param o			GameObject to add
+	 */
+	public void addGameObject(GameObject o) {
+		if(o.getComponent(TextureComponent.class) == null) return;
+		TextureComponent tex = o.getComponent(TextureComponent.class);
+		for(RenderBatch r : renderBatches) {
+			if(r.add(tex)) {
+				return;
+			}
+		}
+		RenderBatch r = new RenderBatch();
+		renderBatches.add(r);
+		r.add(tex);
 	}
 	
 	/**
 	 * Get component attached to scene
 	 * 
-	 * @param componentClass			Attached Component to check
-	 * @return							Instance of component
+	 * @param componentClass		Attached Component to check
+	 * @return						Instance of component
 	 */
 	public <T extends ShaderComponent> T getComponent(Class<T> componentClass) {
 		for(ShaderComponent s : components) {
@@ -151,6 +154,7 @@ public class Renderer {
 	 * Add component to scene
 	 * 
 	 * @param c			Component to add
+	 * @param index		Index to add component
 	 * @return			Scene instance
 	 */
 	public Renderer addComponent(ShaderComponent c, int index) {

@@ -1,7 +1,8 @@
 package util;
 
-import static org.lwjgl.opengl.GL11.GL_TRIANGLE_STRIP;
-import static org.lwjgl.opengl.GL11.glDrawArrays;
+import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
+import static org.lwjgl.opengl.GL11.GL_UNSIGNED_INT;
+import static org.lwjgl.opengl.GL11.glDrawElements;
 import static org.lwjgl.opengl.GL20.glDisableVertexAttribArray;
 import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
 import static org.lwjgl.opengl.GL30.glBindVertexArray;
@@ -14,10 +15,15 @@ import com.Window;
 public class Quad {
 	
 	public static float vertices[] = {
-			-1, 1,
-			-1, -1,
-			1, 1,
-			1, -1
+			-1, 1, //Top Left
+			-1, -1, //Bottom left
+			1, -1, //Bottom right
+			1, 1 //Top right
+	};
+	
+	public static int indices[] = {
+			0, 1, 2,
+			0, 2, 3
 	};
 	
 	private static int vaoID;
@@ -118,7 +124,7 @@ public class Quad {
 		
 		if(texture != null) {
 			TextureLoader.loadTextureToShader(shader, texture, 0);
-			glDrawArrays(GL_TRIANGLE_STRIP, 0, vertices.length);
+			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 			TextureLoader.unbindTexture(shader, 0);
 		}
 		
@@ -144,7 +150,7 @@ public class Quad {
 		}
 				
 		TextureLoader.loadTextureToShader(shader, texture, 0);
-		glDrawArrays(GL_TRIANGLE_STRIP, 0, vertices.length);
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 		TextureLoader.unbindTexture(shader, 0);
 		
 		glDisableVertexAttribArray(0);
@@ -208,7 +214,7 @@ public class Quad {
 			if(textures[i] == null) continue;
 			TextureLoader.loadTextureToShader(shader, textures[i], i);
 		}
-		glDrawArrays(GL_TRIANGLE_STRIP, 0, vertices.length);
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 		
 		for(int i = 0; i < textures.length; i++) {
 			TextureLoader.unbindTexture(shader, i);
@@ -218,10 +224,33 @@ public class Quad {
 		glBindVertexArray(0);
 	}
 	
+	public static void renderQuadTest(int shader, Texture texture, Transform transform) {
+		glBindVertexArray(getVaoID());
+		glEnableVertexAttribArray(0); 
+
+		if(transform != null) {
+			ShaderLoader.loadMatrix(shader, "uTransformation", Maths.createTransformationalMatrix(transform));
+		}else {
+			ShaderLoader.loadMatrix(shader, "uTransformation", base);
+		}
+		
+		ShaderLoader.loadVector2f(shader, "uTranslation", transform.position);
+		ShaderLoader.loadVector2f(shader, "uRotation", transform.rotation);
+		ShaderLoader.loadVector2f(shader, "uScale", transform.scale);
+				
+		TextureLoader.loadTextureToShader(shader, texture, 0);
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		TextureLoader.unbindTexture(shader, 0);
+		
+		glDisableVertexAttribArray(0);
+		glBindVertexArray(0);
+	}
+	
 	public static int getVaoID() {
 		if(vaoID == 0) {
 			vaoID = Helper.generateVAO();
 			Helper.storeDataInAttributeList(getVaoID(), 2, 0, vertices);
+			Helper.generateIndicesBuffer(vaoID, indices);
 		}
 		return vaoID;
 	}

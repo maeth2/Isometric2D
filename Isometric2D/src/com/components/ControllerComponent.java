@@ -68,6 +68,7 @@ public class ControllerComponent extends Component {
 		this.gameObject.transform.position.x += vel.x;
 		this.gameObject.transform.position.y += vel.y;
 		
+		gameObject.setDirty(true);
 		Main.getScene().updateGrid(gameObject);
 	}
 	

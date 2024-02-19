@@ -16,7 +16,6 @@ import com.Main;
 import com.Renderer;
 import com.Window;
 import com.components.LightComponent;
-import com.components.TextureComponent;
 
 import util.AssetManager;
 import util.BufferHelper;
@@ -68,7 +67,7 @@ public class ShadowShaderComponent extends ShaderComponent {
 			this.occlusionFBO = BufferHelper.createFrameBuffer(diameter, diameter, 2);
 			this.shadow1DFBO = BufferHelper.createFrameBuffer(rayNumber, 1, 1);
 			this.shadowFBO = BufferHelper.createFrameBuffer(diameter, diameter, 1);
-			this.occlusionTexture = AssetManager.generateBufferTexture(occlusionFBO, diameter, diameter, 1, Texture.TYPE_ALPHA);
+			this.occlusionTexture = AssetManager.generateBufferTexture(occlusionFBO, diameter, diameter, 0, Texture.TYPE_ALPHA);
 			this.shadow1DTexture = AssetManager.generateBufferTexture(shadow1DFBO, rayNumber, 1, 0, Texture.TYPE_ALPHA);
 			this.shadowTexture = AssetManager.generateBufferTexture(shadowFBO, diameter, diameter, 0, Texture.TYPE_ALPHA);
 			
@@ -84,10 +83,10 @@ public class ShadowShaderComponent extends ShaderComponent {
 	
 	@Override
 	public void start() {
-		this.occlusionShader = AssetManager.getShader("assets/shaders/default");
+		this.occlusionShader = AssetManager.getShader("assets/shaders/shadow/occlusion");
 		this.shadow1DShader = AssetManager.getShader("assets/shaders/shadow/shadow1D");
 		this.shadowShader = AssetManager.getShader("assets/shaders/shadow/shadow");
-		this.shader = AssetManager.getShader("assets/shaders/default");
+		this.shader = AssetManager.getShader("assets/shaders/shadow/default");
 	
 		this.fbo = BufferHelper.createFrameBuffer(width, height, 1);
 		
@@ -130,13 +129,9 @@ public class ShadowShaderComponent extends ShaderComponent {
 		setup(light.occlusionFBO, occlusionShader, light.occlusionTexture);
 		Renderer.refresh();
 		ShaderLoader.loadMatrix(occlusionShader, "uView", tempCam.getViewMatrix());	
-		for(GameObject e : Main.getScene().getSurroundingLevel(tempCam, 5, 5)) {
-			TextureComponent tex = e.getComponent(TextureComponent.class);
-			if(tex != null) {
-				ShaderLoader.loadBool(occlusionShader, "uShadow", tex.canCastShadow());
-				Quad.renderQuad(occlusionShader, tex.getTexture(), Maths.createTransformationalMatrix(e.transform));
-			}
-		}
+
+		renderer.renderBatches(occlusionShader);
+		
 		unbind();
 		
 		//Converting Occlusion texture to 1D Shadow Map
@@ -174,10 +169,8 @@ public class ShadowShaderComponent extends ShaderComponent {
 			Texture shadow = isDirty ? renderShadow(light, i) : light.shadowTexture; //Check if light has moved.
 			
 			//Scale down by half because the quad renderer vertices are from -1 to 1 not 0 to 1
-
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 			setup(fbo, shader, texture);
-			ShaderLoader.loadBool(shader, "uManualAlpha", false);
 			ShaderLoader.loadMatrix(shader, "uView", Main.getScene().getCamera().getViewMatrix());
 			Quad.renderQuad(shader, shadow, Maths.createTransformationalMatrix(lightTransform));
 			unbind();

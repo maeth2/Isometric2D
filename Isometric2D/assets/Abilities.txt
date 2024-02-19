@@ -1,0 +1,43 @@
+Jaidyn:
+- Passive: 
+- [E]: Insulin (30s)
+	-click allies to boost members who have diabetes.
+	-click enemies to inflict poison damage.
+- [Q]:
+- [R]:
+
+Max:
+- Passive: SC-750 (Mount)(60s)
+	- SC-750 mount, deal bonus damage when running over enemy
+	- Leaves slime trail that slows down enemies, gives allies speed boost
+	- Once destroyed or dismounted, Max will regain mount after cooldown
+- [E]: Tree Spawning (45s)
+	- Touching the tree will grant allies temporary immunity to all sources of damage. 
+	- Trees will only last 4 second
+- [Q]: 
+- [R]: Dismount (0s)
+
+Brynn:
+- Passive:
+- [E]:
+- [R]:
+- [Q]:
+
+Ethan:
+- Passive:
+- [E]: Piss Stream (30s)
+	- Once activated, a piss stream will form dealing damage to all enemies it touches.
+- [R]:
+- [Q]:
+
+Items:
+- Monster: You get a speed boost, but consuming too many gives you diabetes.
+	- Diabetes: You lose health over time, but consuming insulin gives you a regen/speed boost (Immune: Jaidyn)
+
+Jero:
+- Boss room (Jero's basement)
+	- Stage 1: 
+		- Jero will occasionally cry spawning teardrops that will fall from the top of the room
+	- Stage 2: His van will spawn, driving randomly and bouncing off walls. The van will deal damage and knockback.
+
+	

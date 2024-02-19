@@ -8,7 +8,6 @@ import org.lwjgl.glfw.GLFW;
 
 import com.Camera;
 import com.GameObject;
-import com.Main;
 import com.Window;
 import com.components.AABBComponent;
 import com.components.ControllerComponent;
@@ -48,27 +47,37 @@ public class TestScene extends Scene {
 	public void init() {
 		rand = new Random();
 
-		Main.getRenderer().addComponent(new ShadowShaderComponent(Window.WIDTH, Window.HEIGHT));
-		Main.getRenderer().addComponent(new LightShaderComponent(Window.WIDTH, Window.HEIGHT));
+		renderer.addComponent(new ShadowShaderComponent(Window.WIDTH, Window.HEIGHT));
 
 		camera = new Camera(new Vector2f(0.5f, 0.5f));
 		this.addGameObjectToScene(camera);
 		
 		this.setLevel(LevelLoader.loadLevel(10, 10, unitSize, level));
 		
+//		for(int i = 0; i < 100; i++) {
+//			GameObject test = new GameObject( 
+//					"Jaidyn",
+//					new Transform(
+//							new Vector2f(rand.nextFloat() * 50 * unitSize, rand.nextFloat() * 50 * unitSize), new Vector2f(unitSize / 2, unitSize / 2), new Vector2f(0f, 0f)
+//					)
+//				);
+//			test.addComponent(new TextureComponent(AssetManager.getTexture("assets/textures/jaidyn.png"), true));
+//			this.addGameObjectToScene(test);
+//		}
+		
 		GameObject player;
 		
 		player = new GameObject( 
-				"Martha",
+				"Jaidyn",
 				new Transform(
-						new Vector2f(5 * unitSize, 5 * unitSize), new Vector2f(unitSize / 2, unitSize / 2), new Vector2f(180f, 0f)
+						new Vector2f(5 * unitSize, 5 * unitSize), new Vector2f(unitSize / 2, unitSize / 2), new Vector2f(0f, 0f)
 				)
 			);
-		player.addComponent(new TextureComponent(AssetManager.getTexture("assets/textures/arhum.png"), false));
+		player.addComponent(new TextureComponent(AssetManager.getTexture("assets/textures/jaidyn.png"), false));
 		player.addComponent(new ControllerComponent());
-		player.addComponent(new AABBComponent(new Vector2f(0, -unitSize / 4.5f), new Vector2f(unitSize / 4, unitSize / 3.5f)));
+		player.addComponent(new AABBComponent(new Vector2f(0, -unitSize / 4.5f), new Vector2f(unitSize / 3.5f, unitSize / 4f)));
 		player.addComponent(new LightComponent(new Vector3f(1f, 1f, 1f), 400f, 1f, true));
-		Main.getRenderer().getComponent(LightShaderComponent.class).addLight(player);
+		renderer.getComponent(LightShaderComponent.class).addLight(player);
 		camera.setTarget(player);
 		this.addGameObjectToScene(player);
 	}
@@ -88,8 +97,8 @@ public class TestScene extends Scene {
 					)
 				);
 				light.addComponent(new LightComponent(new Vector3f(1f, 0.6f, 0.6f), 800, 1f, true));
-				if(Main.getRenderer().getComponent(LightShaderComponent.class) != null) {
-					Main.getRenderer().getComponent(LightShaderComponent.class).addLight(light);
+				if(renderer.getComponent(LightShaderComponent.class) != null) {
+					renderer.getComponent(LightShaderComponent.class).addLight(light);
 				}
 				this.addGameObjectToScene(light);
 				cooldown = 0.5f;
@@ -110,6 +119,8 @@ public class TestScene extends Scene {
 		for(GameObject l : this.getSurroundingLevel(this.getCamera(), 10, 10)) {
 			l.update(dt);
 		}
+		
+		renderer.render();
 	}
 
 }

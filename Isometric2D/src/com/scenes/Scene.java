@@ -7,6 +7,7 @@ import org.joml.Vector2i;
 
 import com.Camera;
 import com.GameObject;
+import com.Renderer;
 
 public abstract class Scene {	
 	public static int MAX_SCENE_LIGHTS = 10;
@@ -14,7 +15,8 @@ public abstract class Scene {
 	protected float unitSize = 100f;
 	private boolean isRunning = false;
 	protected int gridWidth, gridHeight;
-	
+	protected Renderer renderer;
+
 	protected List<GameObject> gameObjects = new ArrayList<GameObject>();
 	protected List<GameObject> grid[][];
 	protected GameObject level[][];
@@ -23,6 +25,7 @@ public abstract class Scene {
 	private List<GameObject> surroundingGrid = new ArrayList<GameObject>();
 
 	public Scene(int width, int height) {
+		this.renderer = new Renderer();
 		this.gridWidth = width;
 		this.gridHeight = height;
 		this.initialiseGrid(width, height);
@@ -47,6 +50,8 @@ public abstract class Scene {
 	 */
 	public void addGameObjectToScene(GameObject o) {
 		gameObjects.add(o);
+		renderer.addGameObject(o);
+		
 		if(isRunning) {
 			o.start();
 		}
@@ -103,6 +108,11 @@ public abstract class Scene {
 	 * @param level		Level Layout
 	 */
 	public void setLevel(GameObject[][] level) {
+		for(GameObject r[] : level) {
+			for(GameObject c : r) {
+				renderer.addGameObject(c);
+			}
+		}
 		this.level = level;
 	}
 	
@@ -203,5 +213,14 @@ public abstract class Scene {
 	 */
 	public Camera getCamera() {
 		return this.camera;
+	}
+	
+	/**
+	 * Get scene renderer
+	 * 
+	 * @return			Scene Renderer
+	 */
+	public Renderer getRenderer() {
+		return this.renderer;
 	}
 }

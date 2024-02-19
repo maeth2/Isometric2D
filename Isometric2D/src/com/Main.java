@@ -18,12 +18,10 @@ import util.Helper;
 public class Main {
 	
 	private static Scene scene;
-	private static Renderer renderer;
 	
 	public static void main(String[] args) {
 		Window.get().init();
 		Main main = new Main();
-		renderer = new Renderer();
 		scene = new TestScene(10, 10);
 		scene.init();
 		scene.start();
@@ -37,7 +35,6 @@ public class Main {
 		
 		while(!glfwWindowShouldClose(Window.get().getGLFWWindow())) {			
 			scene.update(dt);
-			renderer.render();
 			
 			glfwSwapBuffers(Window.get().getGLFWWindow());
 			glfwPollEvents();
@@ -81,9 +78,4 @@ public class Main {
 	public static Scene getScene(){
 		return scene;
 	}
-	
-	public static Renderer getRenderer() {
-		return renderer;
-	}
-
 }

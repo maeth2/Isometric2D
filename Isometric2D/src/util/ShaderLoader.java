@@ -183,7 +183,25 @@ public class ShaderLoader {
 	}
 	
 	/**
-	 * Uploads Vector3f into uniform variable in shader
+	 * Uploads Array of Vector3f into uniform variable in shader
+	 * 
+	 * @param shaderID			Shader program ID
+	 * @param name				Name of uniform variable
+	 * @param data				Vector3f array to upload	 
+	 */
+	public static void loadVector3fArray(int shaderID, String name, Vector3f data[]){//Changes vector variables in shader program
+		int location = glGetUniformLocation(shaderID, name);
+		float array[] = new float[data.length * 3];
+		for(int i = 0; i < data.length; i++) {
+			array[i * 3] = data[i].x;
+			array[i * 3 + 1] = data[i].y;
+			array[i * 3 + 2] = data[i].z;
+		}
+		GL20.glUniform3fv(location, array);
+	}
+	
+	/**
+	 * Uploads Vector2f into uniform variable in shader
 	 * 
 	 * @param shaderID			Shader program ID
 	 * @param name				Name of uniform variable
@@ -192,6 +210,23 @@ public class ShaderLoader {
 	public static void loadVector2f(int shaderID, String name, Vector2f data){//Changes vector variables in shader program
 		int location = glGetUniformLocation(shaderID, name);
 		GL20.glUniform2f(location, data.x, data.y);
+	}
+	
+	/**
+	 * Uploads Array of Vector2f into uniform variable in shader
+	 * 
+	 * @param shaderID			Shader program ID
+	 * @param name				Name of uniform variable
+	 * @param data				Vector2f array to upload	 
+	 */
+	public static void loadVector2fArray(int shaderID, String name, Vector2f data[]){//Changes vector variables in shader program
+		int location = glGetUniformLocation(shaderID, name);
+		float array[] = new float[data.length * 2];
+		for(int i = 0; i < data.length; i++) {
+			array[i * 2] = data[i].x;
+			array[i * 2 + 1] = data[i].y;
+		}
+		GL20.glUniform2fv(location, array);
 	}
 	
 	/**

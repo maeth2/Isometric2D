@@ -16,7 +16,7 @@ public class LevelLoader {
 				GameObject block = new GameObject( 
 						"test",
 						new Transform(
-								new Vector2f(c * unitSize, r * unitSize), new Vector2f(unitSize / 2, unitSize / 2), new Vector2f(180f, 0f)
+								new Vector2f(c * unitSize, r * unitSize), new Vector2f(unitSize / 2, unitSize / 2), new Vector2f(0f, 0f)
 						)
 					);
 				if(level[r][c] == 2) {

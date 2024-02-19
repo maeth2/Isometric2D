@@ -101,8 +101,19 @@ public class TextureLoader {
 	 * @param slot					OpenGL texture slot to use
 	 */
 	public static void loadTextureToShader(int shaderID, Texture texture, int slot) {
+		loadTextureToShader(shaderID, texture.getID(), slot);
+	}
+	
+	/**
+	 * Loads a texture to shader
+	 * 
+	 * @param shaderID				Shader ID
+	 * @param textureFile			Image ID
+	 * @param slot					OpenGL texture slot to use
+	 */
+	public static void loadTextureToShader(int shaderID, int textureID, int slot) {
 		glActiveTexture(GL_TEXTURE0 + slot);
-		glBindTexture(GL_TEXTURE_2D, texture.getID());
+		glBindTexture(GL_TEXTURE_2D, textureID);
 	}
 	
 	/**
