@@ -10,13 +10,12 @@ import com.GameObject;
 import com.Main;
 import com.Renderer;
 import com.components.LightComponent;
-
-import util.AssetManager;
-import util.BufferHelper;
-import util.Quad;
-import util.ShaderLoader;
-import util.Texture;
-import util.TextureLoader;
+import com.utils.AssetManager;
+import com.utils.BufferHelper;
+import com.utils.Quad;
+import com.utils.ShaderLoader;
+import com.utils.Texture;
+import com.utils.TextureLoader;
 
 public class LightShaderComponent extends ShaderComponent {
 	

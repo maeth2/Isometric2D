@@ -11,8 +11,9 @@ import com.Renderer;
 
 public abstract class Scene {	
 	public static int MAX_SCENE_LIGHTS = 10;
+	public static float UNIT_SIZE = 100f;
+
 	protected Camera camera;
-	protected float unitSize = 100f;
 	private boolean isRunning = false;
 	protected int gridWidth, gridHeight;
 	protected Renderer renderer;
@@ -50,13 +51,13 @@ public abstract class Scene {
 	 */
 	public void addGameObjectToScene(GameObject o) {
 		gameObjects.add(o);
-		renderer.addGameObject(o);
+		renderer.addRenderObject(o);
 		
 		if(isRunning) {
 			o.start();
 		}
-		int r = (int)(o.transform.position.y / unitSize);
-		int c = (int)(o.transform.position.x / unitSize);
+		int r = (int)(o.transform.position.y / UNIT_SIZE);
+		int c = (int)(o.transform.position.x / UNIT_SIZE);
 		if(r < 0 || r >= this.gridHeight || c < 0 || c >= this.gridWidth) return;
 		grid[r][c].add(o);
 		o.setGridPosition(c, r, grid[r][c].size() - 1);
@@ -110,7 +111,7 @@ public abstract class Scene {
 	public void setLevel(GameObject[][] level) {
 		for(GameObject r[] : level) {
 			for(GameObject c : r) {
-				renderer.addGameObject(c);
+				renderer.addRenderObject(c);
 			}
 		}
 		this.level = level;
@@ -145,7 +146,7 @@ public abstract class Scene {
 	 * @return			Grid Position of Object
 	 */
 	public Vector2i getGridPosition(GameObject o) {
-		return new Vector2i((int)(o.transform.position.x / unitSize), (int)(o.transform.position.y / unitSize));
+		return new Vector2i((int)(o.transform.position.x / UNIT_SIZE), (int)(o.transform.position.y / UNIT_SIZE));
 	}
 	
 	/**

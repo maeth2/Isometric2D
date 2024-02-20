@@ -9,26 +9,22 @@ import org.lwjgl.glfw.GLFW;
 import com.Camera;
 import com.GameObject;
 import com.Window;
-import com.components.AABBComponent;
-import com.components.ControllerComponent;
 import com.components.LightComponent;
-import com.components.TextureComponent;
 import com.components.shaders.LightShaderComponent;
 import com.components.shaders.ShadowShaderComponent;
-
-import listeners.KeyListener;
-import util.AssetManager;
-import util.LevelLoader;
-import util.Transform;
+import com.entities.EntityList;
+import com.listeners.KeyListener;
+import com.utils.LevelLoader;
+import com.utils.Transform;
 
 public class TestScene extends Scene {
 
 	int[][] level= {
 		{2, 2, 2, 2, 2, 2, 2, 2, 2, 2},
 		{2, 1, 1, 1, 1, 1, 1, 1, 1, 2},
-		{2, 1, 2, 1, 1, 1, 1, 2, 1, 2},
-		{2, 1, 1, 1, 1, 1, 1, 1, 1, 2},
-		{2, 1, 1, 1, 1, 1, 1, 1, 1, 2},
+		{2, 1, 1, 2, 2, 2, 2, 1, 1, 2},
+		{2, 1, 1, 2, 0, 0, 2, 1, 1, 2},
+		{2, 1, 1, 2, 2, 2, 2, 1, 1, 2},
 		{2, 1, 1, 1, 1, 1, 1, 1, 1, 2},
 		{2, 1, 1, 1, 1, 1, 1, 1, 1, 2},
 		{2, 1, 1, 2, 2, 2, 2, 1, 1, 2},
@@ -52,34 +48,18 @@ public class TestScene extends Scene {
 		camera = new Camera(new Vector2f(0.5f, 0.5f));
 		this.addGameObjectToScene(camera);
 		
-		this.setLevel(LevelLoader.loadLevel(10, 10, unitSize, level));
-		
-//		for(int i = 0; i < 100; i++) {
-//			GameObject test = new GameObject( 
-//					"Jaidyn",
-//					new Transform(
-//							new Vector2f(rand.nextFloat() * 50 * unitSize, rand.nextFloat() * 50 * unitSize), new Vector2f(unitSize / 2, unitSize / 2), new Vector2f(0f, 0f)
-//					)
-//				);
-//			test.addComponent(new TextureComponent(AssetManager.getTexture("assets/textures/jaidyn.png"), true));
-//			this.addGameObjectToScene(test);
-//		}
-		
-		GameObject player;
-		
-		player = new GameObject( 
-				"Jaidyn",
-				new Transform(
-						new Vector2f(5 * unitSize, 5 * unitSize), new Vector2f(unitSize / 2, unitSize / 2), new Vector2f(0f, 0f)
-				)
-			);
-		player.addComponent(new TextureComponent(AssetManager.getTexture("assets/textures/jaidyn.png"), false));
-		player.addComponent(new ControllerComponent());
-		player.addComponent(new AABBComponent(new Vector2f(0, -unitSize / 4.5f), new Vector2f(unitSize / 3.5f, unitSize / 4f)));
-		player.addComponent(new LightComponent(new Vector3f(1f, 1f, 1f), 400f, 1f, true));
-		renderer.getComponent(LightShaderComponent.class).addLight(player);
-		camera.setTarget(player);
+		this.setLevel(LevelLoader.loadLevel(10, 10, level));
+				
+		GameObject player = EntityList.get("Jaidyn").create(
+			new Transform(
+				new Vector2f(5 * UNIT_SIZE, 5 * UNIT_SIZE), 
+				new Vector2f(UNIT_SIZE / 2, UNIT_SIZE / 2), 
+				new Vector2f(0f, 0f)
+			)
+		);
 		this.addGameObjectToScene(player);
+
+		camera.setTarget(player);
 	}
 	
 	@Override
@@ -88,22 +68,22 @@ public class TestScene extends Scene {
 			cooldown -= dt;
 		}
 		
-		if(KeyListener.isKeyPressed(GLFW.GLFW_KEY_SPACE)) {
-			if(cooldown < 0) {
-				GameObject light = new GameObject(
-					"Light",
-					new Transform(
-							new Vector2f(camera.transform.position.x, camera.transform.position.y), new Vector2f(unitSize / 2, unitSize / 2)
-					)
-				);
-				light.addComponent(new LightComponent(new Vector3f(1f, 0.6f, 0.6f), 800, 1f, true));
-				if(renderer.getComponent(LightShaderComponent.class) != null) {
-					renderer.getComponent(LightShaderComponent.class).addLight(light);
-				}
-				this.addGameObjectToScene(light);
-				cooldown = 0.5f;
-			}
-		}
+//		if(KeyListener.isKeyPressed(GLFW.GLFW_KEY_SPACE)) {
+//			if(cooldown < 0) {
+//				GameObject light = new GameObject(
+//					"Light",
+//					new Transform(
+//							new Vector2f(camera.transform.position.x, camera.transform.position.y), new Vector2f(UNIT_SIZE / 2, UNIT_SIZE / 2)
+//					)
+//				);
+//				light.addComponent(new LightComponent(new Vector3f(1f, 0.6f, 0.6f), 800, 1f, true));
+//				if(renderer.getComponent(LightShaderComponent.class) != null) {
+//					renderer.getComponent(LightShaderComponent.class).addLight(light);
+//				}
+//				this.addGameObjectToScene(light);
+//				cooldown = 0.5f;
+//			}
+//		}
 		
 		if(KeyListener.isKeyPressed(GLFW.GLFW_KEY_V)) {
 			if(cooldown < 0) {

@@ -1,4 +1,4 @@
-package util;
+package com.utils;
 
 import static org.lwjgl.opengl.GL11.GL_FLOAT;
 import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;

@@ -7,13 +7,12 @@ import static org.lwjgl.glfw.GLFW.glfwPollEvents;
 import static org.lwjgl.glfw.GLFW.glfwSwapBuffers;
 import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
 
+import com.listeners.KeyListener;
 import com.scenes.Scene;
 import com.scenes.TestScene;
-
-import listeners.KeyListener;
-import util.AssetManager;
-import util.BufferHelper;
-import util.Helper;
+import com.utils.AssetManager;
+import com.utils.BufferHelper;
+import com.utils.Helper;
 
 public class Main {
 	

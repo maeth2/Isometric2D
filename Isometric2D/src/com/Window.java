@@ -16,17 +16,14 @@ import static org.lwjgl.glfw.GLFW.glfwShowWindow;
 import static org.lwjgl.glfw.GLFW.glfwSwapInterval;
 import static org.lwjgl.glfw.GLFW.glfwWindowHint;
 import static org.lwjgl.opengl.GL.createCapabilities;
-import static org.lwjgl.opengl.GL11.GL_BACK;
-import static org.lwjgl.opengl.GL11.GL_CULL_FACE;
-import static org.lwjgl.opengl.GL11.glCullFace;
 import static org.lwjgl.opengl.GL11.glEnable;
 
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL11;
 
-import listeners.KeyListener;
-import listeners.MouseListener;
+import com.listeners.KeyListener;
+import com.listeners.MouseListener;
 
 public class Window {
 	public long window;
@@ -77,9 +74,6 @@ public class Window {
 				
 		//Create Capabilities
 		createCapabilities();
-		
-		glEnable(GL_CULL_FACE);
-		glCullFace(GL_BACK);
 		
 		glEnable(GL11.GL_BLEND);
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);

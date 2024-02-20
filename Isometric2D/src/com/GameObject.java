@@ -7,13 +7,14 @@ import org.joml.Vector2i;
 import org.joml.Vector3i;
 
 import com.components.Component;
-
-import util.Transform;
+import com.states.StateMachine;
+import com.utils.Transform;
 
 
 public class GameObject {
 	private String name;
 	protected List<Component> components = new ArrayList<Component>();
+	protected List<StateMachine<?>> stateMachines = new ArrayList<StateMachine<?>>();
 	public Transform transform;
 	private Vector3i gridPosition;
 	private boolean isDirty = false;
@@ -50,7 +51,7 @@ public class GameObject {
 		this.transform = transform;
 		this.gridPosition = new Vector3i(0, 0, 0);
 	}
-	
+		
 	/**
 	 * Get component attached to object
 	 * 
@@ -95,13 +96,61 @@ public class GameObject {
 	}
 	
 	/**
+	 * Remove state machine from object
+	 * 
+	 * @param stateClass				Component to detatch
+	 * @return							Detachment success
+	 */
+	public <T extends StateMachine<?>> boolean removeStateMachine(Class<T> stateClass) {
+		for(int i = 0; i < stateMachines.size(); i++) {
+			StateMachine<?> s = stateMachines.get(i);
+			if(stateClass.isAssignableFrom(s.getClass())) {
+				stateMachines.remove(i);
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * Add state machine
+	 * 
+	 * @param s			State Machine to add
+	 */
+	public StateMachine<?> addStateMachine(StateMachine<?> s) {
+		stateMachines.add(s);
+		return s;
+	}
+	
+	/**
 	 * Update funtion
 	 * 
 	 * @param dt		Delta time
 	 */
 	public void update(float dt) {
+		updateComponents(dt);
+	}
+	
+	/**
+	 * Update Components
+	 * 
+	 * @param dt		Delta time
+	 */
+	public void updateComponents(float dt) {
 		for(Component c : components) {
 			c.update(dt);
+		}
+	}
+	
+	
+	/**
+	 * Update state machines
+	 * 
+	 * @param dt		Delta time
+	 */
+	public void updateStateMachines(float dt) {
+		for(StateMachine<?> s : stateMachines) {
+			s.update(dt);
 		}
 	}
 	
@@ -111,6 +160,9 @@ public class GameObject {
 	public void start() {
 		for(Component c : components) {
 			c.start();
+		}
+		for(StateMachine<?> s : stateMachines) {
+			s.start();
 		}
 	}
 	

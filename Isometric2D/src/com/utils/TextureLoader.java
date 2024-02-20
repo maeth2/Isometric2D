@@ -1,4 +1,4 @@
-package util;
+package com.utils;
 
 import static org.lwjgl.opengl.GL11.GL_NEAREST;
 import static org.lwjgl.opengl.GL11.GL_REPEAT;

@@ -2,8 +2,8 @@ package com.components;
 
 import org.joml.Vector2f;
 
-import util.AssetManager;
-import util.Texture;
+import com.utils.AssetManager;
+import com.utils.Texture;
 
 public class AABBComponent extends Component {
 	private Vector2f offset;

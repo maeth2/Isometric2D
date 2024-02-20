@@ -2,8 +2,8 @@ package com.components;
 
 import org.joml.Vector2f;
 
-import util.AssetManager;
-import util.Texture;
+import com.utils.AssetManager;
+import com.utils.Texture;
 
 public class TextureComponent extends Component {
 	private Texture texture;
@@ -31,6 +31,22 @@ public class TextureComponent extends Component {
 	
 	public TextureComponent(Texture texture, float alpha, boolean castShadow) {
 		init(texture, alpha, castShadow, new Vector2f(0, 0), texture.getDimensions());
+	}
+	
+	public TextureComponent(Texture texture, Vector2f spriteDimension) {
+		init(texture, 1f, false, new Vector2f(0, 0), spriteDimension);
+	}
+	
+	public TextureComponent(Texture texture, float alpha, Vector2f spriteDimension) {
+		init(texture, alpha, false, new Vector2f(0, 0), spriteDimension);
+	}
+
+	public TextureComponent(Texture texture, boolean castShadow, Vector2f spriteDimension) {
+		init(texture, 1f, castShadow, new Vector2f(0, 0), spriteDimension);
+	}
+	
+	public TextureComponent(Texture texture, float alpha, boolean castShadow, Vector2f spriteDimension) {
+		init(texture, alpha, castShadow, new Vector2f(0, 0), spriteDimension);
 	}
 	
 	public TextureComponent(Texture texture, Vector2f spritePosition, Vector2f spriteDimension) {

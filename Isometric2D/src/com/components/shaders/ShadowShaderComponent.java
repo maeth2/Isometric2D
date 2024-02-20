@@ -16,14 +16,13 @@ import com.Main;
 import com.Renderer;
 import com.Window;
 import com.components.LightComponent;
-
-import util.AssetManager;
-import util.BufferHelper;
-import util.Maths;
-import util.Quad;
-import util.ShaderLoader;
-import util.Texture;
-import util.Transform;
+import com.utils.AssetManager;
+import com.utils.BufferHelper;
+import com.utils.Maths;
+import com.utils.Quad;
+import com.utils.ShaderLoader;
+import com.utils.Texture;
+import com.utils.Transform;
 
 public class ShadowShaderComponent extends ShaderComponent {
 	//TODO

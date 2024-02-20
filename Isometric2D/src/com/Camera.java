@@ -5,10 +5,11 @@ import org.joml.Vector2f;
 
 import com.components.Component;
 import com.components.ControllerComponent;
+import com.entities.Entity;
+import com.utils.Maths;
+import com.utils.Transform;
 
-import util.Maths;
-
-public class Camera extends GameObject{
+public class Camera extends Entity{
 	private Matrix4f projectionMatrix;
 	private GameObject target;
 
@@ -64,9 +65,17 @@ public class Camera extends GameObject{
 			prevTarget = target;
 			this.setTarget(this);
 			if(this.getComponent(ControllerComponent.class) == null) {
-				this.addComponent(new ControllerComponent());
-				this.getComponent(ControllerComponent.class).setSpeed(0f);
+				this.addComponent(new ControllerComponent(this));
+				this.getComponent(ControllerComponent.class);
 			}
 		}
+	}
+
+	@Override
+	public void addComponents() {}
+
+	@Override
+	public Entity create(Transform t) {
+		return null;
 	}
 }

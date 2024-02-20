@@ -1,14 +1,15 @@
-package util;
+package com.utils;
 
 import org.joml.Vector2f;
 
 import com.GameObject;
 import com.components.AABBComponent;
 import com.components.TextureComponent;
+import com.scenes.Scene;
 
 public class LevelLoader {
 	
-	public static GameObject[][] loadLevel(int width, int height, float unitSize, int[][] level) {
+	public static GameObject[][] loadLevel(int width, int height, int[][] level) {
 		level = Helper.reverse(level);
 		GameObject grid[][] = new GameObject[height][width];
 		for(int r = 0; r < height; r++) {
@@ -16,11 +17,11 @@ public class LevelLoader {
 				GameObject block = new GameObject( 
 						"test",
 						new Transform(
-								new Vector2f(c * unitSize, r * unitSize), new Vector2f(unitSize / 2, unitSize / 2), new Vector2f(0f, 0f)
+								new Vector2f(c * Scene.UNIT_SIZE, r * Scene.UNIT_SIZE), new Vector2f(Scene.UNIT_SIZE / 2, Scene.UNIT_SIZE / 2), new Vector2f(0f, 0f)
 						)
 					);
 				if(level[r][c] == 2) {
-					block.addComponent(new AABBComponent(new Vector2f(0, 0), new Vector2f(unitSize / 2, unitSize / 2)));
+					block.addComponent(new AABBComponent(new Vector2f(0, 0), new Vector2f(Scene.UNIT_SIZE / 2, Scene.UNIT_SIZE / 2)));
 				}else if(level[r][c] == 1){
 					block.addComponent(new TextureComponent(
 							AssetManager.getTexture("assets/textures/walls.png"), 

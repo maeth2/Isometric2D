@@ -38,6 +38,7 @@ void main(){
 		vec4 shadowColor = texture(uShadow, fTexCoords);
 		finalScreenColor += shadowColor;
 	}
+	
 	finalScreenColor *= vec4(uAmbient, 1);
 	color = finalScreenColor;
 }

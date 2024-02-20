@@ -1,4 +1,4 @@
-package util;
+package com.utils;
 
 import static org.lwjgl.opengl.GL11.glDeleteTextures;
 import static org.lwjgl.opengl.GL20.glDeleteShader;

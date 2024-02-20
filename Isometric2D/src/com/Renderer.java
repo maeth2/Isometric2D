@@ -7,12 +7,11 @@ import org.lwjgl.opengl.GL11;
 
 import com.components.TextureComponent;
 import com.components.shaders.ShaderComponent;
-
-import util.AssetManager;
-import util.BufferHelper;
-import util.Quad;
-import util.ShaderLoader;
-import util.Texture;
+import com.utils.AssetManager;
+import com.utils.BufferHelper;
+import com.utils.Quad;
+import com.utils.ShaderLoader;
+import com.utils.Texture;
 
 public class Renderer {
 	private List<ShaderComponent> components = new ArrayList<ShaderComponent>();
@@ -88,7 +87,7 @@ public class Renderer {
 	 * 
 	 * @param o			GameObject to add
 	 */
-	public void addGameObject(GameObject o) {
+	public void addRenderObject(GameObject o) {
 		if(o.getComponent(TextureComponent.class) == null) return;
 		TextureComponent tex = o.getComponent(TextureComponent.class);
 		for(RenderBatch r : renderBatches) {

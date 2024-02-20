@@ -1,8 +1,7 @@
 package com.components.shaders;
 
 import com.Renderer;
-
-import util.Texture;
+import com.utils.Texture;
 
 public abstract class ShaderComponent {
 	int fbo;

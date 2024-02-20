@@ -15,12 +15,11 @@ import java.util.Map;
 import org.joml.Vector2f;
 
 import com.components.TextureComponent;
-
-import util.Helper;
-import util.Quad;
-import util.ShaderLoader;
-import util.TextureLoader;
-import util.Transform;
+import com.utils.Helper;
+import com.utils.Quad;
+import com.utils.ShaderLoader;
+import com.utils.TextureLoader;
+import com.utils.Transform;
 
 public class RenderBatch {
 	private static final int MAX_BATCH_SIZE = 1000;
@@ -131,6 +130,7 @@ public class RenderBatch {
 			TextureComponent tex = texturedObjects.get(i);
 			if(tex.gameObject.isDirty()) {
 				updateVertices(tex, i);
+				tex.gameObject.setDirty(false);
 			}
 		}
 	}

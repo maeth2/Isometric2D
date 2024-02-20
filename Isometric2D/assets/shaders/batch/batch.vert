@@ -13,15 +13,24 @@ uniform mat4 uProjection;
 uniform mat4 uView;
 
 
-mat4 createTransformationMatrix(vec2 s, vec2 r){
+vec4 getTransformedPosition(vec2 v, vec2 t, vec2 s, vec2 r){
 	float sz = sin(radians(r.x + 180));
 	float cz = cos(radians(r.x + 180));
-
+	float sy = sin(radians(r.y));
+	float cy = cos(radians(r.y));
+	
 	mat4 rotZ = mat4(
 		cz, -sz, 0, 0,
 		sz, cz,  0, 0,
 		0,  0,   1, 0,
 		0,  0,   0, 1
+	);
+	
+	mat4 trans = mat4(
+		1, 0, 0, t.x,
+		0, 1, 0, t.y,
+		0, 0, 1, 0,
+		0, 0, 0, 1
 	);
 	
 	mat4 scale = mat4(
@@ -31,13 +40,12 @@ mat4 createTransformationMatrix(vec2 s, vec2 r){
 		0, 0, 0, 1
 	);
 	
-	return rotZ * scale;
+	return scale * rotZ * vec4(v.x, v.y, 1, 1) * trans;
 }
 
 void main(){
 	fTexCoords =  vec2((aVert.x+1.0)/2.0, (aVert.y+1.0)/2.0);
 	fTexData = aTexData;
-	mat4 transformation = createTransformationMatrix(aScale, aRotation);
-	vec4 pos = transformation * vec4(aVert, 0.0, 1.0) + vec4(aTranslation, 0, 0);
+	vec4 pos = getTransformedPosition(aVert, aTranslation, aScale, aRotation);
 	gl_Position = uProjection * uView * pos;
 }
