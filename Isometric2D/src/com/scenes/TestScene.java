@@ -57,6 +57,10 @@ public class TestScene extends Scene {
 				new Vector2f(0f, 0f)
 			)
 		);
+		player.addComponent(new LightComponent(new Vector3f(0f, 0f, 1f), 400, 1f, false));
+		if(renderer.getComponent(LightShaderComponent.class) != null) {
+			renderer.getComponent(LightShaderComponent.class).addLight(player);
+		}
 		this.addGameObjectToScene(player);
 
 		camera.setTarget(player);
@@ -68,22 +72,22 @@ public class TestScene extends Scene {
 			cooldown -= dt;
 		}
 		
-//		if(KeyListener.isKeyPressed(GLFW.GLFW_KEY_SPACE)) {
-//			if(cooldown < 0) {
-//				GameObject light = new GameObject(
-//					"Light",
-//					new Transform(
-//							new Vector2f(camera.transform.position.x, camera.transform.position.y), new Vector2f(UNIT_SIZE / 2, UNIT_SIZE / 2)
-//					)
-//				);
-//				light.addComponent(new LightComponent(new Vector3f(1f, 0.6f, 0.6f), 800, 1f, true));
-//				if(renderer.getComponent(LightShaderComponent.class) != null) {
-//					renderer.getComponent(LightShaderComponent.class).addLight(light);
-//				}
-//				this.addGameObjectToScene(light);
-//				cooldown = 0.5f;
-//			}
-//		}
+		if(KeyListener.isKeyPressed(GLFW.GLFW_KEY_SPACE)) {
+			if(cooldown < 0) {
+				GameObject light = new GameObject(
+					"Light",
+					new Transform(
+							new Vector2f(camera.transform.position.x, camera.transform.position.y), new Vector2f(UNIT_SIZE / 2, UNIT_SIZE / 2)
+					)
+				);
+				light.addComponent(new LightComponent(new Vector3f(1f, 0f, 0f), 400, 1f, true));
+				if(renderer.getComponent(LightShaderComponent.class) != null) {
+					renderer.getComponent(LightShaderComponent.class).addLight(light);
+				}
+				this.addGameObjectToScene(light);
+				cooldown = 0.5f;
+			}
+		}
 		
 		if(KeyListener.isKeyPressed(GLFW.GLFW_KEY_V)) {
 			if(cooldown < 0) {

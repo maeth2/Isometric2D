@@ -30,7 +30,7 @@ Ethan:
 - [R]:
 - [Q]:
 
-Items:
+Items: 
 - Monster: You get a speed boost, but consuming too many gives you diabetes.
 	- Diabetes: You lose health over time, but consuming insulin gives you a regen/speed boost (Immune: Jaidyn)
 
