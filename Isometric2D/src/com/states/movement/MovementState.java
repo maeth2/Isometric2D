@@ -23,6 +23,16 @@ public abstract class MovementState extends State<MovementStateMachine.movementS
 		this.context = context;
 	}
 	
+	public void pointToTarget() {
+		if(context.getEntity().getTargetDestination().x < context.getEntity().transform.position.x) {
+			context.getEntity().transform.scale.x = Math.abs(context.getEntity().transform.scale.x);
+		}else {
+			context.getEntity().transform.scale.x = -Math.abs(context.getEntity().transform.scale.x);
+		}
+		
+		context.getEntity().setDirty(true);
+	}
+	
 	public void checkCollision() {
 		Entity entity = context.getEntity();
 		AABBComponent aabb = entity.getComponent(AABBComponent.class);

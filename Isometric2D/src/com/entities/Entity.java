@@ -3,6 +3,8 @@ package com.entities;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.joml.Vector2f;
+
 import com.GameObject;
 import com.states.movement.MovementStateMachine;
 import com.states.attack.AttackStateMachine;
@@ -10,6 +12,7 @@ import com.utils.Transform;
 
 public abstract class Entity extends GameObject{
 	protected Map<String, Boolean> trigger = new HashMap<String, Boolean>();
+	protected Vector2f targetDestination = new Vector2f(0, 0);
 	private float speed = 500f;
 	
 	public Entity(String name, Transform transform) {
@@ -74,6 +77,26 @@ public abstract class Entity extends GameObject{
 	 * @return 			New instance of Entity
 	 */
 	public abstract Entity create(String name, Transform t);
+	
+	/**
+	 * Set Target Destination
+	 * 
+	 * @param x			Target x coordinates
+	 * @param y			Target y coordinates
+	 */
+	public void setTargetDestination(float x, float y) {
+		this.targetDestination.x = x;
+		this.targetDestination.y = y;
+	}
+	
+	/**
+	 * Get Target Destination
+	 * 
+	 * @return			Target Destination
+	 */
+	public Vector2f getTargetDestination() {
+		return this.targetDestination;
+	}
 	
 	public float getSpeed() {
 		return speed;

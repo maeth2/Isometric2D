@@ -1,7 +1,6 @@
 package com.states.movement;
 
 import com.Main;
-import com.components.AnimationComponent;
 
 public class RunningState extends MovementState {
 
@@ -11,9 +10,8 @@ public class RunningState extends MovementState {
 
 	@Override
 	public void enter() {
-		AnimationComponent a = context.getEntity().getComponent(AnimationComponent.class);
-		if(a != null) {
-			a.setCurrentAnimation("Running");
+		if(context.getAnimation() != null) {
+			context.getAnimation().setCurrentAnimation("Running");
 		}		
 		nextState = stateKey;
 	}
@@ -36,10 +34,8 @@ public class RunningState extends MovementState {
 		}
 		
 		if(context.getEntity().getTrigger("Left")){
-			context.getEntity().transform.scale.x = Math.abs(context.getEntity().transform.scale.x);
 			velocity.x = -speed * dt;
 		}else if(context.getEntity().getTrigger("Right")) {
-			context.getEntity().transform.scale.x = -Math.abs(context.getEntity().transform.scale.x);
 			velocity.x = speed * dt;
 		}
 		
@@ -54,6 +50,8 @@ public class RunningState extends MovementState {
 		}
 		
 		checkCollision();
+		
+		pointToTarget();
 		
 		context.getEntity().transform.position.x += velocity.x;
 		context.getEntity().transform.position.y += velocity.y;

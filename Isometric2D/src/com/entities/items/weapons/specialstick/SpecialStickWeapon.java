@@ -20,8 +20,9 @@ public class SpecialStickWeapon extends Item {
 
 	public static Texture spriteSheet = AssetManager.getTexture("assets/textures/weapons.png");
 	static {
-		animations.put("Idle", Animation.createAnimationFrame(0, 0, 2, 1f));
+		animations.put("Idle", Animation.createAnimationFrame(0, 0, 2, 0f));
 		animations.put("Picked", Animation.createAnimationFrame(0, 0, 2, 0f));
+		animations.put("Attack", Animation.createAnimationFrame(0, 4, 3, 0.25f, true));
 	}
 	
 	public SpecialStickWeapon(String name, Transform transform) {

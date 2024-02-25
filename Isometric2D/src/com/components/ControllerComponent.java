@@ -2,6 +2,7 @@ package com.components;
 
 import org.lwjgl.glfw.GLFW;
 
+import com.Main;
 import com.entities.Entity;
 import com.listeners.KeyListener;
 import com.listeners.MouseListener;
@@ -24,6 +25,10 @@ public class ControllerComponent extends Component {
 		entity.setTrigger("Drop", KeyListener.isKeyPressed(GLFW.GLFW_KEY_F));
 		entity.setTrigger("L_Click", MouseListener.mouseButtonDown(0));
 		entity.setTrigger("R_Click", MouseListener.mouseButtonDown(1));
+		entity.setTargetDestination(
+			MouseListener.getX() + Main.getScene().getCamera().transform.position.x, 
+			MouseListener.getY() + Main.getScene().getCamera().transform.position.y
+		);
 	}
 	
 

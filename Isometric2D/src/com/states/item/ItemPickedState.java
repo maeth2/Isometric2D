@@ -1,7 +1,5 @@
 package com.states.item;
 
-import com.components.AnimationComponent;
-
 public class ItemPickedState extends ItemState {	
 	
 	public ItemPickedState(ItemContext context, ItemStateMachine.itemStates stateKey) {
@@ -12,9 +10,8 @@ public class ItemPickedState extends ItemState {
 	public void enter() {
 		this.nextState = stateKey;
 		this.context.getItem().transform.pivot.y = -0.4f;
-		AnimationComponent a = context.getItem().getComponent(AnimationComponent.class);
-		if(a != null) {
-			a.setCurrentAnimation("Picked");
+		if(context.getAnimation() != null) {
+			context.getAnimation().setCurrentAnimation("Picked");
 		}
 	}
 

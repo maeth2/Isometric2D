@@ -1,12 +1,12 @@
 package com.entities.items.weapons.syringe;
 
-import com.components.AnimationComponent;
 import com.states.item.ItemContext;
 import com.states.item.ItemState;
 import com.states.item.ItemStateMachine;
 
 public class SyringeAttackState extends ItemState{	
-	private float cooldown;
+	private float elapsed;
+	private float cooldown = 1f;
 	
 	public SyringeAttackState(ItemContext context, ItemStateMachine.itemStates stateKey) {
 		super(context, stateKey);
@@ -15,11 +15,10 @@ public class SyringeAttackState extends ItemState{
 	@Override
 	public void enter() {
 		this.nextState = stateKey;
-		AnimationComponent a = context.getItem().getComponent(AnimationComponent.class);
-		if(a != null) {
-			a.setCurrentAnimation("Attack");
+		if(context.getAnimation() != null) {
+			context.getAnimation().setCurrentAnimation("Attack");
 		}
-		cooldown = 1f;
+		elapsed = 0f;
 	}
 
 	@Override
@@ -28,10 +27,10 @@ public class SyringeAttackState extends ItemState{
 
 	@Override
 	public void update(float dt) {
-		cooldown -= dt;
+		elapsed += dt;
 		pointToMouse();
 		stickToEntity();
-		if(cooldown <= 0) {
+		if(elapsed >= cooldown) {
 			this.nextState = ItemStateMachine.itemStates.Picked;
 		}
 	}

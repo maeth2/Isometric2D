@@ -7,7 +7,6 @@ import org.joml.Vector3f;
 import com.GameObject;
 import com.Main;
 import com.components.AABBComponent;
-import com.components.AnimationComponent;
 import com.components.LightComponent;
 import com.components.shaders.LightShaderComponent;
 import com.entities.Entity;
@@ -24,9 +23,8 @@ public class ItemIdleState extends ItemState{
 		this.context.getItem().transform.pivot.y = 0f;
 		this.context.getItem().transform.rotation.x = 0f;
 		this.context.getItem().setDirty(true);
-		AnimationComponent a = context.getItem().getComponent(AnimationComponent.class);
-		if(a != null) {
-			a.setCurrentAnimation("Idle");
+		if(context.getAnimation() != null) {
+			context.getAnimation().setCurrentAnimation("Idle");
 		}
 		context.getItem().addComponent(new LightComponent(new Vector3f(50, 50, 50), 100, 1f, false));
 		if(Main.getScene().getRenderer().getComponent(LightShaderComponent.class) != null) {

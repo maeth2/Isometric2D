@@ -3,7 +3,6 @@ package com.states.item;
 import org.joml.Vector2f;
 
 import com.Main;
-import com.listeners.MouseListener;
 import com.states.State;
 import com.utils.Animation;
 
@@ -19,12 +18,13 @@ public abstract class ItemState extends State<ItemStateMachine.itemStates> {
 	public void pointToMouse() {
 		float sx = this.context.getItem().transform.position.x;
 		float sy = this.context.getItem().transform.position.y;
-		float mx = MouseListener.getX() + Main.getScene().getCamera().transform.position.x;
-		float my = MouseListener.getY() + Main.getScene().getCamera().transform.position.y - context.getItem().transform.scale.y;
+		float mx = context.getItem().getEntity().getTargetDestination().x;
+		float my = context.getItem().getEntity().getTargetDestination().y - context.getItem().transform.scale.y;
 		float angle = (float) Math.toDegrees(Math.atan2((my - sy), (mx - sx))) - 90f;
 		this.context.getItem().transform.rotation.x = angle;
 
 		context.getItem().transform.scale.x = Math.abs(context.getItem().transform.scale.x) * (mx > sx ? -1 : 1);
+		
 		this.context.getItem().setDirty(true);
 	}
 	

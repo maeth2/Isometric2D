@@ -5,7 +5,8 @@ import com.states.item.ItemState;
 import com.states.item.ItemStateMachine;
 
 public class SpecialStickAttackState extends ItemState{	
-	private float cooldown = 1f;
+	private float elapsed = 0f;
+	private float cooldown = 0.5f;
 	
 	public SpecialStickAttackState(ItemContext context, ItemStateMachine.itemStates stateKey) {
 		super(context, stateKey);
@@ -13,9 +14,15 @@ public class SpecialStickAttackState extends ItemState{
 
 	@Override
 	public void enter() {
-		System.out.println("Slashing");
+		if(context.getAnimation() != null) {
+			context.getAnimation().setCurrentAnimation("Attack");
+		}
 		this.nextState = stateKey;
-		this.cooldown = 1f;
+		this.elapsed = 0f;
+		
+		context.getItem().transform.scale.x *= 2;
+		context.getItem().transform.scale.y *= 2;
+		context.getItem().transform.pivot.y = 0f;
 	}
 
 	@Override
@@ -24,12 +31,22 @@ public class SpecialStickAttackState extends ItemState{
 
 	@Override
 	public void update(float dt) {
-		pointToMouse();
 		stickToEntity();
-		cooldown -= dt;
-		if(cooldown <= 0) {
+		float angle = (float)Math.toRadians(context.getItem().transform.rotation.x) + 90f;
+		float dx = (float) Math.cos(angle) * Math.abs(context.getItem().transform.scale.x) * 0.2f;
+		float dy = (float) Math.sin(angle) * context.getItem().transform.scale.y * 0.2f;
+		context.getItem().transform.position.x += dx;
+		context.getItem().transform.position.y += dy;
+		elapsed += dt;
+		if(elapsed >= cooldown) {
 			this.nextState = ItemStateMachine.itemStates.Picked;
 		}
+		if(context.getAnimation().getCurrentFrame() == -1) {
+			context.getItem().transform.scale.x /= 2;
+			context.getItem().transform.scale.y /= 2;
+			context.getAnimation().setCurrentAnimation("Picked");
+		}
+		context.getItem().setDirty(true);
 	}
 
 	@Override

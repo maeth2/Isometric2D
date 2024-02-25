@@ -1,7 +1,6 @@
 package com.states.movement;
 
 import com.Main;
-import com.components.AnimationComponent;
 
 public class RollingState extends MovementState {
 	
@@ -17,9 +16,8 @@ public class RollingState extends MovementState {
 
 	@Override
 	public void enter() {
-		AnimationComponent a = context.getEntity().getComponent(AnimationComponent.class);
-		if(a != null) {
-			frames = a.setCurrentAnimation("Rolling");
+		if(context.getAnimation() != null) {
+			frames = context.getAnimation().setCurrentAnimation("Rolling");
 			movementDuration = frames.getAnimationDuration() * ((frames.getActionEndFrame() - frames.getActionStartFrame() + 1.0f) / frames.getTotalFrames());
 		}
 		
