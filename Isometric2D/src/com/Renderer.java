@@ -3,8 +3,10 @@ package com;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.joml.Vector2f;
 import org.lwjgl.opengl.GL11;
 
+import com.components.AABBComponent;
 import com.components.TextureComponent;
 import com.components.shaders.ShaderComponent;
 import com.utils.AssetManager;
@@ -22,6 +24,10 @@ public class Renderer {
 	private int sceneBuffer;
 	private Texture[] bufferTextures;
 	private List<RenderBatch> renderBatches = new ArrayList<RenderBatch>();
+	private List<RenderBatch> shadowBatches = new ArrayList<RenderBatch>();
+	private List<RenderBatch> debugBatches = new ArrayList<RenderBatch>();
+	
+	private boolean toggleDebug = false;
 		
 	public Renderer() {
 		this.sceneShaderID = AssetManager.getShader("assets/shaders/batch");
@@ -43,7 +49,7 @@ public class Renderer {
 	}
 
 	/**
-	 * Render all batches
+	 * Render object batches
 	 * 
 	 * @param shaderID			Shader to use
 	 */
@@ -51,7 +57,24 @@ public class Renderer {
 		for(RenderBatch r : this.renderBatches) {
 			r.render(shaderID);
 		}
+		if(toggleDebug) {
+			for(RenderBatch r : this.debugBatches) {
+				r.render(shaderID);
+			}		
+		}
 	}
+	
+	/**
+	 * Render shadow batches
+	 * 
+	 * @param shaderID			Shader to use
+	 */
+	public void renderShadowBatches(int shaderID) {
+		for(RenderBatch r : this.shadowBatches) {
+			r.render(shaderID);
+		}
+	}
+	
 	/**
 	 * Render All Game Objects in Scene to Screen
 	 * 
@@ -77,7 +100,7 @@ public class Renderer {
 		}
 		refresh();
 		
-		Quad.renderQuad(bufferTextures[Texture.TYPE_OUTPUT]);
+		Quad.renderGUI(bufferTextures[Texture.TYPE_OUTPUT], new Vector2f(2, 2));
 	}
 	
 
@@ -90,14 +113,56 @@ public class Renderer {
 	public void addRenderObject(GameObject o) {
 		if(o.getComponent(TextureComponent.class) == null) return;
 		TextureComponent tex = o.getComponent(TextureComponent.class);
+		boolean added = false;
 		for(RenderBatch r : renderBatches) {
 			if(r.add(tex)) {
-				return;
+				added = true;
+				break;
 			}
 		}
-		RenderBatch r = new RenderBatch();
-		renderBatches.add(r);
-		r.add(tex);
+		if(!added) {
+			RenderBatch r = new RenderBatch();
+			renderBatches.add(r);
+			r.add(tex);
+		}
+		
+		AABBComponent aabb = tex.gameObject.getComponent(AABBComponent.class);
+		if(aabb != null) {
+			added = false;
+			aabb.getTexture().gameObject = o;
+			aabb.getTexture().setCastShadow(tex.canCastShadow());
+			for(RenderBatch r : shadowBatches) {
+				if(r.add(aabb.getTexture(), aabb.getTransform())) {
+					added = true;
+					break;
+				}
+			}
+			if(!added) {
+				RenderBatch r = new RenderBatch();
+				shadowBatches.add(r);
+				debugBatches.add(r);
+				r.add(aabb.getTexture());
+			}
+		}
+	}
+	
+	public void removeRenderObject(GameObject o) {
+		if(o.getComponent(TextureComponent.class) == null) return;
+		TextureComponent tex = o.getComponent(TextureComponent.class);
+		for(RenderBatch r : renderBatches) {
+			if(r.remove(tex)) {
+				break;
+			}
+		}
+		
+		AABBComponent aabb = tex.gameObject.getComponent(AABBComponent.class);
+		if(aabb != null) {
+			for(RenderBatch r : shadowBatches) {
+				if(r.remove(aabb.getTexture())) {
+					break;
+				}
+			}
+		}
 	}
 	
 	/**
@@ -161,5 +226,12 @@ public class Renderer {
 		c.start();
 		c.renderer = this;
 		return this;
+	}
+	
+	/**
+	 * Toggle debug mode
+	 */
+	public void toggleDebug() {
+		toggleDebug = !toggleDebug;
 	}
 }

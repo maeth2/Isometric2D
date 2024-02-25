@@ -66,6 +66,16 @@ public class LightShaderComponent extends ShaderComponent {
 		}
 	}
 	
+	public void removeLight(GameObject light) {
+		LightComponent component = light.getComponent(LightComponent.class);
+		if(component != null) {
+			this.lights.remove(component);
+			if(this.shadow != null) {
+				this.shadow.removeLight(light);
+			}
+		}
+	}
+	
 	@Override
 	public Texture render(Texture[] t) {
 		Camera c = Main.getScene().getCamera();

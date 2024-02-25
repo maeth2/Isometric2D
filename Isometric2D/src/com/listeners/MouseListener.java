@@ -3,6 +3,8 @@ package com.listeners;
 import static org.lwjgl.glfw.GLFW.GLFW_PRESS;
 import static org.lwjgl.glfw.GLFW.GLFW_RELEASE;
 
+import com.Window;
+
 
 public class MouseListener {
 	public static MouseListener instance;
@@ -20,6 +22,10 @@ public class MouseListener {
 		this.lastY = 0.0;
 	}
 	
+	/**
+	 * Get a static instance of the Mouse Listener
+	 * @return
+	 */
 	public static MouseListener get() {
 		if(MouseListener.instance == null) {
 			MouseListener.instance = new MouseListener();
@@ -83,11 +89,11 @@ public class MouseListener {
 	}
 	
 	public static float getX() {
-		return (float)get().xPos;
+		return (float)get().xPos - (float) (Window.WIDTH / 2.0f);
 	}
 	
 	public static float getY() {
-		return (float)get().yPos;
+		return (float) (Window.HEIGHT / 2.0f) - (float)get().yPos;
 	}
 	
 	public static float getDx() {

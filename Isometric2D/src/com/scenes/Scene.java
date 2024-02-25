@@ -19,6 +19,8 @@ public abstract class Scene {
 	protected Renderer renderer;
 
 	protected List<GameObject> gameObjects = new ArrayList<GameObject>();
+	protected List<GameObject> dirtyObjects = new ArrayList<GameObject>();
+	protected List<GameObject> deleteObjects = new ArrayList<GameObject>();
 	protected List<GameObject> grid[][];
 	protected GameObject level[][];
 	
@@ -42,7 +44,24 @@ public abstract class Scene {
 	 * 
 	 * @param dt		Time passed per frame
 	 */
-	public abstract void update(float dt);
+	public void update(float dt) {
+		updateDebug(dt);
+		for(GameObject o : gameObjects) {
+			o.update(dt);
+		}
+		
+		for(GameObject l : this.getSurroundingLevel(this.getCamera(), 10, 10)) {
+			l.update(dt);
+		}
+		
+		renderer.render();
+		cleanObjects();
+	}
+	
+	/**
+	 * Debugger update
+	 */
+	public abstract void updateDebug(float dt);
 	
 	/**
 	 * Adds a game object to the scene
@@ -51,16 +70,35 @@ public abstract class Scene {
 	 */
 	public void addGameObjectToScene(GameObject o) {
 		gameObjects.add(o);
+		dirtyObjects.add(o);
 		renderer.addRenderObject(o);
 		
 		if(isRunning) {
 			o.start();
 		}
+		
 		int r = (int)(o.transform.position.y / UNIT_SIZE);
 		int c = (int)(o.transform.position.x / UNIT_SIZE);
 		if(r < 0 || r >= this.gridHeight || c < 0 || c >= this.gridWidth) return;
 		grid[r][c].add(o);
-		o.setGridPosition(c, r, grid[r][c].size() - 1);
+		o.setGridPosition(c, r);
+	}
+	
+	/**
+	 * Removes game object from the scene
+	 * 
+	 * @param g			Game object to remove
+	 */
+	public void removeGameObjectFromScene(GameObject o) {
+		gameObjects.remove(o);
+		renderer.removeRenderObject(o);
+
+		int r = (int)(o.transform.position.y / UNIT_SIZE);
+		int c = (int)(o.transform.position.x / UNIT_SIZE);
+		if(r < 0 || r >= this.gridHeight || c < 0 || c >= this.gridWidth) return;
+		System.out.println("Before: " + grid[r][c].size());
+		grid[r][c].remove(o);
+		System.out.println("After: " + grid[r][c].size());
 	}
 	
 	/**
@@ -133,9 +171,9 @@ public abstract class Scene {
 		Vector2i pos = this.getGridPosition(o);
 		if(pos.x < 0 || pos.x >= this.gridWidth || pos.y < 0 || pos.y >= this.gridHeight) return;
 		if(pos.x != o.getGridPosition().x || pos.y != o.getGridPosition().y) {
-			grid[o.getGridPosition().y][o.getGridPosition().x].remove(o.getGridPosition().z);
+			grid[o.getGridPosition().y][o.getGridPosition().x].remove(o);
 			grid[pos.y][pos.x].add(o);
-			o.setGridPosition(pos.x, pos.y, grid[pos.y][pos.x].size() - 1);
+			o.setGridPosition(pos.x, pos.y);
 		}
 	}
 	
@@ -206,6 +244,33 @@ public abstract class Scene {
 		}
 	}
 	
+	/**
+	 * Add dirty game object to scene
+	 */
+	public void addDirtyObjects(GameObject o) {
+		dirtyObjects.add(o);
+	}
+	
+	/**
+	 * Add deletable game object to scene
+	 */
+	public void addDeletableObjects(GameObject o) {
+		deleteObjects.add(o);
+	}
+	
+	/**
+	 * Reset all dirty objects to clean
+	 */
+	public void cleanObjects() {
+		for(GameObject i : deleteObjects) {
+			this.removeGameObjectFromScene(i);
+		}
+		for(GameObject i : dirtyObjects) {
+			i.setDirty(false);
+		}
+		dirtyObjects.clear();
+		deleteObjects.clear();
+	}
 	
 	/**
 	 * Get scene camera

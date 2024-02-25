@@ -105,6 +105,16 @@ public class ShadowShaderComponent extends ShaderComponent {
 		System.out.println("Number of Lights in scene: " + lights.size());
 	}
 	
+	public void removeLight(GameObject light) {
+		for(int i = 0; i < lights.size(); i++) {
+			if(lights.get(i).lightObject == light) {
+				lights.remove(i);
+				break;
+			}
+		}
+		System.out.println("Number of Lights in scene: " + lights.size());
+	}
+	
 	public void setup(int fbo, int shader, Texture texture) {
 		BufferHelper.bindFrameBuffer(
 			fbo, 
@@ -122,14 +132,14 @@ public class ShadowShaderComponent extends ShaderComponent {
 	
 	public Texture renderShadow(LightStructure light, int i) {
 		tempCam.setPosition(light.lightObject.transform.position);
-		tempCam.setGridPosition(Main.getScene().getGridPosition(tempCam), i);
+		tempCam.setGridPosition(Main.getScene().getGridPosition(tempCam));
 		
 		//Rendering all shadow objects
 		setup(light.occlusionFBO, occlusionShader, light.occlusionTexture);
 		Renderer.refresh();
 		ShaderLoader.loadMatrix(occlusionShader, "uView", tempCam.getViewMatrix());	
 
-		renderer.renderBatches(occlusionShader);
+		renderer.renderShadowBatches(occlusionShader);
 		
 		unbind();
 		
@@ -162,7 +172,7 @@ public class ShadowShaderComponent extends ShaderComponent {
 			if(!Main.checkInScreen(light.lightObject, light.diameter, light.diameter) || !light.lightComponent.canCastShadow()){
 				continue;
 			}
-			Transform lightTransform = new Transform(light.lightObject.transform.position, new Vector2f(light.diameter / 2, light.diameter / 2));
+			Transform lightTransform = new Transform(light.lightObject.transform.position, new Vector2f(light.diameter, light.diameter));
 
 			boolean isDirty = lightTransform.position.x != light.lastPos.x || lightTransform.position.y != light.lastPos.y;
 			Texture shadow = isDirty ? renderShadow(light, i) : light.shadowTexture; //Check if light has moved.

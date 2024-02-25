@@ -5,8 +5,6 @@ import com.components.AnimationComponent;
 
 public class RunningState extends MovementState {
 
-	private float animationDuration = 0.6f;
-
 	public RunningState(MovementContext context, MovementStateMachine.movementStates stateKey) {
 		super(context, stateKey);
 	}
@@ -16,7 +14,6 @@ public class RunningState extends MovementState {
 		AnimationComponent a = context.getEntity().getComponent(AnimationComponent.class);
 		if(a != null) {
 			a.setCurrentAnimation("Running");
-			a.setAnimationDuration(animationDuration);
 		}		
 		nextState = stateKey;
 	}
@@ -29,24 +26,24 @@ public class RunningState extends MovementState {
 	public void update(float dt) {
 		velocity.x = 0;
 		velocity.y = 0;
-		int direction = 0;
 		
 		float speed = context.getEntity().getSpeed();
-		if(context.getEntity().getActions("Up")){
+		
+		if(context.getEntity().getTrigger("Up")){
 			velocity.y = speed * dt;
-		}else if(context.getEntity().getActions("Down")) {
+		}else if(context.getEntity().getTrigger("Down")) {
 			velocity.y = -speed * dt;
 		}
 		
-		if(context.getEntity().getActions("Left")){
-			direction = 1;
+		if(context.getEntity().getTrigger("Left")){
+			context.getEntity().transform.scale.x = Math.abs(context.getEntity().transform.scale.x);
 			velocity.x = -speed * dt;
-		}else if(context.getEntity().getActions("Right")) {
-			direction = -1;
+		}else if(context.getEntity().getTrigger("Right")) {
+			context.getEntity().transform.scale.x = -Math.abs(context.getEntity().transform.scale.x);
 			velocity.x = speed * dt;
 		}
 		
-		if(context.getEntity().getActions("Roll")){
+		if(context.getEntity().getTrigger("Roll")){
 			nextState = MovementStateMachine.movementStates.Rolling;
 			return;
 		}
@@ -60,15 +57,8 @@ public class RunningState extends MovementState {
 		
 		context.getEntity().transform.position.x += velocity.x;
 		context.getEntity().transform.position.y += velocity.y;
-		if(direction != 0) context.getEntity().transform.scale.x = Math.abs(context.getEntity().transform.scale.x) * direction;
 		
-		context.getEntity().setDirty(true);
 		Main.getScene().updateGrid(context.getEntity());
+		context.getEntity().setDirty(true);
 	}
-
-	@Override
-	public MovementStateMachine.movementStates next() {
-		return this.nextState;
-	}
-
 }

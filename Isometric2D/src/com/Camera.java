@@ -75,7 +75,7 @@ public class Camera extends Entity{
 	public void addComponents() {}
 
 	@Override
-	public Entity create(Transform t) {
+	public Entity create(String name, Transform t) {
 		return null;
 	}
 }

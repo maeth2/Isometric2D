@@ -40,5 +40,5 @@ void main(){
 	}
 	
 	finalScreenColor *= vec4(uAmbient, 1);
-	color = min(finalScreenColor, screenColor + vec4(0.5));
+	color = min(finalScreenColor, screenColor + vec4(0.0));
 }

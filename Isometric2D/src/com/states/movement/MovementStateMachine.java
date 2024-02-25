@@ -15,11 +15,12 @@ public class MovementStateMachine extends StateMachine<MovementStateMachine.move
 	
 	public MovementStateMachine(Entity entity) {
 		this.context = new MovementContext(entity);
-		context.getEntity().addActions("Left");
-		context.getEntity().addActions("Right");
-		context.getEntity().addActions("Up");
-		context.getEntity().addActions("Down");
-		context.getEntity().addActions("Roll");
+		context.getEntity().addTrigger("Left");
+		context.getEntity().addTrigger("Right");
+		context.getEntity().addTrigger("Up");
+		context.getEntity().addTrigger("Down");
+		context.getEntity().addTrigger("Roll");
+		context.getEntity().addTrigger("Stun");
 		initialiseStates();
 		this.currentState = states.get(movementStates.Idle);
 	}

@@ -17,11 +17,15 @@ public class LevelLoader {
 				GameObject block = new GameObject( 
 						"test",
 						new Transform(
-								new Vector2f(c * Scene.UNIT_SIZE, r * Scene.UNIT_SIZE), new Vector2f(Scene.UNIT_SIZE / 2, Scene.UNIT_SIZE / 2), new Vector2f(0f, 0f)
+								new Vector2f(c * Scene.UNIT_SIZE, r * Scene.UNIT_SIZE), new Vector2f(Scene.UNIT_SIZE, Scene.UNIT_SIZE), new Vector2f(0f, 0f)
 						)
 					);
 				if(level[r][c] == 2) {
-					block.addComponent(new AABBComponent(new Vector2f(0, 0), new Vector2f(Scene.UNIT_SIZE / 2, Scene.UNIT_SIZE / 2)));
+					if(r != 0 && level[r - 1][c] != 2) {
+						block.addComponent(new AABBComponent(block, new Vector2f(0, Scene.UNIT_SIZE * 0.57f / 2f), new Vector2f(Scene.UNIT_SIZE, Scene.UNIT_SIZE * 0.43f)));
+					}else {
+						block.addComponent(new AABBComponent(block, new Vector2f(0, 0), new Vector2f(Scene.UNIT_SIZE, Scene.UNIT_SIZE)));
+					}
 				}else if(level[r][c] == 1){
 					block.addComponent(new TextureComponent(
 							AssetManager.getTexture("assets/textures/walls.png"), 
@@ -37,9 +41,12 @@ public class LevelLoader {
 		//First pass loads all the walls with side connections
 		for(int r = 0; r < height; r++) {
 			for(int c = 0; c < width; c++) {
+				GameObject block = grid[r][c];
+
 				int sx = -1;
 				int sy = -1;
-				if(level[r][c] == 0 || grid[r][c] == null || grid[r][c].getComponent(TextureComponent.class) != null) continue;
+				
+				if(level[r][c] == 0 || block == null || block.getComponent(TextureComponent.class) != null) continue;
 				
 				boolean right = (c - 1) >= 0 ? level[r][c - 1] == 2 : false;
 				boolean left = (c + 1) < width ? level[r][c + 1] == 2 : false;
@@ -54,7 +61,7 @@ public class LevelLoader {
 				}
 					
 				if(sx != -1 && sy != -1) {
-					grid[r][c].addComponent(new TextureComponent(
+					block.addComponent(new TextureComponent(
 							AssetManager.getTexture("assets/textures/walls.png"), 
 							true,
 							new Vector2f(sx, sy),
@@ -67,9 +74,12 @@ public class LevelLoader {
 		//Second pass loads all the walls with no side connections
 		for(int r = 0; r < height; r++) {
 			for(int c = 0; c < width; c++) {
+				GameObject block = grid[r][c];
+
 				int sx = -1;
 				int sy = -1;
-				if(level[r][c] == 0 || grid[r][c] == null || grid[r][c].getComponent(TextureComponent.class) != null) continue;
+
+				if(level[r][c] == 0 || block == null || block.getComponent(TextureComponent.class) != null) continue;
 				
 				int right = (c - 1) >= 0 ? level[r][c - 1] : 0;
 				int left = (c + 1) < width ? level[r][c + 1] : 0;
@@ -108,12 +118,13 @@ public class LevelLoader {
 				}
 				
 				if(sx != -1 && sy != -1) {
-					grid[r][c].addComponent(new TextureComponent(
+					block.addComponent(new TextureComponent(
 							AssetManager.getTexture("assets/textures/walls.png"), 
 							true,
 							new Vector2f(sx, sy),
 							new Vector2f(16, 16)
 					));
+					block.addComponent(new AABBComponent(block, new Vector2f(0, 0), new Vector2f(Scene.UNIT_SIZE, Scene.UNIT_SIZE)));
 				}
 			}
 		}

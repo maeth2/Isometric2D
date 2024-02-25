@@ -33,7 +33,7 @@ public class LightComponent extends Component {
 	}
 
 	public void init(Vector3f color, float radius, boolean castShadow, float intensity) {
-		this.color = color;
+		this.color = color.div(255);
 		this.radius = radius;
 		this.castShadow = castShadow;
 		this.intensity = intensity;

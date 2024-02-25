@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.joml.Vector2i;
-import org.joml.Vector3i;
 
 import com.components.Component;
 import com.states.StateMachine;
@@ -13,11 +12,13 @@ import com.utils.Transform;
 
 public class GameObject {
 	private String name;
+	private Vector2i gridPosition;
+	private boolean isDirty = false;
+	
 	protected List<Component> components = new ArrayList<Component>();
 	protected List<StateMachine<?>> stateMachines = new ArrayList<StateMachine<?>>();
+
 	public Transform transform;
-	private Vector3i gridPosition;
-	private boolean isDirty = false;
 	
 	/**
 	 * Initialize game object
@@ -49,7 +50,7 @@ public class GameObject {
 	public void init(String name, Transform transform) {
 		this.name = name;
 		this.transform = transform;
-		this.gridPosition = new Vector3i(0, 0, 0);
+		this.gridPosition = new Vector2i(0, 0);
 	}
 		
 	/**
@@ -129,6 +130,7 @@ public class GameObject {
 	 */
 	public void update(float dt) {
 		updateComponents(dt);
+		updateStateMachines(dt);
 	}
 	
 	/**
@@ -171,7 +173,7 @@ public class GameObject {
 	 * 
 	 * @return Grid Position of Object
 	 */
-	public Vector3i getGridPosition() {
+	public Vector2i getGridPosition() {
 		return this.gridPosition;
 	}
 	
@@ -180,12 +182,10 @@ public class GameObject {
 	 * 
 	 * @param x			Column of Object
 	 * @param y			Row of Object
-	 * @param i			Index of Object in Grid
 	 */
-	public void setGridPosition(int x, int y, int i) {
+	public void setGridPosition(int x, int y) {
 		this.gridPosition.x = x;
 		this.gridPosition.y = y;
-		this.gridPosition.z = i;
 	}
 	
 	/**
@@ -195,10 +195,9 @@ public class GameObject {
 	 * @param y			Row of Object
 	 * @param i			Index of Object in Grid
 	 */
-	public void setGridPosition(Vector2i pos, int i) {
+	public void setGridPosition(Vector2i pos) {
 		this.gridPosition.x = pos.x;
 		this.gridPosition.y = pos.y;
-		this.gridPosition.z = i;
 	}
 
 	/**
@@ -224,6 +223,18 @@ public class GameObject {
 	 * @param isDirty
 	 */
 	public void setDirty(boolean isDirty) {
+		if(!this.isDirty && isDirty) {
+			Main.getScene().addDirtyObjects(this);
+		}
 		this.isDirty = isDirty;
+	}
+	
+	/**
+	 * Remove game object from scene
+	 * 
+	 * @param canRemove
+	 */
+	public void kill() {
+		Main.getScene().addDeletableObjects(this);
 	}
 }

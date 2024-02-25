@@ -22,7 +22,9 @@ public abstract class StateMachine<T extends Enum<T>> {
 	
 	public void transition(T nextState) {
 		currentState.exit();
-		currentState = states.get(nextState);
+		if(states.get(nextState) != null) {
+			currentState = states.get(nextState);
+		}
 		currentState.enter();
 	}
 	

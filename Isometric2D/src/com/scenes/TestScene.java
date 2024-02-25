@@ -9,10 +9,13 @@ import org.lwjgl.glfw.GLFW;
 import com.Camera;
 import com.GameObject;
 import com.Window;
+import com.components.ControllerComponent;
 import com.components.LightComponent;
 import com.components.shaders.LightShaderComponent;
 import com.components.shaders.ShadowShaderComponent;
+import com.entities.Entity;
 import com.entities.EntityList;
+import com.entities.items.ItemList;
 import com.listeners.KeyListener;
 import com.utils.LevelLoader;
 import com.utils.Transform;
@@ -50,37 +53,72 @@ public class TestScene extends Scene {
 		
 		this.setLevel(LevelLoader.loadLevel(10, 10, level));
 				
-		GameObject player = EntityList.get("Jaidyn").create(
+		Entity brynn = EntityList.get("Brynn").create(
+			"Brynn",
 			new Transform(
-				new Vector2f(5 * UNIT_SIZE, 5 * UNIT_SIZE), 
-				new Vector2f(UNIT_SIZE / 2, UNIT_SIZE / 2), 
+				new Vector2f(4.5f * UNIT_SIZE, 8.5f * UNIT_SIZE), 
+				new Vector2f(UNIT_SIZE, UNIT_SIZE), 
 				new Vector2f(0f, 0f)
 			)
 		);
-		player.addComponent(new LightComponent(new Vector3f(0f, 0f, 1f), 400, 1f, false));
+		brynn.addComponent(new ControllerComponent(brynn));
+		brynn.addComponent(new LightComponent(new Vector3f(100, 100, 100), 400, 1f, true));
 		if(renderer.getComponent(LightShaderComponent.class) != null) {
-			renderer.getComponent(LightShaderComponent.class).addLight(player);
+			renderer.getComponent(LightShaderComponent.class).addLight(brynn);
 		}
-		this.addGameObjectToScene(player);
-
-		camera.setTarget(player);
+		camera.setTarget(brynn);
+		this.addGameObjectToScene(brynn);
+		
+		Entity jaidyn = EntityList.get("Jaidyn").create(
+				"Jaidyn",
+				new Transform(
+					new Vector2f(4.5f * UNIT_SIZE, 3.5f * UNIT_SIZE), 
+					new Vector2f(UNIT_SIZE, UNIT_SIZE), 
+					new Vector2f(0f, 0f)
+				)
+			);
+		jaidyn.addComponent(new LightComponent(new Vector3f(100, 100, 100), 400, 1f, true));
+		if(renderer.getComponent(LightShaderComponent.class) != null) {
+			renderer.getComponent(LightShaderComponent.class).addLight(jaidyn);
+		}
+		this.addGameObjectToScene(jaidyn);
+		
+		GameObject weapon = ItemList.get("Syringe").create(
+				"Syringe",
+				new Transform(
+					new Vector2f(2.5f * UNIT_SIZE, 3.5f * UNIT_SIZE), 
+					new Vector2f(UNIT_SIZE / 1.5f, UNIT_SIZE / 1.5f), 
+					new Vector2f(0f, 0f)
+				)
+			);
+		this.addGameObjectToScene(weapon);
+		
+		weapon = ItemList.get("Special_stick").create(
+				"Syringe",
+				new Transform(
+					new Vector2f(2.5f * UNIT_SIZE, 8.5f * UNIT_SIZE), 
+					new Vector2f(UNIT_SIZE / 1.5f, UNIT_SIZE / 1.5f), 
+					new Vector2f(0f, 0f)
+				)
+			);
+		this.addGameObjectToScene(weapon);
 	}
 	
 	@Override
-	public void update(float dt) {
+	public void updateDebug(float dt) {
 		if(cooldown > 0) {
 			cooldown -= dt;
 		}
 		
-		if(KeyListener.isKeyPressed(GLFW.GLFW_KEY_SPACE)) {
+		if(KeyListener.isKeyPressed(GLFW.GLFW_KEY_V)) {
 			if(cooldown < 0) {
 				GameObject light = new GameObject(
 					"Light",
 					new Transform(
-							new Vector2f(camera.transform.position.x, camera.transform.position.y), new Vector2f(UNIT_SIZE / 2, UNIT_SIZE / 2)
+							new Vector2f(camera.transform.position.x, camera.transform.position.y), new Vector2f(UNIT_SIZE, UNIT_SIZE)
 					)
 				);
-				light.addComponent(new LightComponent(new Vector3f(1f, 0f, 0f), 400, 1f, true));
+				light.addComponent(new LightComponent(new Vector3f(227, 139, 89), 400, 1f, true));
 				if(renderer.getComponent(LightShaderComponent.class) != null) {
 					renderer.getComponent(LightShaderComponent.class).addLight(light);
 				}
@@ -89,22 +127,19 @@ public class TestScene extends Scene {
 			}
 		}
 		
-		if(KeyListener.isKeyPressed(GLFW.GLFW_KEY_V)) {
+		if(KeyListener.isKeyPressed(GLFW.GLFW_KEY_Q)) {
 			if(cooldown < 0) {
 				camera.toggleFreeCam();
 				cooldown = 0.5f;
 			}
 		}
-
-		for(GameObject o : gameObjects) {
-			o.update(dt);
-		}
 		
-		for(GameObject l : this.getSurroundingLevel(this.getCamera(), 10, 10)) {
-			l.update(dt);
+		if(KeyListener.isKeyPressed(GLFW.GLFW_KEY_T)) {
+			if(cooldown < 0) {
+				renderer.toggleDebug();
+				cooldown = 0.5f;
+			}
 		}
-		
-		renderer.render();
 	}
 
 }

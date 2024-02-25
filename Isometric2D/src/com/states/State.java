@@ -11,7 +11,10 @@ public abstract class State<T extends Enum<T>> {
 	public abstract void enter();
 	public abstract void exit();
 	public abstract void update(float dt);
-	public abstract T next();
+	
+	public T next() {
+		return this.nextState;
+	}
 	
 	public T getStateKey() {
 		return this.stateKey;

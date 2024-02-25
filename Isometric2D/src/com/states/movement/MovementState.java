@@ -10,12 +10,14 @@ import com.Main;
 import com.components.AABBComponent;
 import com.entities.Entity;
 import com.states.State;
+import com.utils.Animation;
 import com.utils.Helper;
 
 public abstract class MovementState extends State<MovementStateMachine.movementStates>{
 	protected MovementContext context;
 	protected Vector2f velocity = new Vector2f(0, 0);
-	
+	protected Animation frames;
+
 	public MovementState(MovementContext context, MovementStateMachine.movementStates stateKey) {
 		super(stateKey);
 		this.context = context;
@@ -23,9 +25,8 @@ public abstract class MovementState extends State<MovementStateMachine.movementS
 	
 	public void checkCollision() {
 		Entity entity = context.getEntity();
-		AABBComponent aabb = context.getEntity().getComponent(AABBComponent.class);
+		AABBComponent aabb = entity.getComponent(AABBComponent.class);
 		if(aabb !=  null) {
-			aabb.setTexture(AABBComponent.HITBOX_TEXTURE);
 			List<Vector2f> sorted = new ArrayList<Vector2f>();
 			List<GameObject> surrounding = Main.getScene().getSurroundingLevel(entity, 2, 2);
 			for(int i = 0; i < surrounding.size(); i++) {
@@ -45,7 +46,6 @@ public abstract class MovementState extends State<MovementStateMachine.movementS
 
 			for(Vector2f s : sorted){
 				GameObject i = surrounding.get((int) s.y);
-				i.getComponent(AABBComponent.class).setTexture(AABBComponent.HITBOX_TEXTURE);
 				if(i == entity) continue;
 				Vector2f contactNormal = new Vector2f();
 				float t = aabb.getAABBSweptCollision(this.velocity, i.getComponent(AABBComponent.class), contactNormal);

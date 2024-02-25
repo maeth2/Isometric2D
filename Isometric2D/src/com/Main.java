@@ -1,7 +1,7 @@
 package com;
 
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_F;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_TAB;
 import static org.lwjgl.glfw.GLFW.glfwGetTime;
 import static org.lwjgl.glfw.GLFW.glfwPollEvents;
 import static org.lwjgl.glfw.GLFW.glfwSwapBuffers;
@@ -30,7 +30,7 @@ public class Main {
 	public void loop() {
 		float beginTime = (float)glfwGetTime();
 		float endTime = (float)glfwGetTime();
-		float dt = -1;
+		float dt = 0;
 		
 		while(!glfwWindowShouldClose(Window.get().getGLFWWindow())) {			
 			scene.update(dt);
@@ -39,7 +39,7 @@ public class Main {
 			glfwPollEvents();
 
 
-			if(KeyListener.isKeyPressed(GLFW_KEY_F)) {
+			if(KeyListener.isKeyPressed(GLFW_KEY_TAB)) {
 				System.out.println("FPS: " + 1/dt);
 			}
 			

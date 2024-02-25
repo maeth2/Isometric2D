@@ -2,15 +2,12 @@ package com.states.movement;
 
 import com.Main;
 import com.components.AnimationComponent;
-import com.utils.AnimationFrames;
 
 public class RollingState extends MovementState {
 	
-	private float totalFrames = 5;
 	private float distance = 250f;
 	private float elapsed;
 	private float movementDuration;
-	private AnimationFrames frames;
 	
 	private float dx, dy;
 
@@ -22,10 +19,8 @@ public class RollingState extends MovementState {
 	public void enter() {
 		AnimationComponent a = context.getEntity().getComponent(AnimationComponent.class);
 		if(a != null) {
-			frames = a.animations.get("Rolling");
-			a.setCurrentAnimation("Rolling");
-			a.setAnimationDuration(frames.getAnimationDuration());
-			movementDuration = frames.getAnimationDuration() * ((frames.getActionEndFrame() - frames.getActionStartFrame() + 1.0f) / totalFrames);
+			frames = a.setCurrentAnimation("Rolling");
+			movementDuration = frames.getAnimationDuration() * ((frames.getActionEndFrame() - frames.getActionStartFrame() + 1.0f) / frames.getTotalFrames());
 		}
 		
 		
@@ -34,16 +29,16 @@ public class RollingState extends MovementState {
 		dy = 0;
 		int direction = 0;
 		
-		if(context.getEntity().getActions("Up")){
+		if(context.getEntity().getTrigger("Up")){
 			dy = 1;
-		}else if(context.getEntity().getActions("Down")) {
+		}else if(context.getEntity().getTrigger("Down")) {
 			dy = -1;
 		}
 		
-		if(context.getEntity().getActions("Left")){
+		if(context.getEntity().getTrigger("Left")){
 			direction = 1;
 			dx = -1;
-		}else if(context.getEntity().getActions("Right")) {
+		}else if(context.getEntity().getTrigger("Right")) {
 			direction = -1;
 			dx = 1;
 		}
@@ -67,7 +62,7 @@ public class RollingState extends MovementState {
 
 	@Override
 	public void update(float dt) {
-		int frame = (int)(totalFrames / frames.getAnimationDuration() * elapsed);
+		int frame = (int)(frames.getTotalFrames() / frames.getAnimationDuration() * elapsed);
 		elapsed += dt;
 		if(elapsed >= frames.getAnimationDuration()) {
 			nextState = MovementStateMachine.movementStates.Idle;
@@ -81,13 +76,9 @@ public class RollingState extends MovementState {
 
 			context.getEntity().transform.position.x += velocity.x;
 			context.getEntity().transform.position.y += velocity.y;
-			context.getEntity().setDirty(true);
+			
 			Main.getScene().updateGrid(context.getEntity());
+			context.getEntity().setDirty(true);
 		}
-	}
-	
-	@Override
-	public MovementStateMachine.movementStates next() {
-		return nextState;
 	}
 }
