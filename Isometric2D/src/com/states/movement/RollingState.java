@@ -1,6 +1,7 @@
 package com.states.movement;
 
 import com.Main;
+import com.entities.Entity;
 
 public class RollingState extends MovementState {
 	
@@ -10,39 +11,40 @@ public class RollingState extends MovementState {
 	
 	private float dx, dy;
 
-	public RollingState(MovementContext context, MovementStateMachine.movementStates stateKey) {
+	public RollingState(MovementContext context, MovementStateMachine.state stateKey) {
 		super(context, stateKey);
+		this.cooldown = 0.5f;
 	}
 
 	@Override
 	public void enter() {
+		entryTime = Main.getTimeElapsed();
 		if(context.getAnimation() != null) {
-			frames = context.getAnimation().setCurrentAnimation("Rolling");
+			frames = context.getAnimation().setCurrentAnimation(Entity.states.Rolling);
 			movementDuration = frames.getAnimationDuration() * ((frames.getActionEndFrame() - frames.getActionStartFrame() + 1.0f) / frames.getTotalFrames());
 		}
-		
 		
 		elapsed = 0;
 		dx = 0;
 		dy = 0;
 		int direction = 0;
 		
-		if(context.getEntity().getTrigger("Up")){
+		if(context.getTarget().getTrigger("Up")){
 			dy = 1;
-		}else if(context.getEntity().getTrigger("Down")) {
+		}else if(context.getTarget().getTrigger("Down")) {
 			dy = -1;
 		}
 		
-		if(context.getEntity().getTrigger("Left")){
+		if(context.getTarget().getTrigger("Left")){
 			direction = 1;
 			dx = -1;
-		}else if(context.getEntity().getTrigger("Right")) {
+		}else if(context.getTarget().getTrigger("Right")) {
 			direction = -1;
 			dx = 1;
 		}
 		
 		if(dx == 0 && dy == 0) {
-			nextState = MovementStateMachine.movementStates.Idle;
+			nextState = MovementStateMachine.state.Idle;
 			return;
 		}
 				
@@ -50,9 +52,9 @@ public class RollingState extends MovementState {
 		dx = dx / length * distance;
 		dy = dy / length * distance;
 		
-		if(direction != 0) context.getEntity().transform.scale.x = Math.abs(context.getEntity().transform.scale.x) * direction;
-		
-		nextState = stateKey;
+		if(direction != 0) {
+			context.getTarget().transform.scale.x = Math.abs(context.getTarget().transform.scale.x) * direction;
+		}
 	}
 
 	@Override
@@ -60,23 +62,29 @@ public class RollingState extends MovementState {
 
 	@Override
 	public void update(float dt) {
-		int frame = (int)(frames.getTotalFrames() / frames.getAnimationDuration() * elapsed);
 		elapsed += dt;
 		if(elapsed >= frames.getAnimationDuration()) {
-			nextState = MovementStateMachine.movementStates.Idle;
+			nextState = MovementStateMachine.state.Idle;
 			return;
 		}
-		if(frame >= frames.getActionStartFrame() && frame <= frames.getActionEndFrame()){
+		if(context.getAnimation().getCurrentAnimation().inActionFrame(context.getAnimation().getCurrentFrame())){
 			velocity.x = dx / movementDuration * dt;
 			velocity.y = dy / movementDuration * dt;
 			
 			checkCollision();
-
-			context.getEntity().transform.position.x += velocity.x;
-			context.getEntity().transform.position.y += velocity.y;
 			
-			Main.getScene().updateGrid(context.getEntity());
-			context.getEntity().setDirty(true);
+			if(velocity.y == 0 && velocity.x != 0) {
+				dx = dx / Math.abs(dx) * distance;
+			}else if(velocity.y != 0 && velocity.x == 0){
+				dy = dy / Math.abs(dy) * distance;
+			}
+			
+			velocity.x = dx / movementDuration * dt;
+			velocity.y = dy / movementDuration * dt;
+			
+			checkCollision();
+			
+			context.getTarget().changePosition(velocity.x, velocity.y);
 		}
 	}
 }

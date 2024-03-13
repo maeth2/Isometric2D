@@ -13,28 +13,31 @@ import com.states.State;
 import com.utils.Animation;
 import com.utils.Helper;
 
-public abstract class MovementState extends State<MovementStateMachine.movementStates>{
+public abstract class MovementState extends State<MovementStateMachine.state>{
 	protected MovementContext context;
 	protected Vector2f velocity = new Vector2f(0, 0);
 	protected Animation frames;
 
-	public MovementState(MovementContext context, MovementStateMachine.movementStates stateKey) {
+	public MovementState(MovementContext context, MovementStateMachine.state stateKey) {
 		super(stateKey);
 		this.context = context;
 	}
 	
-	public void pointToTarget() {
-		if(context.getEntity().getTargetDestination().x < context.getEntity().transform.position.x) {
-			context.getEntity().transform.scale.x = Math.abs(context.getEntity().transform.scale.x);
+	public int pointToTarget() {
+		int direction = 0;
+		if(context.getTarget().getTargetDestination().x < context.getTarget().transform.position.x) {
+			context.getTarget().transform.scale.x = Math.abs(context.getTarget().transform.scale.x);
+			direction = 1;
 		}else {
-			context.getEntity().transform.scale.x = -Math.abs(context.getEntity().transform.scale.x);
+			context.getTarget().transform.scale.x = -Math.abs(context.getTarget().transform.scale.x);
+			direction = -1;
 		}
-		
-		context.getEntity().setDirty(true);
+		context.getTarget().setDirty(true);
+		return direction;
 	}
 	
 	public void checkCollision() {
-		Entity entity = context.getEntity();
+		Entity entity = context.getTarget();
 		AABBComponent aabb = entity.getComponent(AABBComponent.class);
 		if(aabb !=  null) {
 			List<Vector2f> sorted = new ArrayList<Vector2f>();

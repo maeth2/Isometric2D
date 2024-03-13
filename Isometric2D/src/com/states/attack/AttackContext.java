@@ -1,15 +1,18 @@
 package com.states.attack;
 
+import com.components.AnimationComponent;
 import com.entities.Entity;
+import com.states.Context;
 
-public class AttackContext{
-	private Entity entity;
+public class AttackContext extends Context<Entity>{
+	private AnimationComponent animation;
 	
-	public AttackContext(Entity entity) {
-		this.entity = entity;
+	public AttackContext(Entity target) {
+		super(target);
+		this.animation = target.getComponent(AnimationComponent.class);
 	}
-
-	public Entity getEntity() {
-		return entity;
+	
+	public AnimationComponent getAnimation() {
+		return animation;
 	}
 }

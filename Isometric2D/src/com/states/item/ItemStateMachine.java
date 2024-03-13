@@ -3,28 +3,25 @@ package com.states.item;
 import com.entities.items.Item;
 import com.states.StateMachine;
 
-public class ItemStateMachine extends StateMachine<ItemStateMachine.itemStates>{
+public class ItemStateMachine extends StateMachine<ItemStateMachine.state, Item, ItemContext>{
 	
-	protected ItemContext context;
-	private ItemState use;
+	protected Item item;
 	
-	public static enum itemStates {
+	public static enum state {
 		Picked,
 		Idle,
 		Use
 	}
 	
-	public ItemStateMachine(Item weapon, ItemState use) {
-		this.context = new ItemContext(weapon);
-		this.use = use;
-		initialiseStates();
-		this.currentState = states.get(itemStates.Idle);
+	public ItemStateMachine(Item item, ItemState use) {
+		super(state.Idle, new ItemContext(item));
+		this.item = item;
+		addState(state.Use, use != null ? use.create(getContext(), state.Use) : null);
 	}
 
 	@Override
 	public void initialiseStates() {
-		states.put(itemStates.Idle, new ItemIdleState(context, itemStates.Idle));
-		states.put(itemStates.Picked, new ItemPickedState(context, itemStates.Picked));
-		states.put(itemStates.Use, use != null ? use.create(context, itemStates.Use) : null);
+		states.put(state.Idle, new ItemIdleState(getContext(), state.Idle));
+		states.put(state.Picked, new ItemPickedState(getContext(), state.Picked));
 	}
 }

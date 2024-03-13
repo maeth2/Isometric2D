@@ -1,15 +1,16 @@
 package com.states.attack;
 
 import com.states.State;
-import com.states.attack.AttackStateMachine.attackStates;
 
-public abstract class AttackState extends State<AttackStateMachine.attackStates> {
-
+public abstract class AttackState extends State<AttackStateMachine.state> {
 	protected AttackContext context;
 	
-	public AttackState(AttackContext context, attackStates stateKey) {
+	public AttackState(AttackContext context, AttackStateMachine.state stateKey) {
 		super(stateKey);
 		this.context = context;
 	}
-
+	
+	public AttackState create(AttackContext context, AttackStateMachine.state stateKey) {
+		return null;
+	}
 }

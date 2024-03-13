@@ -1,6 +1,7 @@
 package com.components;
 
 import org.joml.Vector2f;
+import org.joml.Vector3f;
 
 import com.utils.AssetManager;
 import com.utils.Texture;
@@ -11,6 +12,8 @@ public class TextureComponent extends Component {
 	private boolean castShadow;
 	private Vector2f spritePosition;
 	private Vector2f spriteDimension;
+	private Vector3f spriteColor;
+	
 	private static final Texture DEFAULT_TEXTURE = AssetManager.getTexture("assets/textures/blank.png");
 	
 	public TextureComponent() {
@@ -71,6 +74,7 @@ public class TextureComponent extends Component {
 		this.castShadow = castShadow;
 		this.spritePosition = spritePosition;
 		this.spriteDimension = spriteDimension;
+		this.spriteColor = new Vector3f(-1f, -1f, -1f);
 	}
 	
 	@Override
@@ -96,6 +100,7 @@ public class TextureComponent extends Component {
 	public void setSpritePosition(int x, int y) {
 		this.spritePosition.x = x;
 		this.spritePosition.y = y;
+		this.gameObject.setDirty(true);
 	}
 	
 	public Vector2f getSpriteDimension() {
@@ -113,6 +118,7 @@ public class TextureComponent extends Component {
 
 	public void setAlpha(float alpha) {
 		this.alpha = alpha;
+		this.gameObject.setDirty(true);
 	}
 	
 	public boolean canCastShadow() {
@@ -121,5 +127,16 @@ public class TextureComponent extends Component {
 
 	public void setCastShadow(boolean castShadow) {
 		this.castShadow = castShadow;
+	}
+	
+	public void setSpriteColor(float r, float g, float b) {
+		this.spriteColor.x = r;
+		this.spriteColor.y = g;
+		this.spriteColor.z = b;
+		this.gameObject.setDirty(true);
+	}
+	
+	public Vector3f getSpriteColor() {
+		return this.spriteColor;
 	}
 }

@@ -14,9 +14,10 @@ public class GameObject {
 	private String name;
 	private Vector2i gridPosition;
 	private boolean isDirty = false;
+	private int layer = 0;
 	
 	protected List<Component> components = new ArrayList<Component>();
-	protected List<StateMachine<?>> stateMachines = new ArrayList<StateMachine<?>>();
+	protected List<StateMachine<?, ?, ?>> stateMachines = new ArrayList<StateMachine<?, ?, ?>>();
 
 	public Transform transform;
 	
@@ -26,7 +27,7 @@ public class GameObject {
 	 * @param name			Name of object
 	 */
 	public GameObject(String name) {
-		init(name, new Transform());
+		init(name, new Transform(), 1);
 	}
 	
 	/**
@@ -34,10 +35,21 @@ public class GameObject {
 	 * 
 	 * @param name			Name of object
 	 * @param transform		Transform data of object
-	 * @param zIndex		Z index of object
+	 * @param layer			Layer of object
 	 */
 	public GameObject(String name, Transform transform) {
-		init(name, transform);
+		init(name, transform, 1);
+	}
+	
+	/**
+	 * Initialize game object
+	 * 
+	 * @param name			Name of object
+	 * @param transform		Transform data of object
+	 * @param layer			Layer of object
+	 */
+	public GameObject(String name, Transform transform, int layer) {
+		init(name, transform, layer);
 	}
 	
 	/**
@@ -47,9 +59,10 @@ public class GameObject {
 	 * @param transform		Transform data of object
 	 * @param zIndex		Z index of object
 	 */
-	public void init(String name, Transform transform) {
+	public void init(String name, Transform transform, int layer) {
 		this.name = name;
 		this.transform = transform;
+		this.layer = layer;
 		this.gridPosition = new Vector2i(0, 0);
 	}
 		
@@ -97,14 +110,39 @@ public class GameObject {
 	}
 	
 	/**
+	 * Get component attached to object
+	 * 
+	 * @param componentClass			Attached Component to check
+	 * @return							Instance of component
+	 */
+	public <T extends StateMachine<?, ?, ?>> T getStateMachine(Class<T> stateMachineClass) {
+		for(StateMachine<?, ?, ?> c : stateMachines) {
+			if(stateMachineClass.isAssignableFrom(c.getClass())) {
+				return stateMachineClass.cast(c);
+			}
+		}
+		return null;
+	}
+	
+	/**
+	 * Add state machine
+	 * 
+	 * @param s			State Machine to add
+	 */
+	public StateMachine<?, ?, ?> addStateMachine(StateMachine<?, ?, ?> s) {
+		stateMachines.add(s);
+		return s;
+	}
+	
+	/**
 	 * Remove state machine from object
 	 * 
 	 * @param stateClass				Component to detatch
 	 * @return							Detachment success
 	 */
-	public <T extends StateMachine<?>> boolean removeStateMachine(Class<T> stateClass) {
+	public <T extends StateMachine<?, ?, ?>> boolean removeStateMachine(Class<T> stateClass) {
 		for(int i = 0; i < stateMachines.size(); i++) {
-			StateMachine<?> s = stateMachines.get(i);
+			StateMachine<?, ?, ?> s = stateMachines.get(i);
 			if(stateClass.isAssignableFrom(s.getClass())) {
 				stateMachines.remove(i);
 				return true;
@@ -114,23 +152,13 @@ public class GameObject {
 	}
 	
 	/**
-	 * Add state machine
-	 * 
-	 * @param s			State Machine to add
-	 */
-	public StateMachine<?> addStateMachine(StateMachine<?> s) {
-		stateMachines.add(s);
-		return s;
-	}
-	
-	/**
 	 * Update funtion
 	 * 
 	 * @param dt		Delta time
 	 */
 	public void update(float dt) {
-		updateComponents(dt);
 		updateStateMachines(dt);
+		updateComponents(dt);
 	}
 	
 	/**
@@ -151,7 +179,7 @@ public class GameObject {
 	 * @param dt		Delta time
 	 */
 	public void updateStateMachines(float dt) {
-		for(StateMachine<?> s : stateMachines) {
+		for(StateMachine<?, ?, ?> s : stateMachines) {
 			s.update(dt);
 		}
 	}
@@ -163,7 +191,7 @@ public class GameObject {
 		for(Component c : components) {
 			c.start();
 		}
-		for(StateMachine<?> s : stateMachines) {
+		for(StateMachine<?, ?, ?> s : stateMachines) {
 			s.start();
 		}
 	}
@@ -229,6 +257,56 @@ public class GameObject {
 		this.isDirty = isDirty;
 	}
 	
+	/**
+	 * Update layer of object
+	 */
+	public void setLayer(int layer) {
+		if(this.layer != layer) {
+			Main.getScene().getRenderer().updateGameObjectLayer(this, layer);
+		}
+	}
+	
+	/**
+	 * Set layer of object
+	 * @param layer
+	 */
+	public void updateLayer(int layer) {
+		this.layer = layer;
+	}
+	
+	/**
+	 * Get layer of object
+	 * 
+	 * @return		Layer of object
+	 */
+	public int getLayer() {
+		return this.layer;
+	}
+	
+	/**
+	 * Change position of object
+	 * @param dx
+	 * @param dy
+	 */
+	public void changePosition(float dx, float dy) {
+		transform.position.x += dx;
+		transform.position.y += dy;
+		Main.getScene().updateGrid(this);
+		setDirty(true);
+	}
+	
+	/**
+	 * Set position of object
+	 * @param dx
+	 * @param dy
+	 */
+	public void setPosition(float dx, float dy) {
+		transform.position.x = dx;
+		transform.position.y = dy;
+		Main.getScene().updateGrid(this);
+		setDirty(true);
+	}
+		
 	/**
 	 * Remove game object from scene
 	 * 

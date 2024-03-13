@@ -9,8 +9,14 @@ import com.utils.Transform;
 public abstract class Item extends GameObject{
 	protected Entity entity;
 	
+	public static enum states{
+		Idle,
+		Picked,
+		Use
+	}
+	
 	public Item(String name, Transform transform, ItemState use) {
-		super(name, transform);
+		super(name, transform, 1);
 		if(transform != null) {
 			addComponents();
 		}

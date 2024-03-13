@@ -17,6 +17,7 @@ import com.utils.Helper;
 public class Main {
 	
 	private static Scene scene;
+	public static float timeElapsed = 0f;
 	
 	public static void main(String[] args) {
 		Window.get().init();
@@ -34,13 +35,14 @@ public class Main {
 		
 		while(!glfwWindowShouldClose(Window.get().getGLFWWindow())) {			
 			scene.update(dt);
+			timeElapsed += dt;
 			
 			glfwSwapBuffers(Window.get().getGLFWWindow());
 			glfwPollEvents();
 
-
 			if(KeyListener.isKeyPressed(GLFW_KEY_TAB)) {
 				System.out.println("FPS: " + 1/dt);
+				System.out.println("Time Elapsed: " + timeElapsed);
 			}
 			
 			if(KeyListener.isKeyPressed(GLFW_KEY_ESCAPE)) {
@@ -76,5 +78,9 @@ public class Main {
 	
 	public static Scene getScene(){
 		return scene;
+	}
+	
+	public static float getTimeElapsed() {
+		return timeElapsed;
 	}
 }

@@ -1,13 +1,13 @@
 package com.states.attack;
 
-public class AttackIdleState extends AttackState{
-	public AttackIdleState(AttackContext context, AttackStateMachine.state stateKey) {
+public class AttackBasicState extends AttackState {
+
+	public AttackBasicState(AttackContext context, AttackStateMachine.state stateKey) {
 		super(context, stateKey);
 	}
 
 	@Override
 	public void enter() {		
-		this.nextState = stateKey;
 	}
 
 	@Override
@@ -17,5 +17,4 @@ public class AttackIdleState extends AttackState{
 	@Override
 	public void update(float dt) {		
 	}
-
 }

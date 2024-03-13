@@ -18,6 +18,10 @@ public class Animation{
 		this.toggleOnce = toggleOnce;
 	}
 	
+	public boolean inActionFrame(int frame) {
+		return frame >= this.actionStartFrame && frame <= this.actionEndFrame;
+	}
+	
 	public float getAnimationDuration() {
 		return animationDuration;
 	}
@@ -63,6 +67,22 @@ public class Animation{
 	 */
 	public static Animation createAnimationFrame(int sx, int ex, int y, float animationDuration, float actionStartFrame, float actionEndFrame) {
 		return new Animation(sx, ex, y, animationDuration, actionStartFrame, actionEndFrame, false);
+	}
+	
+	/**
+	 * Create new Animation
+	 * 
+	 * @param sx						Starting x position in spritesheet
+	 * @param ex						Ending x position in spritesheet
+	 * @param y							Starting y position in spritesheet
+	 * @param animationDuration			Animation duration in seconds
+	 * @param actionStartFrame			Frame when action begins
+	 * @param actionEndFrame			Frame when action ends
+	 * @param toggleOnce				Animation only toggles once
+	 * @return							New animation object
+	 */
+	public static Animation createAnimationFrame(int sx, int ex, int y, float animationDuration, float actionStartFrame, float actionEndFrame, boolean toggleOnce) {
+		return new Animation(sx, ex, y, animationDuration, actionStartFrame, actionEndFrame, toggleOnce);
 	}
 	
 	/**

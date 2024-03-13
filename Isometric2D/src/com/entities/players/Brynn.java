@@ -16,13 +16,14 @@ import com.utils.Texture;
 import com.utils.Transform;
 
 public class Brynn extends Entity {
-	public static Map<String, Animation> animations = new HashMap<String, Animation>();
 	
+	public static Map<Enum<?>, Animation> animations = new HashMap<Enum<?>, Animation>();
+
 	public static Texture spriteSheet = AssetManager.getTexture("assets/textures/character.png");
 	static {
-		animations.put("Idle", Animation.createAnimationFrame(0, 4, 6, 0.5f));
-		animations.put("Running", Animation.createAnimationFrame(0, 5, 7, 0.5f));
-		animations.put("Rolling", Animation.createAnimationFrame(0, 4, 8, 0.35f, 0, 4));
+		animations.put(states.Idle, Animation.createAnimationFrame(0, 4, 6, 0.5f));
+		animations.put(states.Running, Animation.createAnimationFrame(0, 5, 7, 0.5f));
+		animations.put(states.Rolling, Animation.createAnimationFrame(0, 4, 8, 0.35f, 0, 4));
 	}
 	
 	public Brynn(String name, Transform transform) {
@@ -32,7 +33,7 @@ public class Brynn extends Entity {
 	@Override
 	public void addComponents() {
 		addComponent(new TextureComponent(spriteSheet, false, new Vector2f(16, 16)));
-		addComponent(new AnimationComponent(animations, "Idle"));
+		addComponent(new AnimationComponent(animations, states.Idle));
 		addComponent(new AABBComponent(this, new Vector2f(0, 0), new Vector2f(Scene.UNIT_SIZE * 0.8f, Scene.UNIT_SIZE)));
 	}
 

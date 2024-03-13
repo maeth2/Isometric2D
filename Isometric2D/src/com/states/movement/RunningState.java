@@ -1,19 +1,17 @@
 package com.states.movement;
 
-import com.Main;
+import com.entities.Entity;
 
 public class RunningState extends MovementState {
-
-	public RunningState(MovementContext context, MovementStateMachine.movementStates stateKey) {
+	public RunningState(MovementContext context, MovementStateMachine.state stateKey) {
 		super(context, stateKey);
 	}
 
 	@Override
 	public void enter() {
 		if(context.getAnimation() != null) {
-			context.getAnimation().setCurrentAnimation("Running");
+			context.getAnimation().setCurrentAnimation(Entity.states.Running);
 		}		
-		nextState = stateKey;
 	}
 
 	@Override
@@ -25,38 +23,40 @@ public class RunningState extends MovementState {
 		velocity.x = 0;
 		velocity.y = 0;
 		
-		float speed = context.getEntity().getSpeed();
+		float speed = context.getTarget().getSpeed();
 		
-		if(context.getEntity().getTrigger("Up")){
+		if(context.getTarget().getTrigger("Up")){
 			velocity.y = speed * dt;
-		}else if(context.getEntity().getTrigger("Down")) {
+		}else if(context.getTarget().getTrigger("Down")) {
 			velocity.y = -speed * dt;
 		}
 		
-		if(context.getEntity().getTrigger("Left")){
+		if(context.getTarget().getTrigger("Left")){
 			velocity.x = -speed * dt;
-		}else if(context.getEntity().getTrigger("Right")) {
+		}else if(context.getTarget().getTrigger("Right")) {
 			velocity.x = speed * dt;
 		}
 		
-		if(context.getEntity().getTrigger("Roll")){
-			nextState = MovementStateMachine.movementStates.Rolling;
-			return;
-		}
-		
 		if(velocity.x == 0 && velocity.y == 0) {
-			nextState = MovementStateMachine.movementStates.Idle;
+			nextState = MovementStateMachine.state.Idle;
 			return;
 		}
 		
 		checkCollision();
 		
-		pointToTarget();
+		int direction = pointToTarget();
 		
-		context.getEntity().transform.position.x += velocity.x;
-		context.getEntity().transform.position.y += velocity.y;
+		if(velocity.x / Math.abs(velocity.x) != direction) {
+			context.getAnimation().setReversed(true);
+		}else {
+			context.getAnimation().setReversed(false);
+		}
 		
-		Main.getScene().updateGrid(context.getEntity());
-		context.getEntity().setDirty(true);
+		context.getTarget().changePosition(velocity.x, velocity.y);
+		
+		if(context.getTarget().getTrigger("Roll")){
+			nextState = MovementStateMachine.state.Rolling;
+			return;
+		}
 	}
 }

@@ -19,6 +19,7 @@ import com.entities.items.ItemList;
 import com.listeners.KeyListener;
 import com.utils.LevelLoader;
 import com.utils.Transform;
+import com.states.ai.TestAI;
 
 public class TestScene extends Scene {
 
@@ -49,59 +50,73 @@ public class TestScene extends Scene {
 		renderer.addComponent(new ShadowShaderComponent(Window.WIDTH, Window.HEIGHT));
 
 		camera = new Camera(new Vector2f(0.5f, 0.5f));
-		this.addGameObjectToScene(camera);
+		this.addGameObject(camera);
 		
 		this.setLevel(LevelLoader.loadLevel(10, 10, level));
+		
+		stressTest(0);
+		
+		Entity jaidyn = EntityList.get(EntityList.entity.Jaidyn).create(
+				"Jaidyn",
+				new Transform(
+					new Vector2f(4.5f * UNIT_SIZE, 3.5f * UNIT_SIZE), 
+					new Vector2f(UNIT_SIZE, UNIT_SIZE) 
+				)
+			);
+		jaidyn.addComponent(new LightComponent(new Vector3f(100, 100, 100), 400, 1f, false));
+		jaidyn.addStateMachine(new TestAI(jaidyn));
+		if(renderer.getComponent(LightShaderComponent.class) != null) {
+			renderer.getComponent(LightShaderComponent.class).addLight(jaidyn);
+		}
+		this.addGameObject(jaidyn);
+		
+//		stressTest(1000);
 				
-		Entity brynn = EntityList.get("Brynn").create(
-			"Brynn",
-			new Transform(
-				new Vector2f(4.5f * UNIT_SIZE, 8.5f * UNIT_SIZE), 
-				new Vector2f(UNIT_SIZE, UNIT_SIZE), 
-				new Vector2f(0f, 0f)
-			)
-		);
+		Entity brynn = EntityList.get(EntityList.entity.Brynn).create(
+				"Brynn",
+				new Transform(
+					new Vector2f(4.5f * UNIT_SIZE, 8.5f * UNIT_SIZE), 
+					new Vector2f(UNIT_SIZE, UNIT_SIZE) 
+				)
+			);
 		brynn.addComponent(new ControllerComponent(brynn));
 		brynn.addComponent(new LightComponent(new Vector3f(100, 100, 100), 400, 1f, true));
 		if(renderer.getComponent(LightShaderComponent.class) != null) {
 			renderer.getComponent(LightShaderComponent.class).addLight(brynn);
 		}
 		camera.setTarget(brynn);
-		this.addGameObjectToScene(brynn);
-		
-		Entity jaidyn = EntityList.get("Jaidyn").create(
-				"Jaidyn",
-				new Transform(
-					new Vector2f(4.5f * UNIT_SIZE, 3.5f * UNIT_SIZE), 
-					new Vector2f(UNIT_SIZE, UNIT_SIZE), 
-					new Vector2f(0f, 0f)
-				)
-			);
-		jaidyn.addComponent(new LightComponent(new Vector3f(100, 100, 100), 400, 1f, true));
-		if(renderer.getComponent(LightShaderComponent.class) != null) {
-			renderer.getComponent(LightShaderComponent.class).addLight(jaidyn);
-		}
-		this.addGameObjectToScene(jaidyn);
-		
-		GameObject weapon = ItemList.get("Syringe").create(
+		this.addGameObject(brynn);
+				
+		GameObject weapon = ItemList.get(ItemList.item.Syringe).create(
 				"Syringe",
 				new Transform(
 					new Vector2f(2.5f * UNIT_SIZE, 3.5f * UNIT_SIZE), 
-					new Vector2f(UNIT_SIZE / 1.5f, UNIT_SIZE / 1.5f), 
-					new Vector2f(0f, 0f)
+					new Vector2f(UNIT_SIZE / 1.5f, UNIT_SIZE / 1.5f) 
 				)
 			);
-		this.addGameObjectToScene(weapon);
+		this.addGameObject(weapon);
 		
-		weapon = ItemList.get("Special_stick").create(
-				"Syringe",
+		weapon = ItemList.get(ItemList.item.SpecialStick).create(
+				"Stick",
 				new Transform(
 					new Vector2f(2.5f * UNIT_SIZE, 8.5f * UNIT_SIZE), 
-					new Vector2f(UNIT_SIZE / 1.5f, UNIT_SIZE / 1.5f), 
-					new Vector2f(0f, 0f)
+					new Vector2f(UNIT_SIZE / 1.5f, UNIT_SIZE / 1.5f)
 				)
 			);
-		this.addGameObjectToScene(weapon);
+		this.addGameObject(weapon);
+	}
+	
+	private void stressTest(int num) {
+		for(int i = 0; i < num; i++) {
+			Entity jaidyn = EntityList.get(EntityList.entity.Jaidyn).create(
+					"Jaidyn",
+					new Transform(
+						new Vector2f(rand.nextFloat() * 10 * UNIT_SIZE, rand.nextFloat() * 10 * UNIT_SIZE), 
+						new Vector2f(UNIT_SIZE, UNIT_SIZE) 
+					)
+				);
+			this.addGameObject(jaidyn);
+		}
 	}
 	
 	@Override
@@ -122,7 +137,7 @@ public class TestScene extends Scene {
 				if(renderer.getComponent(LightShaderComponent.class) != null) {
 					renderer.getComponent(LightShaderComponent.class).addLight(light);
 				}
-				this.addGameObjectToScene(light);
+				addGameObject(light);
 				cooldown = 0.5f;
 			}
 		}

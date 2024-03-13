@@ -1,17 +1,18 @@
 package com.states.movement;
 
+import com.entities.Entity;
+
 public class IdleState extends MovementState  {
 	
-	public IdleState(MovementContext context, MovementStateMachine.movementStates stateKey) {
+	public IdleState(MovementContext context, MovementStateMachine.state stateKey) {
 		super(context, stateKey);
 	}
 
 	@Override
 	public void enter() {
 		if(context.getAnimation() != null) {
-			context.getAnimation().setCurrentAnimation("Idle");
+			context.getAnimation().setCurrentAnimation(Entity.states.Idle);
 		}
-		this.nextState = this.stateKey;
 	}
 
 	@Override
@@ -20,13 +21,13 @@ public class IdleState extends MovementState  {
 
 	@Override
 	public void update(float dt) {		
-		boolean up = context.getEntity().getTrigger("Up");
-		boolean down = context.getEntity().getTrigger("Down");
-		boolean left = context.getEntity().getTrigger("Left");
-		boolean right = context.getEntity().getTrigger("Right");
+		boolean up = context.getTarget().getTrigger("Up");
+		boolean down = context.getTarget().getTrigger("Down");
+		boolean left = context.getTarget().getTrigger("Left");
+		boolean right = context.getTarget().getTrigger("Right");
 		
 		if(up || down || left || right) {
-			this.nextState = MovementStateMachine.movementStates.Running;
+			this.nextState = MovementStateMachine.state.Running;
 		}
 		
 		pointToTarget();

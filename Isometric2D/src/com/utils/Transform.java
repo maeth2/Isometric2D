@@ -7,6 +7,7 @@ public class Transform {
 	public Vector2f scale;
 	public Vector2f rotation;
 	public Vector2f pivot;
+	public float zLayer = -1;
 	
 	public Transform() {
 		init(new Vector2f(0, 0), new Vector2f(1, 1), new Vector2f(0, 0), new Vector2f(0, 0));

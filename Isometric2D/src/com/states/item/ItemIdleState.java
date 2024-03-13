@@ -4,72 +4,59 @@ import java.util.List;
 
 import org.joml.Vector3f;
 
-import com.GameObject;
 import com.Main;
 import com.components.AABBComponent;
 import com.components.LightComponent;
 import com.components.shaders.LightShaderComponent;
 import com.entities.Entity;
+import com.entities.items.Item;
 
 public class ItemIdleState extends ItemState{
 
-	public ItemIdleState(ItemContext context, ItemStateMachine.itemStates stateKey) {
+	public ItemIdleState(ItemContext context, ItemStateMachine.state stateKey) {
 		super(context, stateKey);
 	}
 
 	@Override
 	public void enter() {	
-		this.nextState = stateKey;
-		this.context.getItem().transform.pivot.y = 0f;
-		this.context.getItem().transform.rotation.x = 0f;
-		this.context.getItem().setDirty(true);
+		this.context.getTarget().transform.pivot.y = 0f;
+		this.context.getTarget().transform.rotation.x = 0f;
+		this.context.getTarget().setDirty(true);
 		if(context.getAnimation() != null) {
-			context.getAnimation().setCurrentAnimation("Idle");
+			context.getAnimation().setCurrentAnimation(Item.states.Idle);
 		}
-		context.getItem().addComponent(new LightComponent(new Vector3f(50, 50, 50), 100, 1f, false));
+		context.getTarget().addComponent(new LightComponent(new Vector3f(50, 50, 50), 100, 1f, false));
 		if(Main.getScene().getRenderer().getComponent(LightShaderComponent.class) != null) {
-			Main.getScene().getRenderer().getComponent(LightShaderComponent.class).addLight(context.getItem());
+			Main.getScene().getRenderer().getComponent(LightShaderComponent.class).addLight(context.getTarget());
 		}
+		
+		context.getTarget().setLayer(1);
+		context.getTarget().getComponent(AABBComponent.class).setCollision(true);
 	}
 
 	@Override
 	public void exit() {
 		if(Main.getScene().getRenderer().getComponent(LightShaderComponent.class) != null) {
-			Main.getScene().getRenderer().getComponent(LightShaderComponent.class).removeLight(context.getItem());
+			Main.getScene().getRenderer().getComponent(LightShaderComponent.class).removeLight(context.getTarget());
 		}
-		context.getItem().removeComponent(LightComponent.class);
+		context.getTarget().removeComponent(LightComponent.class);
 	}
 
 	@Override
 	public void update(float dt) {
-		Entity e = checkCollision();
-		if(e != null) {
-			context.getItem().setEntity(e);
-			this.nextState = ItemStateMachine.itemStates.Picked;
-		}
-	}
-	
-	public Entity checkCollision() {
-		GameObject entity = context.getItem();
-		AABBComponent aabb = entity.getComponent(AABBComponent.class);
-		if(aabb != null) {
-			List<GameObject> surrounding = Main.getScene().getSurroundingGrid(entity, 2, 2);
-			for(GameObject i : surrounding) {
-				if(i == entity) continue;
-				if(!(i instanceof Entity)) continue;
-				Entity e = (Entity) i;
-				if(aabb.getCollision(e.getComponent(AABBComponent.class))) {
-					if(e.getTrigger("Use")) {
-						return e;
-					}
-				}
+		List<Entity> e = checkCollision();
+		for(Entity i : e) {
+			if(i.getTrigger("Use") && i.getInventory().getSelected() == null) {
+				context.getTarget().setEntity(i);
+				i.getInventory().setSelected(context.getTarget());
+				this.nextState = ItemStateMachine.state.Picked;
+				break;
 			}
 		}
-		return null;
 	}
 	
 	@Override
-	public ItemState create(ItemContext context, ItemStateMachine.itemStates stateKey) {
+	public ItemState create(ItemContext context, ItemStateMachine.state stateKey) {
 		return new ItemIdleState(context, stateKey);
 	}
 }

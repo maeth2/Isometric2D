@@ -21,6 +21,7 @@ public abstract class Scene {
 	protected List<GameObject> gameObjects = new ArrayList<GameObject>();
 	protected List<GameObject> dirtyObjects = new ArrayList<GameObject>();
 	protected List<GameObject> deleteObjects = new ArrayList<GameObject>();
+	protected List<GameObject> addObjects = new ArrayList<GameObject>();
 	protected List<GameObject> grid[][];
 	protected GameObject level[][];
 	
@@ -38,6 +39,17 @@ public abstract class Scene {
 	 * Initializes the scene
 	 */
 	public void init() {}
+	
+	/**
+	 * Start function
+	 */
+	public void start() {
+		for(GameObject o : gameObjects) {
+			o.start();
+		}
+
+		isRunning = true;
+	}
 	
 	/**
 	 * Updates the scene
@@ -58,110 +70,22 @@ public abstract class Scene {
 		cleanObjects();
 	}
 	
-	/**
-	 * Debugger update
-	 */
-	public abstract void updateDebug(float dt);
 	
 	/**
-	 * Adds a game object to the scene
+	 * Initialise the Grid
 	 * 
-	 * @param g			Game object to add
+	 * @param width 	Width of Grid
+	 * @param height	Hiehgt of grid 
 	 */
-	public void addGameObjectToScene(GameObject o) {
-		gameObjects.add(o);
-		dirtyObjects.add(o);
-		renderer.addRenderObject(o);
-		
-		if(isRunning) {
-			o.start();
-		}
-		
-		int r = (int)(o.transform.position.y / UNIT_SIZE);
-		int c = (int)(o.transform.position.x / UNIT_SIZE);
-		if(r < 0 || r >= this.gridHeight || c < 0 || c >= this.gridWidth) return;
-		grid[r][c].add(o);
-		o.setGridPosition(c, r);
-	}
-	
-	/**
-	 * Removes game object from the scene
-	 * 
-	 * @param g			Game object to remove
-	 */
-	public void removeGameObjectFromScene(GameObject o) {
-		gameObjects.remove(o);
-		renderer.removeRenderObject(o);
-
-		int r = (int)(o.transform.position.y / UNIT_SIZE);
-		int c = (int)(o.transform.position.x / UNIT_SIZE);
-		if(r < 0 || r >= this.gridHeight || c < 0 || c >= this.gridWidth) return;
-		System.out.println("Before: " + grid[r][c].size());
-		grid[r][c].remove(o);
-		System.out.println("After: " + grid[r][c].size());
-	}
-	
-	/**
-	 * Start function
-	 */
-	public void start() {
-		for(GameObject o : gameObjects) {
-			o.start();
-		}
-
-		isRunning = true;
-	}
-	
-	/**
-	 * Get List of Game Objects in the Scene
-	 * 
-	 * @return GameObject List
-	 */
-	public List<GameObject> getGameObjects(){
-		return this.gameObjects;
-	}
-	
-	/**
-	 * Get Grid of Game Objects in the Scene
-	 * 
-	 * @return GameObject Grid
-	 */
-	public List<GameObject>[][] getGrid() {
-		return this.grid;
-	}
-	
-	/**
-	 * Set Level Layout
-	 * 
-	 * @param x			Column of Level
-	 * @param y			Row of Level
-	 * @param o			GameObject to add
-	 */
-	public void setLevel(int x, int y, GameObject o) {
-		this.level[y][x] = o;
-	}
-	
-	/**
-	 * Set Level Layout
-	 * 
-	 * @param level		Level Layout
-	 */
-	public void setLevel(GameObject[][] level) {
-		for(GameObject r[] : level) {
-			for(GameObject c : r) {
-				renderer.addRenderObject(c);
+	@SuppressWarnings("unchecked")
+	protected void initialiseGrid(int width, int height) {
+		this.grid = new List[height][width]; 
+		this.level = new GameObject[height][width];
+		for(int i = 0; i < height; i++) {
+			for(int j = 0; j < width; j++) {
+				this.grid[i][j] = new ArrayList<GameObject>();
 			}
 		}
-		this.level = level;
-	}
-	
-	/**
-	 * Get Level Layout in the Scene
-	 * 
-	 * @return Level Layout
-	 */
-	public GameObject[][] getLevel() {
-		return this.level;
 	}
 	
 	/**
@@ -177,15 +101,6 @@ public abstract class Scene {
 		}
 	}
 	
-	/**
-	 * Get Grid Position of Object
-	 * 
-	 * @param o			Object to Check
-	 * @return			Grid Position of Object
-	 */
-	public Vector2i getGridPosition(GameObject o) {
-		return new Vector2i((int)(o.transform.position.x / UNIT_SIZE), (int)(o.transform.position.y / UNIT_SIZE));
-	}
 	
 	/**
 	 * Get Surrounding GameObjects Based on GameObject Grid Position
@@ -226,21 +141,67 @@ public abstract class Scene {
 		}
 		return surroundingLevel;
 	}
+
+	/**
+	 * Get Grid Position of Object
+	 * 
+	 * @param o			Object to Check
+	 * @return			Grid Position of Object
+	 */
+	public Vector2i getGridPosition(GameObject o) {
+		return new Vector2i((int)(o.transform.position.x / UNIT_SIZE), (int)(o.transform.position.y / UNIT_SIZE));
+	}
 	
 	/**
-	 * Initialise the Grid
-	 * 
-	 * @param width 	Width of Grid
-	 * @param height	Hiehgt of grid 
+	 * Debugger update
 	 */
-	@SuppressWarnings("unchecked")
-	protected void initialiseGrid(int width, int height) {
-		this.grid = new List[height][width]; 
-		this.level = new GameObject[height][width];
-		for(int i = 0; i < height; i++) {
-			for(int j = 0; j < width; j++) {
-				this.grid[i][j] = new ArrayList<GameObject>();
-			}
+	public abstract void updateDebug(float dt);
+	
+	/**
+	 * Adds a game object to the scene
+	 * 
+	 * @param g			Game object to add
+	 */
+	private void addGameObjectToScene(GameObject o) {
+		gameObjects.add(o);
+		dirtyObjects.add(o);
+		renderer.addGameObject(o);
+		
+		if(isRunning) {
+			o.start();
+		}
+		
+		int r = (int)(o.transform.position.y / UNIT_SIZE);
+		int c = (int)(o.transform.position.x / UNIT_SIZE);
+		if(r < 0 || r >= this.gridHeight || c < 0 || c >= this.gridWidth) return;
+		grid[r][c].add(o);
+		o.setGridPosition(c, r);
+	}
+	
+	
+	/**
+	 * Removes game object from the scene
+	 * 
+	 * @param g			Game object to remove
+	 */
+	public void removeGameObjectFromScene(GameObject o) {
+		gameObjects.remove(o);
+		renderer.removeGameObject(o);
+
+		int r = (int)(o.transform.position.y / UNIT_SIZE);
+		int c = (int)(o.transform.position.x / UNIT_SIZE);
+		if(r < 0 || r >= this.gridHeight || c < 0 || c >= this.gridWidth) return;
+		grid[r][c].remove(o);
+	}
+	
+	/**
+	 * Adds a game object to the scene
+	 * 
+	 * @param g			Game object to add
+	 */
+	public void addGameObject(GameObject o) {
+		if(!addObjects.contains(o)) {
+			addObjects.add(o);
 		}
 	}
 	
@@ -263,13 +224,70 @@ public abstract class Scene {
 	 */
 	public void cleanObjects() {
 		for(GameObject i : deleteObjects) {
-			this.removeGameObjectFromScene(i);
+			removeGameObjectFromScene(i);
+		}
+		for(GameObject i : addObjects) {
+			addGameObjectToScene(i);
 		}
 		for(GameObject i : dirtyObjects) {
 			i.setDirty(false);
 		}
 		dirtyObjects.clear();
 		deleteObjects.clear();
+		addObjects.clear();
+	}
+	
+	/**
+	 * Set Level Layout
+	 * 
+	 * @param x			Column of Level
+	 * @param y			Row of Level
+	 * @param o			GameObject to add
+	 */
+	public void setLevel(int x, int y, GameObject o) {
+		this.level[y][x] = o;
+	}
+	
+	/**
+	 * Set Level Layout
+	 * 
+	 * @param level		Level Layout
+	 */
+	public void setLevel(GameObject[][] level) {
+		for(GameObject r[] : level) {
+			for(GameObject c : r) {
+				renderer.addGameObject(c);
+			}
+		}
+		this.level = level;
+	}
+	
+	/**
+	 * Get List of Game Objects in the Scene
+	 * 
+	 * @return GameObject List
+	 */
+	public List<GameObject> getGameObjects(){
+		return this.gameObjects;
+	}
+	
+	/**
+	 * Get Grid of Game Objects in the Scene
+	 * 
+	 * @return GameObject Grid
+	 */
+	public List<GameObject>[][] getGrid() {
+		return this.grid;
+	}
+	
+	
+	/**
+	 * Get Level Layout in the Scene
+	 * 
+	 * @return Level Layout
+	 */
+	public GameObject[][] getLevel() {
+		return this.level;
 	}
 	
 	/**

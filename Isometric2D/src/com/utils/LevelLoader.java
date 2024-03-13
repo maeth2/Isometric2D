@@ -18,7 +18,8 @@ public class LevelLoader {
 						"test",
 						new Transform(
 								new Vector2f(c * Scene.UNIT_SIZE, r * Scene.UNIT_SIZE), new Vector2f(Scene.UNIT_SIZE, Scene.UNIT_SIZE), new Vector2f(0f, 0f)
-						)
+						),
+						0
 					);
 				if(level[r][c] == 2) {
 					if(r != 0 && level[r - 1][c] != 2) {

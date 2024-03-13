@@ -10,7 +10,8 @@ import com.utils.Transform;
 public class AABBComponent extends Component {
 	private Vector2f offset;
 	private Transform transform;
-
+	private boolean hasCollision = true;
+	
 	public static final Texture HITBOX_TEXTURE = AssetManager.getTexture("assets/textures/hitbox.png");
 	public static final Texture BOX_TEXTURE = AssetManager.getTexture("assets/textures/blank.png");
 	private TextureComponent texture;
@@ -59,6 +60,7 @@ public class AABBComponent extends Component {
 	 */
 	public float getAABBSweptCollision(Vector2f vel, AABBComponent target, Vector2f contactNormal) {
 		if(target == null) return -1;
+		if(!target.hasCollision) return -1;
 		
 		Transform t1 = this.getTransform();
 		Transform t2 = target.getTransform();
@@ -116,7 +118,20 @@ public class AABBComponent extends Component {
 	 * @return				Has Collision
 	 */
 	public boolean getCollision(AABBComponent target) {
+		return getCollision(target, null);
+	}
+	
+	/**
+	 * Get AABB Normal Bound Collision
+	 * 
+	 * @param target		Target AABB to Check
+	 * @param interact		Type to interact
+	 * @return				Has Collision
+	 */
+	public boolean getCollision(AABBComponent target, Class<?> interact) {
 		if(target == null) return false;
+		if(!target.hasCollision) return false;
+		if(interact != null && !interact.isAssignableFrom(target.gameObject.getClass())) return false;
 		
 		Transform t1 = this.getTransform();
 		Transform t2 = target.getTransform();
@@ -149,5 +164,13 @@ public class AABBComponent extends Component {
 	
 	public TextureComponent getTexture() {
 		return this.texture;
+	}
+	
+	public void setCollision(boolean i) {
+		this.hasCollision = i;
+	}
+	
+	public boolean hasCollision() {
+		return this.hasCollision;
 	}
 }

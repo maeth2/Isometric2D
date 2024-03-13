@@ -3,32 +3,42 @@ package com.states.movement;
 import com.entities.Entity;
 import com.states.StateMachine;
 
-public class MovementStateMachine extends StateMachine<MovementStateMachine.movementStates>{
-	
-	protected MovementContext context;
-	
-	public static enum movementStates {
+public class MovementStateMachine extends StateMachine<MovementStateMachine.state, Entity, MovementContext>{	
+	public static enum state {
 		Running,
 		Rolling,
-		Idle
+		Idle,
+		Knockback
 	}
 	
 	public MovementStateMachine(Entity entity) {
-		this.context = new MovementContext(entity);
-		context.getEntity().addTrigger("Left");
-		context.getEntity().addTrigger("Right");
-		context.getEntity().addTrigger("Up");
-		context.getEntity().addTrigger("Down");
-		context.getEntity().addTrigger("Roll");
-		context.getEntity().addTrigger("Stun");
+		super(state.Idle, new MovementContext(entity));
+		getContext().getTarget().addTrigger("Left");
+		getContext().getTarget().addTrigger("Right");
+		getContext().getTarget().addTrigger("Up");
+		getContext().getTarget().addTrigger("Down");
+		getContext().getTarget().addTrigger("Roll");
 		initialiseStates();
-		this.currentState = states.get(movementStates.Idle);
+		this.currentState = states.get(state.Idle);
 	}
 
 	@Override
 	public void initialiseStates() {
-		states.put(movementStates.Running, new RunningState(context, movementStates.Running));
-		states.put(movementStates.Rolling, new RollingState(context, movementStates.Rolling));
-		states.put(movementStates.Idle, new IdleState(context, movementStates.Idle));
+		states.put(state.Running, new RunningState(getContext(), state.Running));
+		states.put(state.Rolling, new RollingState(getContext(), state.Rolling));
+		states.put(state.Idle, new IdleState(getContext(), state.Idle));
+		states.put(state.Knockback, new KnockbackState(getContext(), state.Knockback));
+	}
+	
+	/**
+	 * Knockback Trigger
+	 * 
+	 * @param distance			Knockback distance
+	 */
+	public void onKnockback(float dx, float dy) {
+		if(currentState.getStateKey() != state.Knockback) {
+			getContext().setKnockbackDistance(dx, dy);
+			setState(state.Knockback);
+		}
 	}
 }

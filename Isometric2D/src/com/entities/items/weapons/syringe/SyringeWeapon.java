@@ -15,14 +15,14 @@ import com.utils.AssetManager;
 import com.utils.Texture;
 import com.utils.Transform;
 
-public class SyringeWeapon extends Item {
-	public static Map<String, Animation> animations = new HashMap<String, Animation>();
-
+public class SyringeWeapon extends Item{
+	public static Map<Enum<?>, Animation> animations = new HashMap<Enum<?>, Animation>();
+	
 	public static Texture spriteSheet = AssetManager.getTexture("assets/textures/weapons.png");
 	static {
-		animations.put("Idle", Animation.createAnimationFrame(0, 3, 0, 1f));
-		animations.put("Picked", Animation.createAnimationFrame(0, 0, 0, 0f));
-		animations.put("Attack", Animation.createAnimationFrame(0, 4, 1, 0.5f, true));
+		animations.put(states.Idle, Animation.createAnimationFrame(0, 0, 0, 0f));
+		animations.put(states.Picked, Animation.createAnimationFrame(0, 0, 0, 0f));
+		animations.put(states.Use, Animation.createAnimationFrame(0, 4, 1, 0.5f, true));
 	}
 	
 	public SyringeWeapon(String name, Transform transform) {
@@ -38,7 +38,7 @@ public class SyringeWeapon extends Item {
 	@Override
 	public void addComponents() {
 		addComponent(new TextureComponent(spriteSheet, false, new Vector2f(1, 1), new Vector2f(16, 16)));	
-		addComponent(new AnimationComponent(animations, "Idle"));
+		addComponent(new AnimationComponent(animations, states.Idle));
 		addComponent(new AABBComponent(this, new Vector2f(0, 0), new Vector2f(Scene.UNIT_SIZE * 0.4f, Scene.UNIT_SIZE * 0.8f)));
 	}
 

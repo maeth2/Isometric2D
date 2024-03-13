@@ -28,7 +28,6 @@ public class ShadowShaderComponent extends ShaderComponent {
 	//TODO
 	/**
 	 * 1. Add Documentation
-	 * 2. Fix Gaussian Blur issue create an example using alpha test program
 	 */
 		
 	int occlusionShader;
@@ -38,7 +37,7 @@ public class ShadowShaderComponent extends ShaderComponent {
 	int shadowShader;
 	
 	int rayNumber = 360 * 10;
-	
+		
 	Camera tempCam = new Camera(new Vector2f(0, 0));
 		
 	List<LightStructure> lights = new ArrayList<LightStructure>();
@@ -102,7 +101,7 @@ public class ShadowShaderComponent extends ShaderComponent {
 	public void addLight(GameObject light) {
 		LightStructure l = new LightStructure(light);
 		lights.add(l);
-		System.out.println("Number of Lights in scene: " + lights.size());
+//		System.out.println("Number of Lights in scene: " + lights.size());
 	}
 	
 	public void removeLight(GameObject light) {

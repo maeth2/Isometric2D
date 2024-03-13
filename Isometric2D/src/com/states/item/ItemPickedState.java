@@ -1,18 +1,22 @@
 package com.states.item;
 
+import com.components.AABBComponent;
+import com.entities.items.Item;
+
 public class ItemPickedState extends ItemState {	
 	
-	public ItemPickedState(ItemContext context, ItemStateMachine.itemStates stateKey) {
+	public ItemPickedState(ItemContext context, ItemStateMachine.state stateKey) {
 		super(context, stateKey);
 	}
 
 	@Override
 	public void enter() {
-		this.nextState = stateKey;
-		this.context.getItem().transform.pivot.y = -0.4f;
+		context.getTarget().transform.pivot.y = -0.4f;
 		if(context.getAnimation() != null) {
-			context.getAnimation().setCurrentAnimation("Picked");
+			context.getAnimation().setCurrentAnimation(Item.states.Picked);
 		}
+		context.getTarget().setLayer(2);
+		context.getTarget().getComponent(AABBComponent.class).setCollision(false);
 	}
 
 	@Override
@@ -21,19 +25,15 @@ public class ItemPickedState extends ItemState {
 
 	@Override
 	public void update(float dt) {
-		pointToMouse();
+		pointToDestination();
 		stickToEntity();
 		
-		if(context.getItem().getEntity().getTrigger("Drop")) {
-			this.nextState = ItemStateMachine.itemStates.Idle;
-			this.context.getItem().setEntity(null);
-		}else if(context.getItem().getEntity().getTrigger("L_Click")) {
-			this.nextState = ItemStateMachine.itemStates.Use;
+		if(context.getTarget().getEntity().getTrigger("Drop")) {
+			nextState = ItemStateMachine.state.Idle;
+			context.getTarget().getEntity().getInventory().setSelected(null);
+			context.getTarget().setEntity(null);
+		}else if(context.getTarget().getEntity().getTrigger("L_Click")) {
+			nextState = ItemStateMachine.state.Use;
 		}
-	}
-
-	@Override
-	public ItemState create(ItemContext context, ItemStateMachine.itemStates stateKey) {
-		return new ItemPickedState(context, stateKey);
 	}
 }

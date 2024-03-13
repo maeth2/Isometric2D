@@ -6,9 +6,11 @@ layout(location=2) in vec2 aScale;
 layout(location=3) in vec2 aRotation;
 layout(location=4) in vec2 aPivot;
 layout(location=5) in vec4 aTexData;
+layout(location=6) in vec3 aTexColor;
 
 out vec2 fTexCoords;
 out vec4 fTexData;
+out vec3 fTexColor;
 
 uniform mat4 uProjection;
 uniform mat4 uView;
@@ -65,6 +67,7 @@ float map(float value, float min1, float max1, float min2, float max2) {
 void main(){
 	fTexCoords = vec2(map(aVert.x, -0.5, 0.5, 0, 1), map(aVert.y, -0.5, 0.5, 0, 1));
 	fTexData = aTexData;
+	fTexColor = aTexColor;
 	vec4 pos = getTransformedPosition(aVert, aTranslation, aScale, aRotation, aPivot);
 	gl_Position = uProjection * uView * pos;
 }

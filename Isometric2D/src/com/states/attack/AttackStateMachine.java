@@ -3,32 +3,42 @@ package com.states.attack;
 import com.entities.Entity;
 import com.states.StateMachine;
 
-public class AttackStateMachine extends StateMachine<AttackStateMachine.attackStates>{
+public class AttackStateMachine extends StateMachine<AttackStateMachine.state, Entity, AttackContext>{
 	
-	protected AttackContext context;
+	private AttackState Q;
+	private AttackState E;
+	private AttackState R;
 	
-	public static enum attackStates {
+	public static enum state {
 		Q,
 		E,
 		R,
-		BASIC,
+		Basic,
 		Idle
 	}
 	
-	public AttackStateMachine(Entity entity) {
-		this.context = new AttackContext(entity);
-		context.getEntity().addTrigger("Q");
-		context.getEntity().addTrigger("E");
-		context.getEntity().addTrigger("R");
-		context.getEntity().addTrigger("R_Click");
-		context.getEntity().addTrigger("L_Click");
-		initialiseStates();
-		this.currentState = states.get(attackStates.Idle);
+	public AttackStateMachine(Entity entity, AttackState Q, AttackState E, AttackState R) {
+		super(state.Idle, new AttackContext(entity));
+		getContext().getTarget().addTrigger("Q");
+		getContext().getTarget().addTrigger("E");
+		getContext().getTarget().addTrigger("R");
+		getContext().getTarget().addTrigger("R_Click");
+		getContext().getTarget().addTrigger("L_Click");
+		this.Q = Q;
+		this.E = E;
+		this.R = R;
 	}
 
 	@Override
 	public void initialiseStates() {
-		states.put(attackStates.Idle, new AttackIdleState(context, attackStates.Idle));
+		states.put(state.Idle, new AttackIdleState(getContext(), state.Idle));
+		states.put(state.Basic, new AttackBasicState(getContext(), state.Basic));
+		if(Q != null) states.put(state.Q, Q.create(getContext(), state.Q));
+		if(E != null) states.put(state.E, E.create(getContext(), state.E));
+		if(R != null) states.put(state.R, R.create(getContext(), state.R));
 	}
-
+	
+	public void setStates(AttackStateMachine.state state, AttackState ability) {
+		states.put(state, ability.create(getContext(), state));
+	}
 }
