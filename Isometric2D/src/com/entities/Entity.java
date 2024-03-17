@@ -10,15 +10,18 @@ import com.components.InventoryComponent;
 import com.components.effects.StatusEffect;
 import com.components.effects.StatusEffectManagerComponent;
 import com.states.movement.MovementStateMachine;
+import com.states.ai.TestAI;
 import com.states.attack.AttackStateMachine;
 import com.utils.Transform;
 
 public abstract class Entity extends GameObject{
 	protected Map<String, Boolean> trigger = new HashMap<String, Boolean>();
 	protected Vector2f targetDestination = new Vector2f(0, 0);
-	private float speed = 500f;
 	private InventoryComponent inventory;
 	private StatusEffectManagerComponent statusManager;
+	
+	private float baseSpeed = 500f;
+	private float speedModifier = 1f;
 	
 	public static enum states{
 		Idle,
@@ -34,13 +37,15 @@ public abstract class Entity extends GameObject{
 		
 		this.inventory = new InventoryComponent();
 		addComponent(inventory);
-		this.statusManager = new StatusEffectManagerComponent();
-		addComponent(statusManager);
 		
 		addStateMachine(new MovementStateMachine(this));
 		addStateMachine(new AttackStateMachine(this, null, null, null));
 		addTrigger("Use");
 		addTrigger("Drop");
+		addTrigger("Damaged");
+		
+		this.statusManager = new StatusEffectManagerComponent();
+		addComponent(statusManager);
 	}
 	
 	public Entity(String name) {
@@ -48,6 +53,20 @@ public abstract class Entity extends GameObject{
 		addStateMachine(new MovementStateMachine(this));
 		addTrigger("Use");
 		addTrigger("Drop");
+		addTrigger("Damaged");
+	}
+	
+	/**
+	 * Update funtion
+	 * 
+	 * @param dt		Delta time
+	 */
+	public void update(float dt) {
+		updateComponents(dt);
+		updateStateMachines(dt);
+		if(getTrigger("Damaged")) {
+			setTrigger("Damaged", false);
+		}
 	}
 
 	/**
@@ -62,10 +81,27 @@ public abstract class Entity extends GameObject{
 	 * @param knockBack			Knockback distance
 	 * @param dmg				Damage dealt
 	 */
-	public void onHit(Vector2f direction, float knockBack, float dmg) {
+	public void onHit(Entity origin, Vector2f direction, float knockBack, float dmg) {
 		float dx = direction.x * knockBack;
 		float dy = direction.y * knockBack;
-		this.getStateMachine(MovementStateMachine.class).onKnockback(dx, dy);
+		MovementStateMachine move = this.getStateMachine(MovementStateMachine.class);
+		if(move != null) {
+			move.onKnockback(dx, dy);
+		}
+		TestAI ai = this.getStateMachine(TestAI.class);
+		if(ai != null) {
+			ai.setTargetEntity(origin);
+		}
+		onDamage(dmg);
+	}
+	
+	/**
+	 * On Damage
+	 * 
+	 * @param dmg				Damage dealt
+	 */
+	public void onDamage(float dmg) {
+		setTrigger("Damaged", true);
 	}
 	
 	/**
@@ -131,12 +167,16 @@ public abstract class Entity extends GameObject{
 		return this.targetDestination;
 	}
 
-	public void setSpeed(float speed) {
-		this.speed = speed;
+	public void setBaseSpeed(float speed) {
+		this.baseSpeed = speed;
+	}
+	
+	public void setSpeedModifier(float i) {
+		this.speedModifier = i;
 	}
 	
 	public float getSpeed() {
-		return speed;
+		return this.baseSpeed * this.speedModifier;
 	}
 	
 	public InventoryComponent getInventory() {

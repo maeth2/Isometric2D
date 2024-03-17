@@ -16,7 +16,7 @@ public class SyringeProjectile extends Projectile {
 
 	public static Texture spriteSheet = AssetManager.getTexture("assets/textures/weapons.png");
 
-	public SyringeProjectile(String name, Transform transform, Vector2f trajectory, float speed, GameObject origin) {
+	public SyringeProjectile(String name, Transform transform, Vector2f trajectory, float speed, Entity origin) {
 		super(name, transform, trajectory, speed, origin);
 	}
 
@@ -30,14 +30,14 @@ public class SyringeProjectile extends Projectile {
 	public void onCollision(GameObject o) {
 		if(o instanceof Entity) {
 			Entity e = (Entity) o;
-			e.onHit(getTrajectory(), 10f, 10f);
-			e.apply(StatusEffect.effects.Freeze, 2f, 2f);
+			e.onHit(origin, getTrajectory(), 10f, 10f);
+			e.apply(StatusEffect.effects.Freeze, 3f, 1f);
 		}
 		kill();
 	}
 
 	@Override
-	public Projectile create(String name,  Vector2f position, Vector2f scale, Vector2f trajectory, float speed, GameObject origin) {
+	public Projectile create(String name,  Vector2f position, Vector2f scale, Vector2f trajectory, float speed, Entity origin) {
 		return new SyringeProjectile(
 				name, 
 				new Transform(new Vector2f(position.x, position.y), new Vector2f(scale.x, scale.y)),

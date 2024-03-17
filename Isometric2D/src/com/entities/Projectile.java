@@ -10,11 +10,11 @@ import com.components.AABBComponent;
 import com.utils.Transform;
 
 public abstract class Projectile extends GameObject {
-	protected GameObject origin;
+	protected Entity origin;
 	private Vector2f trajectory;
 	private float speed;
 	
-	public Projectile(String name, Transform transform, Vector2f trajectory, float speed, GameObject origin) {
+	public Projectile(String name, Transform transform, Vector2f trajectory, float speed, Entity origin) {
 		super(name, transform);
 		this.trajectory = trajectory;
 		this.speed = speed;
@@ -64,7 +64,7 @@ public abstract class Projectile extends GameObject {
 	
 	public abstract void onCollision(GameObject o);
 	
-	public abstract Projectile create(String name, Vector2f position, Vector2f scale, Vector2f trajectory, float speed, GameObject origin);
+	public abstract Projectile create(String name, Vector2f position, Vector2f scale, Vector2f trajectory, float speed, Entity origin);
 
 	public Vector2f getTrajectory() {
 		return trajectory;

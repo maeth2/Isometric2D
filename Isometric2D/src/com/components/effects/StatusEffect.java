@@ -26,6 +26,7 @@ public abstract class StatusEffect {
 	protected float duration;
 	protected float strength;
 	protected float startTime;
+	protected boolean isFinished = false;
 	
 	public StatusEffect(Entity target, float duration, float strength) {
 		this.target = target;
@@ -35,11 +36,23 @@ public abstract class StatusEffect {
 	}
 	
 	public abstract void start();
+	
 	public abstract void exit();
+	
 	public abstract void update(float dt);
+	
 	public abstract StatusEffect create(Entity target, float duration, float strength);
 	
 	public boolean checkDuration() {
 		return startTime + duration < Main.getTimeElapsed();
+	}
+	
+	public boolean getFinished() {
+		return this.isFinished;
+	}
+	
+	public void stack(float duration) {
+		this.startTime = Main.getTimeElapsed();
+		this.duration = duration;
 	}
 }

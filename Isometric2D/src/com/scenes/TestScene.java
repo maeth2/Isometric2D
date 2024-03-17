@@ -68,9 +68,10 @@ public class TestScene extends Scene {
 		if(renderer.getComponent(LightShaderComponent.class) != null) {
 			renderer.getComponent(LightShaderComponent.class).addLight(jaidyn);
 		}
+		jaidyn.setBaseSpeed(UNIT_SIZE);
 		this.addGameObject(jaidyn);
 		
-//		stressTest(1000);
+//		stressTest(100);
 				
 		Entity brynn = EntityList.get(EntityList.entity.Brynn).create(
 				"Brynn",
@@ -115,6 +116,8 @@ public class TestScene extends Scene {
 						new Vector2f(UNIT_SIZE, UNIT_SIZE) 
 					)
 				);
+			jaidyn.setBaseSpeed(UNIT_SIZE);
+			jaidyn.addStateMachine(new TestAI(jaidyn));
 			this.addGameObject(jaidyn);
 		}
 	}

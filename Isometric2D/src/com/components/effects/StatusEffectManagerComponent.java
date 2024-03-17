@@ -1,12 +1,13 @@
 package com.components.effects;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
+
 import com.components.Component;
 import com.entities.Entity;
 
 public class StatusEffectManagerComponent extends Component {
-	private List<StatusEffect> currentEffects = new ArrayList<StatusEffect>();
+	private Map<Enum<?>, StatusEffect> currentEffects = new HashMap<Enum<?>, StatusEffect>();
 	
 	@Override
 	public void start() {
@@ -14,19 +15,24 @@ public class StatusEffectManagerComponent extends Component {
 
 	@Override
 	public void update(float dt) {
-		for(int i = 0; i < currentEffects.size(); i++) {
+		for(Enum<?> i : currentEffects.keySet()) {
 			StatusEffect e = currentEffects.get(i);
+			if(e == null) continue;
 			e.update(dt);
-			if(e.checkDuration()) {
+			if(e.checkDuration() || e.getFinished()) {
 				e.exit();
-				currentEffects.remove(i);
+				currentEffects.put(i, null);
 			}
 		}
 	}
 	
 	public void add(StatusEffect.effects effect, Entity target, float duration, float strength) {
-		StatusEffect e = StatusEffect.statusEffects.get(effect).create(target, duration, strength);
-		e.start();
-		currentEffects.add(e);
+		if(currentEffects.containsKey(effect) && currentEffects.get(effect) != null) {
+			currentEffects.get(effect).stack(duration);
+		}else {
+			StatusEffect e = StatusEffect.statusEffects.get(effect).create(target, duration, strength);
+			e.start();
+			currentEffects.put(effect, e);
+		}
 	}
 }

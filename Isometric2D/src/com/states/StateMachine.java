@@ -9,7 +9,7 @@ import com.Main;
 public abstract class StateMachine<T extends Enum<T>, S extends GameObject, U extends Context<?>> {
 	protected Map<T, State<T>> states = new HashMap<T, State<T>>();
 	protected State<T> currentState;
-	private Context<S> context;
+	protected Context<S> context;
 	
 	public StateMachine(T currentState, Context<S> context) {
 		this.context = context;
