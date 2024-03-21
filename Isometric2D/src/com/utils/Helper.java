@@ -192,23 +192,58 @@ public class Helper {
 	public static <T> List<T> sort(List<T> a, BiFunction<T, T, Boolean> compare){
 		List<T> sorted = new ArrayList<T>();
 		for(T i : a) {
-			int l = 0;
-			int r = sorted.size() - 1;
-			while(l <= r) {
-				int m = (l + r) / 2;
-				if(compare.apply(i, sorted.get(m))) {
-					l = m + 1;
-				}else {
-					r = m - 1;
-				}
-			}
+			int j = binarySearch(sorted, i, compare);
 			if(sorted.size() == 0) {
 				sorted.add(i);
 			}else {
-				sorted.add(l, i);
+				sorted.add(j, i);
 			}
 		}
 		return sorted;
+	}
+	
+	/**
+	 * Binary Search a sorted list
+	 *
+	 * @param a				List to search
+	 * @param b				Element to compare
+	 * @param compare		Comparator function
+	 * @return				Index of element
+	 */
+	public static <T> int binarySearch(List<T> a, T b, BiFunction<T, T, Boolean> compare) {
+		int l = 0;
+		int r = a.size() - 1;
+		while(l <= r) {
+			int m = (l + r) / 2;
+			if(compare.apply(b, a.get(m))) {
+				l = m + 1;
+			}else {
+				r = m - 1;
+			}
+		}
+		return l;
+	}
+	
+	/**
+	 * Binary Search a sorted array
+	 *
+	 * @param a				Array to search
+	 * @param b				Element to compare
+	 * @param compare		Comparator function
+	 * @return				Index of element
+	 */
+	public static <T> int binarySearch(T[] a, T b, BiFunction<T, T, Boolean> compare) {
+		int l = 0;
+		int r = a.length - 1;
+		while(l <= r) {
+			int m = (l + r) / 2;
+			if(compare.apply(b, a[m])) {
+				l = m + 1;
+			}else {
+				r = m - 1;
+			}
+		}
+		return l;
 	}
 	
 	

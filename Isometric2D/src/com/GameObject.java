@@ -297,16 +297,36 @@ public class GameObject {
 	
 	/**
 	 * Set position of object
-	 * @param dx
-	 * @param dy
+	 * @param x
+	 * @param y
 	 */
-	public void setPosition(float dx, float dy) {
-		transform.position.x = dx;
-		transform.position.y = dy;
+	public void setPosition(float x, float y) {
+		transform.position.x = x;
+		transform.position.y = y;
+		Main.getScene().updateGrid(this);
+		setDirty(true);
+	}
+	
+	/**
+	 * Set x position of object
+	 * @param x
+	 */
+	public void setX(float x) {
+		transform.position.x = x;
 		Main.getScene().updateGrid(this);
 		setDirty(true);
 	}
 		
+	/**
+	 * Set y position of object
+	 * @param y
+	 */
+	public void setY(float y) {
+		transform.position.y = y;
+		Main.getScene().updateGrid(this);
+		setDirty(true);
+	}
+	
 	/**
 	 * Remove game object from scene
 	 * 

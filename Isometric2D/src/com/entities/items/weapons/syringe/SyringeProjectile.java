@@ -31,7 +31,7 @@ public class SyringeProjectile extends Projectile {
 		if(o instanceof Entity) {
 			Entity e = (Entity) o;
 			e.onHit(origin, getTrajectory(), 10f, 10f);
-			e.apply(StatusEffect.effects.Freeze, 3f, 1f);
+			e.apply(StatusEffect.effects.Freeze, 4f, 1f);
 		}
 		kill();
 	}

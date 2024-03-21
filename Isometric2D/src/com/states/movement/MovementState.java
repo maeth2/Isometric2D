@@ -53,9 +53,12 @@ public abstract class MovementState extends State<MovementStateMachine.state>{
 				}
 			}
 
-			sorted = Helper.sort(sorted, (a, b) -> {
-				return a.x >= b.x;
-			});
+			sorted = Helper.sort(
+				sorted, 
+				(a, b) -> {
+					return a.x >= b.x;
+				}
+			);
 
 			for(Vector2f s : sorted){
 				GameObject i = surrounding.get((int) s.y);

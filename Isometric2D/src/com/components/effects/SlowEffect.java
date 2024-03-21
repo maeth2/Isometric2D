@@ -10,14 +10,17 @@ public class SlowEffect extends StatusEffect {
 
 	@Override
 	public void start() {
-		// TODO Auto-generated method stub
-		
+		strength = 1 / strength;
+		if(target.getSpeedModifier() >= strength) {
+			target.setSpeedModifier(strength);
+		}
 	}
 	
 	@Override
 	public void exit() {
-		// TODO Auto-generated method stub
-		
+		if(target.getSpeedModifier() == strength) {
+			target.setSpeedModifier(1);
+		}		
 	}
 
 	@Override

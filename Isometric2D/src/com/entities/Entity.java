@@ -10,7 +10,7 @@ import com.components.InventoryComponent;
 import com.components.effects.StatusEffect;
 import com.components.effects.StatusEffectManagerComponent;
 import com.states.movement.MovementStateMachine;
-import com.states.ai.TestAI;
+import com.states.ai.EnemyStateMachine;
 import com.states.attack.AttackStateMachine;
 import com.utils.Transform;
 
@@ -88,7 +88,7 @@ public abstract class Entity extends GameObject{
 		if(move != null) {
 			move.onKnockback(dx, dy);
 		}
-		TestAI ai = this.getStateMachine(TestAI.class);
+		EnemyStateMachine ai = this.getStateMachine(EnemyStateMachine.class);
 		if(ai != null) {
 			ai.setTargetEntity(origin);
 		}
@@ -173,6 +173,10 @@ public abstract class Entity extends GameObject{
 	
 	public void setSpeedModifier(float i) {
 		this.speedModifier = i;
+	}
+	
+	public float getSpeedModifier() {
+		return this.speedModifier;
 	}
 	
 	public float getSpeed() {

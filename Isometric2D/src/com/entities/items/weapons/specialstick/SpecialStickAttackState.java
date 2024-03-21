@@ -6,6 +6,7 @@ import java.util.List;
 import org.joml.Vector2f;
 
 import com.components.effects.StatusEffect;
+import com.components.effects.StatusEffect.effects;
 import com.entities.Entity;
 import com.entities.items.Item;
 import com.states.item.ItemContext;
@@ -57,6 +58,7 @@ public class SpecialStickAttackState extends ItemState{
 //						Vector2f d = Maths.pointToPointDirectionVector(i.transform.position, context.getTarget().getEntity().transform.position);
 						i.onHit(context.getTarget().getEntity(), direction, 50f, 0f);
 						i.apply(StatusEffect.effects.Burn, 3f, 2f);
+						i.apply(effects.Slow, 2f, 2f);
 					}
 				}
 			}

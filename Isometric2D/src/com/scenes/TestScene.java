@@ -19,7 +19,7 @@ import com.entities.items.ItemList;
 import com.listeners.KeyListener;
 import com.utils.LevelLoader;
 import com.utils.Transform;
-import com.states.ai.TestAI;
+import com.states.ai.EnemyStateMachine;
 
 public class TestScene extends Scene {
 
@@ -48,11 +48,14 @@ public class TestScene extends Scene {
 		rand = new Random();
 
 		renderer.addComponent(new ShadowShaderComponent(Window.WIDTH, Window.HEIGHT));
+		
+		gridWidth = 10;
+		gridHeight = 10;
 
 		camera = new Camera(new Vector2f(0.5f, 0.5f));
-		this.addGameObject(camera);
+		addGameObject(camera);
 		
-		this.setLevel(LevelLoader.loadLevel(10, 10, level));
+		setLevel(LevelLoader.loadLevel(gridWidth, gridHeight, level));
 		
 		stressTest(0);
 		
@@ -64,12 +67,12 @@ public class TestScene extends Scene {
 				)
 			);
 		jaidyn.addComponent(new LightComponent(new Vector3f(100, 100, 100), 400, 1f, false));
-		jaidyn.addStateMachine(new TestAI(jaidyn));
+		jaidyn.addStateMachine(new EnemyStateMachine(jaidyn));
 		if(renderer.getComponent(LightShaderComponent.class) != null) {
 			renderer.getComponent(LightShaderComponent.class).addLight(jaidyn);
 		}
-		jaidyn.setBaseSpeed(UNIT_SIZE);
-		this.addGameObject(jaidyn);
+		jaidyn.setBaseSpeed(UNIT_SIZE * 3.5f);
+		addGameObject(jaidyn);
 		
 //		stressTest(100);
 				
@@ -80,13 +83,14 @@ public class TestScene extends Scene {
 					new Vector2f(UNIT_SIZE, UNIT_SIZE) 
 				)
 			);
-		brynn.addComponent(new ControllerComponent(brynn));
 		brynn.addComponent(new LightComponent(new Vector3f(100, 100, 100), 400, 1f, true));
 		if(renderer.getComponent(LightShaderComponent.class) != null) {
 			renderer.getComponent(LightShaderComponent.class).addLight(brynn);
 		}
+		brynn.setBaseSpeed(UNIT_SIZE * 4);
+		brynn.addComponent(new ControllerComponent(brynn));
 		camera.setTarget(brynn);
-		this.addGameObject(brynn);
+		addGameObject(brynn);
 				
 		GameObject weapon = ItemList.get(ItemList.item.Syringe).create(
 				"Syringe",
@@ -95,7 +99,7 @@ public class TestScene extends Scene {
 					new Vector2f(UNIT_SIZE / 1.5f, UNIT_SIZE / 1.5f) 
 				)
 			);
-		this.addGameObject(weapon);
+		addGameObject(weapon);
 		
 		weapon = ItemList.get(ItemList.item.SpecialStick).create(
 				"Stick",
@@ -104,7 +108,7 @@ public class TestScene extends Scene {
 					new Vector2f(UNIT_SIZE / 1.5f, UNIT_SIZE / 1.5f)
 				)
 			);
-		this.addGameObject(weapon);
+		addGameObject(weapon);
 	}
 	
 	private void stressTest(int num) {
@@ -117,8 +121,8 @@ public class TestScene extends Scene {
 					)
 				);
 			jaidyn.setBaseSpeed(UNIT_SIZE);
-			jaidyn.addStateMachine(new TestAI(jaidyn));
-			this.addGameObject(jaidyn);
+			jaidyn.addStateMachine(new EnemyStateMachine(jaidyn));
+			addGameObject(jaidyn);
 		}
 	}
 	

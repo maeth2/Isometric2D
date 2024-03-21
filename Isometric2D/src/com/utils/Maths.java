@@ -84,4 +84,19 @@ public class Maths {
 		float l = (float)Math.sqrt(dx * dx + dy * dy);
 		return new Vector2f(dx / l, dy / l);
 	}
+	
+	/**
+	 * Get distance between two points
+	 * 
+	 * @param x1				Point1 x
+	 * @param y1				Point1 y
+	 * @param x2				Point2 x
+	 * @param y2				Point2 y
+	 * @return					Euclidean Distance between points
+	 */
+	public static float getEuclideanDistance(float x1, float y1, float x2, float y2) {
+		float dx = x2 - x1;
+		float dy = y2 - y1;
+		return (float)Math.sqrt(dx * dx + dy * dy);
+	}
 }

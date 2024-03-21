@@ -6,12 +6,12 @@ import com.entities.Entity;
 import com.states.Context;
 import com.states.movement.MovementStateMachine;
 
-public class TestContext extends Context<Entity> {
+public class EnemyContext extends Context<Entity> {
 	protected Vector2f destination;
 	protected MovementStateMachine movement;
 	protected Entity targetEntity;
 	
-	public TestContext(Entity target) {
+	public EnemyContext(Entity target) {
 		super(target);
 		destination = new Vector2f(-1, -1);
 		movement = target.getStateMachine(MovementStateMachine.class);

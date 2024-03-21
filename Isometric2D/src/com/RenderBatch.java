@@ -82,7 +82,13 @@ public class RenderBatch {
 			dimensions[1][texIndex] = tex.getSpriteDimension();
 		}
 		
-		int index = getIndex(transform);
+		int index = Helper.binarySearch(
+			texturedTransforms, 
+			transform, 
+			(a, b) -> {
+				return getLayer(a) <= getLayer(b);
+			}
+		);
 		
 		texturedObjects.add(index, tex);
 		texturedTransforms.add(index, transform);
@@ -113,8 +119,14 @@ public class RenderBatch {
 			dimensions[1][texIndex] = tex.getSpriteDimension();
 		}
 		
-		int index = getIndex(tex.gameObject.transform);
-		
+		int index = Helper.binarySearch(
+			texturedTransforms, 
+			tex.gameObject.transform, 
+			(a, b) -> {
+				return getLayer(a) <= getLayer(b);
+			}
+		);
+	
 		texturedObjects.add(index, tex);
 		texturedTransforms.add(index, tex.gameObject.transform);
 		this.batchSize++;
@@ -171,7 +183,14 @@ public class RenderBatch {
 		texturedObjects.remove(currIndex);
 		texturedTransforms.remove(currIndex);
 		
-		int index = getIndex(transform);
+		int index = Helper.binarySearch(
+			texturedTransforms, 
+			transform, 
+			(a, b) -> {
+				return getLayer(a) <= getLayer(b);
+			}
+		);
+		
 		if(index == currIndex) {
 			texturedObjects.add(currIndex, tex);
 			texturedTransforms.add(currIndex, transform);
@@ -182,21 +201,6 @@ public class RenderBatch {
 		texturedTransforms.add(index, transform);
 		
 		return true;
-	}
-	
-	private int getIndex(Transform transform) {
-		int l = 0;
-		int r = texturedTransforms.size() - 1;
-		float pos = transform.zLayer != -1 ? transform.zLayer : transform.position.y;
-		while(l <= r) {
-			int m = (l + r) / 2;
-			if(pos <= getLayer(texturedTransforms.get(m))) {
-				l = m + 1;
-			}else {
-				r = m - 1;
-			}
-		}
-		return l;
 	}
 	
 	private float getLayer(Transform t) {

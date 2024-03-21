@@ -8,6 +8,7 @@ import org.joml.Vector2i;
 import com.Camera;
 import com.GameObject;
 import com.Renderer;
+import com.components.AABBComponent;
 
 public abstract class Scene {	
 	public static int MAX_SCENE_LIGHTS = 10;
@@ -24,6 +25,7 @@ public abstract class Scene {
 	protected List<GameObject> addObjects = new ArrayList<GameObject>();
 	protected List<GameObject> grid[][];
 	protected GameObject level[][];
+	protected boolean levelCollision[][];
 	
 	private List<GameObject> surroundingLevel = new ArrayList<GameObject>();
 	private List<GameObject> surroundingGrid = new ArrayList<GameObject>();
@@ -81,6 +83,7 @@ public abstract class Scene {
 	protected void initialiseGrid(int width, int height) {
 		this.grid = new List[height][width]; 
 		this.level = new GameObject[height][width];
+		this.levelCollision = new boolean[height][width];
 		for(int i = 0; i < height; i++) {
 			for(int j = 0; j < width; j++) {
 				this.grid[i][j] = new ArrayList<GameObject>();
@@ -149,7 +152,7 @@ public abstract class Scene {
 	 * @return			Grid Position of Object
 	 */
 	public Vector2i getGridPosition(GameObject o) {
-		return new Vector2i((int)(o.transform.position.x / UNIT_SIZE), (int)(o.transform.position.y / UNIT_SIZE));
+		return new Vector2i((int)((o.transform.position.x + Math.abs(o.transform.scale.x / 2)) / UNIT_SIZE), (int)((o.transform.position.y) / UNIT_SIZE));
 	}
 	
 	/**
@@ -254,9 +257,12 @@ public abstract class Scene {
 	 * @param level		Level Layout
 	 */
 	public void setLevel(GameObject[][] level) {
-		for(GameObject r[] : level) {
-			for(GameObject c : r) {
-				renderer.addGameObject(c);
+		for(int r = 0; r < getGridHeight(); r++) {
+			for(int c = 0; c < getGridWidth(); c++) {
+				GameObject o = level[r][c];
+				AABBComponent aabb = o.getComponent(AABBComponent.class);
+				renderer.addGameObject(level[r][c]);
+				levelCollision[r][c] = aabb == null ? false : aabb.hasCollision();
 			}
 		}
 		this.level = level;
@@ -291,6 +297,15 @@ public abstract class Scene {
 	}
 	
 	/**
+	 * Get Level Collision Layout in the Scene
+	 * 
+	 * @return Level Collision Layout
+	 */
+	public boolean[][] getLevelCollision() {
+		return this.levelCollision;
+	}
+	
+	/**
 	 * Get scene camera
 	 * 
 	 * @return			Scene camera
@@ -306,5 +321,23 @@ public abstract class Scene {
 	 */
 	public Renderer getRenderer() {
 		return this.renderer;
+	}
+	
+	/**
+	 * Get grid width
+	 * 
+	 * @return			Grid width
+	 */
+	public int getGridWidth() {
+		return this.gridWidth;
+	}
+	
+	/**
+	 * Get grid height
+	 * 
+	 * @return			Grid height
+	 */
+	public int getGridHeight() {
+		return this.gridHeight;
 	}
 }

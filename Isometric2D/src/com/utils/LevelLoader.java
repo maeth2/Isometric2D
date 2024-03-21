@@ -8,7 +8,6 @@ import com.components.TextureComponent;
 import com.scenes.Scene;
 
 public class LevelLoader {
-	
 	public static GameObject[][] loadLevel(int width, int height, int[][] level) {
 		level = Helper.reverse(level);
 		GameObject grid[][] = new GameObject[height][width];
