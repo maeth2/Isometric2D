@@ -23,13 +23,13 @@ public class FreezeEffect extends StatusEffect {
 	@Override
 	public void exit() {
 		target.getComponent(AnimationComponent.class).setFreeze(false);		
-		target.getComponent(TextureComponent.class).setSpriteColor(-1, -1, -1);
+		target.getComponent(TextureComponent.class).setColor(-1, -1, -1);
 		target.setSpeedModifier(1f);
 	}
 
 	@Override
 	public void update(float dt) {
-		target.getComponent(TextureComponent.class).setSpriteColor(0, 0, 1);
+		target.getComponent(TextureComponent.class).setColor(0, 0, 1);
 		if(!isHit && target.getTrigger("Damaged")) {
 			isFinished = true;
 		}

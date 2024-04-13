@@ -213,6 +213,18 @@ public class ShaderLoader {
 	}
 	
 	/**
+	 * Uploads Vector2f into uniform variable in shader
+	 * 
+	 * @param shaderID			Shader program ID
+	 * @param name				Name of uniform variable
+	 * @param x					X component
+	 * @param y					Y component
+	 */
+	public static void loadVector2f(int shaderID, String name, float x, float y){//Changes vector variables in shader program
+		int location = glGetUniformLocation(shaderID, name);
+		GL20.glUniform2f(location, x, y);
+	}
+	/**
 	 * Uploads Array of Vector2f into uniform variable in shader
 	 * 
 	 * @param shaderID			Shader program ID

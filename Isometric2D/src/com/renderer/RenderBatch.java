@@ -1,4 +1,4 @@
-package com;
+package com.renderer;
 
 import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
 import static org.lwjgl.opengl.GL11.GL_UNSIGNED_INT;
@@ -26,22 +26,26 @@ public class RenderBatch {
 
 	private static final int ATTRIBUTE_COUNT = 7;
 	private static final int VERTEX_COUNT = 4;
+
 	private static final int VERTEX_SIZE = 2;
+	private static final int POSITION_SIZE = 2;
+	private static final int SCALE_SIZE = 2;
+	private static final int ROTATION_SIZE = 2;
+	private static final int PIVOT_SIZE = 2;
 	private static final int UV_SIZE = 4;
 	private static final int COLOR_SIZE = 3;
 	
-	private static final int MAX_TEXTURES = 8;
 	private List<TextureComponent> texturedObjects = new ArrayList<TextureComponent>();
 	private	List<TextureComponent> dirtyObjects = new ArrayList<TextureComponent>();
 	private List<Transform> texturedTransforms = new ArrayList<Transform>();
+	
+	private int vao;
+	private int vbos[] = new int[ATTRIBUTE_COUNT];
+	
+	private static final int MAX_TEXTURES = 8;
 	private Map<Integer, Integer> textures = new HashMap<Integer, Integer>(); 
 	private Vector2f dimensions[][] = new Vector2f[2][MAX_TEXTURES];
 	private int[] texSlots = {0, 1, 2, 3, 4, 5, 6, 7, 8};
-
-	private int batchSize = 0;
-	private int vao;
-	
-	private int vbos[] = new int[ATTRIBUTE_COUNT];
 	
 	private float[] vertices;
 	private float[] uvs;
@@ -51,18 +55,35 @@ public class RenderBatch {
 	
 	public RenderBatch() {
 		this.vao = Helper.generateVAO();
+		
 		for(int i = 0; i < ATTRIBUTE_COUNT; i++) {
 			vbos[i] = Helper.generateVBO();
 		}
+		
 		for(int i = 0; i < MAX_TEXTURES; i++) {
 			dimensions[0][i] = new Vector2f();
 			dimensions[1][i] = new Vector2f();
 		}
+		
 		this.vertices = new float[MAX_BATCH_SIZE * VERTEX_COUNT * VERTEX_SIZE];
 		this.uvs = new float[MAX_BATCH_SIZE * VERTEX_COUNT * UV_SIZE];
 		this.colors = new float[MAX_BATCH_SIZE * VERTEX_COUNT * COLOR_SIZE];
-		this.translations = new float[4][MAX_BATCH_SIZE * VERTEX_COUNT * VERTEX_SIZE];
+		this.translations = new float[4][0];
+		this.translations[0] = new float[MAX_BATCH_SIZE * VERTEX_COUNT * POSITION_SIZE];
+		this.translations[1] = new float[MAX_BATCH_SIZE * VERTEX_COUNT * SCALE_SIZE];
+		this.translations[2] = new float[MAX_BATCH_SIZE * VERTEX_COUNT * ROTATION_SIZE];
+		this.translations[3] = new float[MAX_BATCH_SIZE * VERTEX_COUNT * PIVOT_SIZE];
 		Helper.generateIndicesBuffer(vao, loadIndices());
+	}
+
+	private int[] loadIndices() {
+		int[] indices = new int[MAX_BATCH_SIZE * 6];
+		for(int i = 0; i < MAX_BATCH_SIZE; i++) {
+			for(int j = 0; j < 6; j++) {
+				indices[i * 6 + j] = Quad.indices[j] + i * 4;
+			}
+		}
+		return indices;
 	}
 	
 	public boolean add(TextureComponent tex, Transform transform) {
@@ -79,7 +100,7 @@ public class RenderBatch {
 			int texIndex = textures.size();
 			textures.put(texID, texIndex);
 			dimensions[0][texIndex] = tex.getTexture().getDimensions();
-			dimensions[1][texIndex] = tex.getSpriteDimension();
+			dimensions[1][texIndex] = tex.getSpriteDimensions();
 		}
 		
 		int index = Helper.binarySearch(
@@ -92,9 +113,8 @@ public class RenderBatch {
 		
 		texturedObjects.add(index, tex);
 		texturedTransforms.add(index, transform);
-		this.batchSize++;
 		
-		for(int i = index; i < batchSize; i++){
+		for(int i = index; i < texturedObjects.size(); i++){
 			updateVertices(texturedObjects.get(i), texturedTransforms.get(i), i);
 		}
 		
@@ -116,7 +136,7 @@ public class RenderBatch {
 			int texIndex = textures.size();
 			textures.put(texID, texIndex);
 			dimensions[0][texIndex] = tex.getTexture().getDimensions();
-			dimensions[1][texIndex] = tex.getSpriteDimension();
+			dimensions[1][texIndex] = tex.getSpriteDimensions();
 		}
 		
 		int index = Helper.binarySearch(
@@ -129,9 +149,8 @@ public class RenderBatch {
 	
 		texturedObjects.add(index, tex);
 		texturedTransforms.add(index, tex.gameObject.transform);
-		this.batchSize++;
 		
-		for(int i = index; i < batchSize; i++){
+		for(int i = index; i < texturedObjects.size(); i++){
 			updateVertices(texturedObjects.get(i), texturedTransforms.get(i), i);
 		}
 		
@@ -144,26 +163,13 @@ public class RenderBatch {
 			int index = texturedObjects.indexOf(tex);
 			texturedObjects.remove(index);
 			texturedTransforms.remove(index);
-			batchSize--;
-			for(int i = index; i < batchSize; i++) {
+			for(int i = index; i < texturedObjects.size(); i++) {
 				updateVertices(texturedObjects.get(i), texturedTransforms.get(i), i);
 			}
 			updateAttributePointers();
 			return true;
 		}
 		return false;
-	}
-	
-	private int[] loadIndices() {
-		int[] indices = new int[MAX_BATCH_SIZE * 6];
-		
-		for(int i = 0; i < MAX_BATCH_SIZE; i++) {
-			for(int j = 0; j < 6; j++) {
-				indices[i * 6 + j] = Quad.indices[j] + i * 4;
-			}
-		}
-		
-		return indices;
 	}
 	
 	private boolean updateTransforms(TextureComponent tex) {
@@ -175,7 +181,7 @@ public class RenderBatch {
 		Transform transform = texturedTransforms.get(currIndex);
 		
 		boolean left = (currIndex > 0) ? getLayer(texturedTransforms.get(currIndex - 1)) >= getLayer(transform) : true;
-		boolean right = (currIndex < batchSize - 1) ? getLayer(texturedTransforms.get(currIndex + 1)) <= getLayer(transform) : true;
+		boolean right = (currIndex < texturedObjects.size() - 1) ? getLayer(texturedTransforms.get(currIndex + 1)) <= getLayer(transform) : true;
 		if(left && right) {
 			return false;
 		}
@@ -209,10 +215,10 @@ public class RenderBatch {
 		
 	private void updateAttributePointers() {
 		Helper.storeDataInAttributeList(vao, vbos[0], VERTEX_SIZE, 0, vertices);
-		Helper.storeDataInAttributeList(vao, vbos[1], VERTEX_SIZE, 1, translations[0]);
-		Helper.storeDataInAttributeList(vao, vbos[2], VERTEX_SIZE, 2, translations[1]);
-		Helper.storeDataInAttributeList(vao, vbos[3], VERTEX_SIZE, 3, translations[2]);
-		Helper.storeDataInAttributeList(vao, vbos[4], VERTEX_SIZE, 4, translations[3]);
+		Helper.storeDataInAttributeList(vao, vbos[1], POSITION_SIZE, 1, translations[0]);
+		Helper.storeDataInAttributeList(vao, vbos[2], SCALE_SIZE, 2, translations[1]);
+		Helper.storeDataInAttributeList(vao, vbos[3], ROTATION_SIZE, 3, translations[2]);
+		Helper.storeDataInAttributeList(vao, vbos[4], PIVOT_SIZE, 4, translations[3]);
 		Helper.storeDataInAttributeList(vao, vbos[5], UV_SIZE, 5, uvs);
 		Helper.storeDataInAttributeList(vao, vbos[6], COLOR_SIZE, 6, colors);
 	}
@@ -222,34 +228,27 @@ public class RenderBatch {
 			vertices[i + index * VERTEX_COUNT * VERTEX_SIZE] = Quad.vertices[i];
 		}
 		
-		for(int i = 0; i < VERTEX_COUNT * UV_SIZE; i+=UV_SIZE) {
-			uvs[i + index * VERTEX_COUNT * UV_SIZE] = tex.getSpritePosition().x;
-			uvs[i + index * VERTEX_COUNT * UV_SIZE + 1] =tex.getSpritePosition().y;
-			uvs[i + index * VERTEX_COUNT * UV_SIZE + 2] = textures.get(tex.getTexture().getID());
-			uvs[i + index * VERTEX_COUNT * UV_SIZE + 3] = tex.canCastShadow() ? 1 : 0;
+		for(int i = 0; i < VERTEX_COUNT; i++) {
+			uvs[i * UV_SIZE + index * VERTEX_COUNT * UV_SIZE] = tex.getSpritePosition().x;
+			uvs[i * UV_SIZE + index * VERTEX_COUNT * UV_SIZE + 1] = tex.getSpritePosition().y;
+			uvs[i * UV_SIZE + index * VERTEX_COUNT * UV_SIZE + 2] = textures.get(tex.getTexture().getID());
+			uvs[i * UV_SIZE + index * VERTEX_COUNT * UV_SIZE + 3] = tex.canCastShadow() ? 1 : 0;
+			colors[i * COLOR_SIZE + index * VERTEX_COUNT * COLOR_SIZE] = tex.getColor().x;
+			colors[i * COLOR_SIZE + index * VERTEX_COUNT * COLOR_SIZE + 1] = tex.getColor().y;
+			colors[i * COLOR_SIZE + index * VERTEX_COUNT * COLOR_SIZE + 2] = tex.getColor().z;
+			translations[0][i * POSITION_SIZE + index * VERTEX_COUNT * POSITION_SIZE] = transform.position.x;
+			translations[0][i * POSITION_SIZE + index * VERTEX_COUNT * POSITION_SIZE + 1] = transform.position.y;
+			translations[1][i * SCALE_SIZE + index * VERTEX_COUNT * SCALE_SIZE] = transform.scale.x;
+			translations[1][i * SCALE_SIZE + index * VERTEX_COUNT * SCALE_SIZE + 1] = transform.scale.y;
+			translations[2][i * ROTATION_SIZE + index * VERTEX_COUNT * ROTATION_SIZE] = transform.rotation.x;
+			translations[2][i * ROTATION_SIZE + index * VERTEX_COUNT * ROTATION_SIZE + 1] = transform.rotation.y;
+			translations[3][i * PIVOT_SIZE + index * VERTEX_COUNT * PIVOT_SIZE] = transform.pivot.x;
+			translations[3][i * PIVOT_SIZE + index * VERTEX_COUNT * PIVOT_SIZE + 1] = transform.pivot.y;
 		}
-		
-		for(int i = 0; i < VERTEX_COUNT * COLOR_SIZE; i+=COLOR_SIZE) {
-			colors[i + index * VERTEX_COUNT * COLOR_SIZE] = tex.getSpriteColor().x;
-			colors[i + index * VERTEX_COUNT * COLOR_SIZE + 1] = tex.getSpriteColor().y;
-			colors[i + index * VERTEX_COUNT * COLOR_SIZE + 2] = tex.getSpriteColor().z;
-		}
-		
-		for(int i = 0; i < VERTEX_COUNT * VERTEX_SIZE; i+=VERTEX_SIZE) {
-			translations[0][i + index * VERTEX_COUNT * VERTEX_SIZE] = transform.position.x;
-			translations[0][i + index * VERTEX_COUNT * VERTEX_SIZE + 1] = transform.position.y;
-			translations[1][i + index * VERTEX_COUNT * VERTEX_SIZE] = transform.scale.x;
-			translations[1][i + index * VERTEX_COUNT * VERTEX_SIZE + 1] = transform.scale.y;
-			translations[2][i + index * VERTEX_COUNT * VERTEX_SIZE] = transform.rotation.x;
-			translations[2][i + index * VERTEX_COUNT * VERTEX_SIZE + 1] = transform.rotation.y;
-			translations[3][i + index * VERTEX_COUNT * VERTEX_SIZE] = transform.pivot.x;
-			translations[3][i + index * VERTEX_COUNT * VERTEX_SIZE + 1] = transform.pivot.y;
-		}
-
 	}
 	
 	private void dirtyFlag() {
-		for(int i = 0; i < batchSize; i++) {
+		for(int i = 0; i < texturedObjects.size(); i++) {
 			TextureComponent tex = texturedObjects.get(i);
 			if(tex.gameObject.isDirty()) {
 				updateVertices(tex, texturedTransforms.get(i), i);
@@ -263,7 +262,7 @@ public class RenderBatch {
 		}
 		
 		if(flag) {
-			for(int i = 0; i < batchSize; i++) {
+			for(int i = 0; i < texturedObjects.size(); i++) {
 				updateVertices(texturedObjects.get(i), texturedTransforms.get(i), i);
 			}
 		}
@@ -288,7 +287,7 @@ public class RenderBatch {
 		ShaderLoader.loadVector2fArray(shader, "uDimensions", dimensions[0]);
 		ShaderLoader.loadVector2fArray(shader, "uSpriteDimensions", dimensions[1]);
 		
-		glDrawElements(GL_TRIANGLES, this.batchSize * 6, GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES, texturedObjects.size() * 6, GL_UNSIGNED_INT, 0);
 
 		for(int i = 0; i < textures.size(); i++) {
 			TextureLoader.unbindTexture(shader, i);

@@ -7,8 +7,9 @@ import org.joml.Vector2i;
 
 import com.Camera;
 import com.GameObject;
-import com.Renderer;
 import com.components.AABBComponent;
+import com.particles.ParticleManager;
+import com.renderer.Renderer;
 
 public abstract class Scene {	
 	public static int MAX_SCENE_LIGHTS = 10;
@@ -18,6 +19,7 @@ public abstract class Scene {
 	private boolean isRunning = false;
 	protected int gridWidth, gridHeight;
 	protected Renderer renderer;
+	protected ParticleManager particles;
 
 	protected List<GameObject> gameObjects = new ArrayList<GameObject>();
 	protected List<GameObject> dirtyObjects = new ArrayList<GameObject>();
@@ -32,6 +34,7 @@ public abstract class Scene {
 
 	public Scene(int width, int height) {
 		this.renderer = new Renderer();
+		this.particles = new ParticleManager();
 		this.gridWidth = width;
 		this.gridHeight = height;
 		this.initialiseGrid(width, height);
@@ -60,6 +63,7 @@ public abstract class Scene {
 	 */
 	public void update(float dt) {
 		updateDebug(dt);
+		
 		for(GameObject o : gameObjects) {
 			o.update(dt);
 		}
@@ -68,7 +72,9 @@ public abstract class Scene {
 			l.update(dt);
 		}
 		
+		particles.update(dt);
 		renderer.render();
+		
 		cleanObjects();
 	}
 	
@@ -322,6 +328,16 @@ public abstract class Scene {
 	public Renderer getRenderer() {
 		return this.renderer;
 	}
+	
+	/**
+	 * Get Particle Manager
+	 * 
+	 * @return			Particle Manager
+	 */
+	public ParticleManager getParticles() {
+		return this.particles;
+	}
+	
 	
 	/**
 	 * Get grid width

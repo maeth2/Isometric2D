@@ -11,12 +11,17 @@ public class TextureComponent extends Component {
 	private float alpha;
 	private boolean castShadow;
 	private Vector2f spritePosition;
-	private Vector2f spriteDimension;
-	private Vector3f spriteColor;
+	private Vector2f spriteDimensions;
+	private Vector3f color = new Vector3f(-1, -1, -1);
 	
 	private static final Texture DEFAULT_TEXTURE = AssetManager.getTexture("assets/textures/blank.png");
 	
 	public TextureComponent() {
+		init(DEFAULT_TEXTURE, 1f, false, new Vector2f(0, 0), DEFAULT_TEXTURE.getDimensions());
+	}
+	
+	public TextureComponent(Vector3f color) {
+		this.color = color;
 		init(DEFAULT_TEXTURE, 1f, false, new Vector2f(0, 0), DEFAULT_TEXTURE.getDimensions());
 	}
 	
@@ -36,45 +41,44 @@ public class TextureComponent extends Component {
 		init(texture, alpha, castShadow, new Vector2f(0, 0), texture.getDimensions());
 	}
 	
-	public TextureComponent(Texture texture, Vector2f spriteDimension) {
-		init(texture, 1f, false, new Vector2f(0, 0), spriteDimension);
+	public TextureComponent(Texture texture, Vector2f spriteDimensions) {
+		init(texture, 1f, false, new Vector2f(0, 0), spriteDimensions);
 	}
 	
-	public TextureComponent(Texture texture, float alpha, Vector2f spriteDimension) {
-		init(texture, alpha, false, new Vector2f(0, 0), spriteDimension);
+	public TextureComponent(Texture texture, float alpha, Vector2f spriteDimensions) {
+		init(texture, alpha, false, new Vector2f(0, 0), spriteDimensions);
 	}
 
-	public TextureComponent(Texture texture, boolean castShadow, Vector2f spriteDimension) {
-		init(texture, 1f, castShadow, new Vector2f(0, 0), spriteDimension);
+	public TextureComponent(Texture texture, boolean castShadow, Vector2f spriteDimensions) {
+		init(texture, 1f, castShadow, new Vector2f(0, 0), spriteDimensions);
 	}
 	
-	public TextureComponent(Texture texture, float alpha, boolean castShadow, Vector2f spriteDimension) {
-		init(texture, alpha, castShadow, new Vector2f(0, 0), spriteDimension);
+	public TextureComponent(Texture texture, float alpha, boolean castShadow, Vector2f spriteDimensions) {
+		init(texture, alpha, castShadow, new Vector2f(0, 0), spriteDimensions);
 	}
 	
-	public TextureComponent(Texture texture, Vector2f spritePosition, Vector2f spriteDimension) {
-		init(texture, 1f, false, spritePosition, spriteDimension);
+	public TextureComponent(Texture texture, Vector2f spritePosition, Vector2f spriteDimensions) {
+		init(texture, 1f, false, spritePosition, spriteDimensions);
 	}
 	
-	public TextureComponent(Texture texture, float alpha, Vector2f spritePosition, Vector2f spriteDimension) {
-		init(texture, alpha, false, spritePosition, spriteDimension);
+	public TextureComponent(Texture texture, float alpha, Vector2f spritePosition, Vector2f spriteDimensions) {
+		init(texture, alpha, false, spritePosition, spriteDimensions);
 	}
 
-	public TextureComponent(Texture texture, boolean castShadow, Vector2f spritePosition, Vector2f spriteDimension) {
-		init(texture, 1f, castShadow, spritePosition, spriteDimension);
+	public TextureComponent(Texture texture, boolean castShadow, Vector2f spritePosition, Vector2f spriteDimensions) {
+		init(texture, 1f, castShadow, spritePosition, spriteDimensions);
 	}
 	
-	public TextureComponent(Texture texture, float alpha, boolean castShadow, Vector2f spritePosition, Vector2f spriteDimension) {
-		init(texture, alpha, castShadow, spritePosition, spriteDimension);
+	public TextureComponent(Texture texture, float alpha, boolean castShadow, Vector2f spritePosition, Vector2f spriteDimensions) {
+		init(texture, alpha, castShadow, spritePosition, spriteDimensions);
 	}
 	
-	public void init(Texture texture, float alpha, boolean castShadow, Vector2f spritePosition, Vector2f spriteDimension) {
+	public void init(Texture texture, float alpha, boolean castShadow, Vector2f spritePosition, Vector2f spriteDimensions) {
 		this.texture = texture;
 		this.alpha = alpha;
 		this.castShadow = castShadow;
 		this.spritePosition = spritePosition;
-		this.spriteDimension = spriteDimension;
-		this.spriteColor = new Vector3f(-1f, -1f, -1f);
+		this.spriteDimensions = spriteDimensions;
 	}
 	
 	@Override
@@ -103,13 +107,13 @@ public class TextureComponent extends Component {
 		this.gameObject.setDirty(true);
 	}
 	
-	public Vector2f getSpriteDimension() {
-		return this.spriteDimension;
+	public Vector2f getSpriteDimensions() {
+		return this.spriteDimensions;
 	}
 	
-	public void setSpriteDimension(int width, int height) {
-		this.spriteDimension.x = width;
-		this.spriteDimension.y = height;
+	public void setSpriteDimensions(int width, int height) {
+		this.spriteDimensions.x = width;
+		this.spriteDimensions.y = height;
 	}
 
 	public float getAlpha() {
@@ -129,14 +133,14 @@ public class TextureComponent extends Component {
 		this.castShadow = castShadow;
 	}
 	
-	public void setSpriteColor(float r, float g, float b) {
-		this.spriteColor.x = r;
-		this.spriteColor.y = g;
-		this.spriteColor.z = b;
+	public void setColor(float r, float g, float b) {
+		this.color.x = r;
+		this.color.y = g;
+		this.color.z = b;
 		this.gameObject.setDirty(true);
 	}
 	
-	public Vector3f getSpriteColor() {
-		return this.spriteColor;
+	public Vector3f getColor() {
+		return this.color;
 	}
 }

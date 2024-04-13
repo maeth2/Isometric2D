@@ -15,13 +15,13 @@ public class KnockbackState extends MovementState {
 	@Override
 	public void enter() {
 		context.getAnimation().setCurrentAnimation(Entity.states.Idle);
-		context.getTarget().getComponent(TextureComponent.class).setSpriteColor(1f, 1f, 1f);
+		context.getTarget().getComponent(TextureComponent.class).setColor(1f, 1f, 1f);
 		elapsed = 0f;
 	}
 
 	@Override
 	public void exit() {	
-		context.getTarget().getComponent(TextureComponent.class).setSpriteColor(-1f, -1f, -1f);
+		context.getTarget().getComponent(TextureComponent.class).setColor(-1f, -1f, -1f);
 	}
 
 	@Override

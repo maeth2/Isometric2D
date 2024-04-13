@@ -9,6 +9,7 @@ import org.lwjgl.glfw.GLFW;
 import com.Camera;
 import com.GameObject;
 import com.Window;
+import com.components.AABBComponent;
 import com.components.ControllerComponent;
 import com.components.LightComponent;
 import com.components.shaders.LightShaderComponent;
@@ -17,9 +18,12 @@ import com.entities.Entity;
 import com.entities.EntityList;
 import com.entities.items.ItemList;
 import com.listeners.KeyListener;
+import com.particles.Particle;
 import com.utils.LevelLoader;
+import com.utils.Maths;
 import com.utils.Transform;
 import com.states.ai.EnemyStateMachine;
+import com.components.TextureComponent;
 
 public class TestScene extends Scene {
 
@@ -71,7 +75,7 @@ public class TestScene extends Scene {
 		if(renderer.getComponent(LightShaderComponent.class) != null) {
 			renderer.getComponent(LightShaderComponent.class).addLight(jaidyn);
 		}
-		jaidyn.setBaseSpeed(UNIT_SIZE * 3.5f);
+		jaidyn.setBaseSpeed(UNIT_SIZE * 2f);
 		addGameObject(jaidyn);
 		
 //		stressTest(100);
@@ -153,6 +157,19 @@ public class TestScene extends Scene {
 			if(cooldown < 0) {
 				camera.toggleFreeCam();
 				cooldown = 0.5f;
+			}
+		}
+		
+		if(KeyListener.isKeyPressed(GLFW.GLFW_KEY_U)) {
+			if(cooldown < 0) {
+				particles.add(new Particle(
+					new Vector2f(camera.transform.position), 
+					new Vector2f(UNIT_SIZE / 10f), 
+					new TextureComponent(AABBComponent.HITBOX_TEXTURE), 
+					Maths.angleToDirectionVector(rand.nextFloat() * 360f).mul(50f),
+					0.5f
+				));
+				cooldown = 0.005f;
 			}
 		}
 		

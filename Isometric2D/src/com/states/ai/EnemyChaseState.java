@@ -14,6 +14,7 @@ import com.utils.Maths;
 public class EnemyChaseState extends EnemyState {
 	private float elapsed;
 	private float chaseDuration = 30f;
+	private float chaseRadius = Scene.UNIT_SIZE * 0.5f;
 	
 	public EnemyChaseState(EnemyStateMachine.state stateKey, EnemyContext context) {
 		super(stateKey, context);
@@ -33,7 +34,13 @@ public class EnemyChaseState extends EnemyState {
 	public void update(float dt) {
 		elapsed += dt;
 		Vector2i nextCell = getNextCell();
-		if(nextCell != null) {
+		float distance = Maths.getEuclideanDistance(
+				context.getTarget().transform.position.x, 
+				context.getTarget().transform.position.y, 
+				context.getTargetEntity().transform.position.x, 
+				context.getTargetEntity().transform.position.y
+		);
+		if(nextCell != null && distance >= chaseRadius) {
 			travelToTarget((float)nextCell.x * Scene.UNIT_SIZE, (float)nextCell.y * Scene.UNIT_SIZE, dt);
 		}else {
 			stop();

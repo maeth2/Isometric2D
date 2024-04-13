@@ -20,7 +20,7 @@ public class PoisonEffect extends StatusEffect {
 	
 	@Override
 	public void exit() {
-		target.getComponent(TextureComponent.class).setSpriteColor(-1, -1, -1);
+		target.getComponent(TextureComponent.class).setColor(-1, -1, -1);
 	}
 	
 	@Override
@@ -28,12 +28,12 @@ public class PoisonEffect extends StatusEffect {
 		tickElapsed += dt;
 		flickerElapsed += dt;
 		if(tickElapsed >= tickDuration) {
-			target.getComponent(TextureComponent.class).setSpriteColor(0, 1, 0);
+			target.getComponent(TextureComponent.class).setColor(0, 1, 0);
 			flickerElapsed = 0f;
 			tickElapsed = 0;
 		}
 		if(flickerElapsed > flickerDuration) {
-			target.getComponent(TextureComponent.class).setSpriteColor(-1, -1, -1);
+			target.getComponent(TextureComponent.class).setColor(-1, -1, -1);
 		}
 	}
 

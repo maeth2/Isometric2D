@@ -1,6 +1,6 @@
 package com.components.shaders;
 
-import com.Renderer;
+import com.renderer.Renderer;
 import com.utils.Texture;
 
 public abstract class ShaderComponent {

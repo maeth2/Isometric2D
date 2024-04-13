@@ -1,4 +1,4 @@
-package com;
+package com.renderer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,6 +6,9 @@ import java.util.List;
 import org.joml.Vector2f;
 import org.lwjgl.opengl.GL11;
 
+import com.GameObject;
+import com.Main;
+import com.Window;
 import com.components.AABBComponent;
 import com.components.TextureComponent;
 import com.components.shaders.ShaderComponent;
@@ -89,7 +92,8 @@ public class Renderer {
 	public void render() {
 		BufferHelper.bindFrameBuffer(sceneBuffer, Window.WIDTH, Window.HEIGHT);
 		refresh();
-		ShaderLoader.useShader(sceneShaderID);		
+		
+		ShaderLoader.useShader(sceneShaderID);	
 		ShaderLoader.loadMatrix(sceneShaderID, "uProjection", Main.getScene().getCamera().getProjectionMatrix());
 		ShaderLoader.loadMatrix(sceneShaderID, "uView", Main.getScene().getCamera().getViewMatrix());	
 		ShaderLoader.loadBool(sceneShaderID, "uManualAlpha", false);
@@ -97,6 +101,9 @@ public class Renderer {
 		renderBatches(sceneShaderID);
 		
 		ShaderLoader.unbindShader();
+		
+		Main.getScene().getParticles().render();
+		
 		BufferHelper.unbindFrameBuffer();
 		
 		bufferTextures[Texture.TYPE_OUTPUT].copy(bufferTextures[Texture.TYPE_COLOR]);
@@ -108,8 +115,6 @@ public class Renderer {
 		
 		Quad.renderGUI(bufferTextures[Texture.TYPE_OUTPUT], new Vector2f(2, 2));
 	}
-	
-
 	
 	/**
 	 * Add GameObject to render batch

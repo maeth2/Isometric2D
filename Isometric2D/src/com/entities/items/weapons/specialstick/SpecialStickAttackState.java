@@ -58,7 +58,7 @@ public class SpecialStickAttackState extends ItemState{
 //						Vector2f d = Maths.pointToPointDirectionVector(i.transform.position, context.getTarget().getEntity().transform.position);
 						i.onHit(context.getTarget().getEntity(), direction, 50f, 0f);
 						i.apply(StatusEffect.effects.Burn, 3f, 2f);
-						i.apply(effects.Slow, 2f, 2f);
+						i.apply(effects.Slow, 0.5f, 2f);
 					}
 				}
 			}
