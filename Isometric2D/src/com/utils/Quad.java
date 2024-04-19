@@ -233,9 +233,9 @@ public class Quad {
 			ShaderLoader.loadMatrix(shader, "uTransformation", base);
 		}
 		
-		ShaderLoader.loadVector2f(shader, "uTranslation", transform.position);
-		ShaderLoader.loadVector2f(shader, "uRotation", transform.rotation);
-		ShaderLoader.loadVector2f(shader, "uScale", transform.scale);
+		ShaderLoader.loadVector2f(shader, "uTranslation", transform.getPosition());
+		ShaderLoader.loadVector2f(shader, "uRotation", transform.getRotation());
+		ShaderLoader.loadVector2f(shader, "uScale", transform.getScale());
 				
 		TextureLoader.loadTextureToShader(shader, texture, 0);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);

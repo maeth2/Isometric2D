@@ -1,7 +1,12 @@
 package com.components.effects;
 
+import org.joml.Vector2f;
+import org.joml.Vector3f;
+
+import com.Main;
 import com.components.TextureComponent;
 import com.entities.Entity;
+import com.scenes.Scene;
 
 public class BurnEffect extends StatusEffect {
 
@@ -16,7 +21,9 @@ public class BurnEffect extends StatusEffect {
 	}
 
 	@Override
-	public void start() {}
+	public void start() {
+		renderParticles();
+	}
 	
 	@Override
 	public void exit() {
@@ -29,6 +36,7 @@ public class BurnEffect extends StatusEffect {
 		flickerElapsed += dt;
 		if(tickElapsed >= tickDuration) {
 			target.getComponent(TextureComponent.class).setColor(1, 0, 0);
+			target.onDamage(50);
 			flickerElapsed = 0f;
 			tickElapsed = 0;
 		}
@@ -41,5 +49,19 @@ public class BurnEffect extends StatusEffect {
 	public StatusEffect create(Entity target, float duration, float strength) {
 		return new BurnEffect(target, duration, strength);
 	}
-
+	
+	@Override
+	protected void renderParticles() {
+		Main.getScene().getParticles().add(
+			"BURNING", 
+			new Vector2f(
+				target.getTransform().getPosition().x + Main.random.nextFloat() * Scene.UNIT_SIZE / 4f, 
+				target.getTransform().getPosition().y + Main.random.nextFloat() * Scene.UNIT_SIZE / 4f
+			),
+			15f, 
+			new Vector2f(0, 30f),
+			0.75f,
+			new Vector3f(1, 0, 0)
+		);
+	}
 }

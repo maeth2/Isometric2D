@@ -21,8 +21,8 @@ public class TextureComponent extends Component {
 	}
 	
 	public TextureComponent(Vector3f color) {
-		this.color = color;
 		init(DEFAULT_TEXTURE, 1f, false, new Vector2f(0, 0), DEFAULT_TEXTURE.getDimensions());
+		this.setColor(color.x, color.y, color.z);
 	}
 	
 	public TextureComponent(Texture texture) {
@@ -60,7 +60,7 @@ public class TextureComponent extends Component {
 	public TextureComponent(Texture texture, Vector2f spritePosition, Vector2f spriteDimensions) {
 		init(texture, 1f, false, spritePosition, spriteDimensions);
 	}
-	
+
 	public TextureComponent(Texture texture, float alpha, Vector2f spritePosition, Vector2f spriteDimensions) {
 		init(texture, alpha, false, spritePosition, spriteDimensions);
 	}
@@ -134,13 +134,25 @@ public class TextureComponent extends Component {
 	}
 	
 	public void setColor(float r, float g, float b) {
-		this.color.x = r;
-		this.color.y = g;
-		this.color.z = b;
-		this.gameObject.setDirty(true);
+		if(r > 1 || g > 1 || b > 1) {
+			this.color.x = r / 255f;
+			this.color.y = g / 255f;
+			this.color.z = b / 255f;
+		}else {
+			this.color.x = r;
+			this.color.y = g;
+			this.color.z = b;
+		}
+		if(gameObject != null) {
+			this.gameObject.setDirty(true);
+		}
 	}
 	
 	public Vector3f getColor() {
 		return this.color;
+	}
+	
+	public boolean hasTexture() {
+		return texture != DEFAULT_TEXTURE;
 	}
 }

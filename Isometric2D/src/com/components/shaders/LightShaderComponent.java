@@ -50,7 +50,7 @@ public class LightShaderComponent extends ShaderComponent {
 	}
 	
 	public void loadLight(String name, LightComponent data) {
-		ShaderLoader.loadVector2f(shader, name + ".position", data.gameObject.transform.position);
+		ShaderLoader.loadVector2f(shader, name + ".position", data.gameObject.getTransform().getPosition());
 		ShaderLoader.loadVector3f(shader, name + ".color", data.getColor());
 		ShaderLoader.loadFloat(shader, name + ".radius", data.getRadius());
 		ShaderLoader.loadBool(shader, name + ".castShadow", data.canCastShadow());
@@ -98,7 +98,7 @@ public class LightShaderComponent extends ShaderComponent {
 		TextureLoader.bindTextureToShader(shader, "uTexture", 0);
 		TextureLoader.bindTextureToShader(shader, "uShadow", 1);
 		
-		Quad.renderQuad(shader, textures, c.transform.position.x, c.transform.position.y, width, height);
+		Quad.renderQuad(shader, textures, c.getTransform().getPosition().x, c.getTransform().getPosition().y, width, height);
 		ShaderLoader.unbindShader();
 		BufferHelper.unbindFrameBuffer();
 		return texture;

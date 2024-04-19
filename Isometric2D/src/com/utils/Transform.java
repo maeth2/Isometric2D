@@ -3,11 +3,11 @@ package com.utils;
 import org.joml.Vector2f;
 
 public class Transform {
-	public Vector2f position;
-	public Vector2f scale;
-	public Vector2f rotation;
-	public Vector2f pivot;
-	public float zLayer = -1;
+	private Vector2f position;
+	private Vector2f scale;
+	private Vector2f rotation;
+	private Vector2f pivot;
+	private float zLayer = -1;
 	
 	public Transform() {
 		init(new Vector2f(0, 0), new Vector2f(1, 1), new Vector2f(0, 0), new Vector2f(0, 0));
@@ -35,4 +35,59 @@ public class Transform {
 		this.rotation = rotation;
 		this.pivot = pivot;
 	}
+	
+	public Vector2f getPosition() {
+		return position;
+	}
+
+	public void setPosition(Vector2f position) {
+		this.position = position;
+	}
+	
+	public void setPosition(float x, float y) {
+		if(this.position == null) {
+			this.position = new Vector2f(x, y);
+			return;
+		}
+		this.position.x = x;
+		this.position.y = y;
+	}
+	
+	public void changePosition(float x, float y) {
+		this.position.x += x;
+		this.position.y += y;
+	}
+
+	public Vector2f getScale() {
+		return scale;
+	}
+
+	public void setScale(Vector2f scale) {
+		this.scale = scale;
+	}
+
+	public Vector2f getRotation() {
+		return rotation;
+	}
+
+	public void setRotation(Vector2f rotation) {
+		this.rotation = rotation;
+	}
+
+	public Vector2f getPivot() {
+		return pivot;
+	}
+
+	public void setPivot(Vector2f pivot) {
+		this.pivot = pivot;
+	}
+
+	public float getZLayer() {
+		return zLayer;
+	}
+
+	public void setZLayer(float zLayer) {
+		this.zLayer = zLayer;
+	}
+
 }

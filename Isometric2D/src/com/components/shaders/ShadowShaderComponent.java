@@ -130,7 +130,7 @@ public class ShadowShaderComponent extends ShaderComponent {
 	}
 	
 	public Texture renderShadow(LightStructure light, int i) {
-		tempCam.setPosition(light.lightObject.transform.position);
+		tempCam.setPosition(light.lightObject.getTransform().getPosition());
 		tempCam.setGridPosition(Main.getScene().getGridPosition(tempCam));
 		
 		//Rendering all shadow objects
@@ -171,9 +171,9 @@ public class ShadowShaderComponent extends ShaderComponent {
 			if(!Main.checkInScreen(light.lightObject, light.diameter, light.diameter) || !light.lightComponent.canCastShadow()){
 				continue;
 			}
-			Transform lightTransform = new Transform(light.lightObject.transform.position, new Vector2f(light.diameter, light.diameter));
+			Transform lightTransform = new Transform(light.lightObject.getTransform().getPosition(), new Vector2f(light.diameter, light.diameter));
 
-			boolean isDirty = lightTransform.position.x != light.lastPos.x || lightTransform.position.y != light.lastPos.y;
+			boolean isDirty = lightTransform.getPosition().x != light.lastPos.x || lightTransform.getPosition().y != light.lastPos.y;
 			Texture shadow = isDirty ? renderShadow(light, i) : light.shadowTexture; //Check if light has moved.
 			
 			//Scale down by half because the quad renderer vertices are from -1 to 1 not 0 to 1
@@ -183,8 +183,8 @@ public class ShadowShaderComponent extends ShaderComponent {
 			Quad.renderQuad(shader, shadow, Maths.createTransformationalMatrix(lightTransform));
 			unbind();
 			
-			light.lastPos.x = lightTransform.position.x;
-			light.lastPos.y = lightTransform.position.y;
+			light.lastPos.x = lightTransform.getPosition().x;
+			light.lastPos.y = lightTransform.getPosition().y;
 			i++;
 		}
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

@@ -7,6 +7,8 @@ import static org.lwjgl.glfw.GLFW.glfwPollEvents;
 import static org.lwjgl.glfw.GLFW.glfwSwapBuffers;
 import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
 
+import java.util.Random;
+
 import com.listeners.KeyListener;
 import com.scenes.Scene;
 import com.scenes.TestScene;
@@ -18,10 +20,12 @@ public class Main {
 	
 	private static Scene scene;
 	public static float timeElapsed = 0f;
+	public static Random random;
 	
 	public static void main(String[] args) {
 		Window.get().init();
 		Main main = new Main();
+		random = new Random();
 		scene = new TestScene(10, 10);
 		scene.init();
 		scene.start();
@@ -62,10 +66,10 @@ public class Main {
 	
 	public static boolean checkInScreen(GameObject g, int width, int height) {
 		boolean isIn = false;
-		float x = g.transform.position.x;
-		float y = g.transform.position.y;
-		float nx = x - getScene().getCamera().transform.position.x;
-		float ny = y - getScene().getCamera().transform.position.y;
+		float x = g.getTransform().getPosition().x;
+		float y = g.getTransform().getPosition().y;
+		float nx = x - getScene().getCamera().getTransform().getPosition().x;
+		float ny = y - getScene().getCamera().getTransform().getPosition().y;
 		
 		float top = ny + height / 2;
 		float bottom = ny - height / 2;

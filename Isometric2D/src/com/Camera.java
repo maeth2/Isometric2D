@@ -19,13 +19,13 @@ public class Camera extends Entity{
 	public Camera(Vector2f position) {
 		super("Camera");
 		target = this;
-		this.transform.position = position;
+		this.transform.setPosition(position);
 		projectionMatrix = Maths.createOrthographicProjection(Window.WIDTH, Window.HEIGHT);
 	}
 	
 	@Override
 	public void update(float dt) {
-		this.setPosition(target.transform.position);
+		this.setPosition(target.transform.getPosition());
 		for(Component c : components) {
 			c.update(dt);
 		}
@@ -45,12 +45,12 @@ public class Camera extends Entity{
 	
 	public void setTarget(GameObject target) {
 		this.target = target;
-		this.setPosition(target.transform.position);
+		this.setPosition(target.transform.getPosition());
 	}
 	
 	public void setPosition(Vector2f position) {
-		this.transform.position.x = position.x;
-		this.transform.position.y = position.y;
+		this.transform.getPosition().x = position.x;
+		this.transform.getPosition().y = position.y;
 	}
 	
 	public void toggleFreeCam() {

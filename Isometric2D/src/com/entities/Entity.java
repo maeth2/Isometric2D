@@ -4,11 +4,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.joml.Vector2f;
+import org.joml.Vector3f;
 
 import com.GameObject;
+import com.Main;
 import com.components.InventoryComponent;
 import com.components.effects.StatusEffect;
 import com.components.effects.StatusEffectManagerComponent;
+import com.scenes.Scene;
 import com.states.movement.MovementStateMachine;
 import com.states.ai.EnemyStateMachine;
 import com.states.attack.AttackStateMachine;
@@ -102,6 +105,17 @@ public abstract class Entity extends GameObject{
 	 */
 	public void onDamage(float dmg) {
 		setTrigger("Damaged", true);
+		Main.getScene().getParticles().add(
+			Float.toString(dmg), 
+			new Vector2f(
+				transform.getPosition().x + Main.random.nextFloat() * Scene.UNIT_SIZE / 4f, 
+				transform.getPosition().y + Main.random.nextFloat() * Scene.UNIT_SIZE / 4f
+			),
+			12f, 
+			new Vector2f(0, 100f),
+			0.3f,
+			new Vector3f(1, 1, 1)
+		);
 	}
 	
 	/**

@@ -12,8 +12,8 @@ public abstract class EnemyState extends State<EnemyStateMachine.state> {
 	
 	public boolean travelToTarget(float x, float y, float dt) {
 		context.getTarget().setTargetDestination(x, y);
-		float x1 = context.getTarget().transform.position.x;
-		float y1 = context.getTarget().transform.position.y;
+		float x1 = context.getTarget().getTransform().getPosition().x;
+		float y1 = context.getTarget().getTransform().getPosition().y;
 
 		boolean fx = Math.abs(x1 - x) >= context.getTarget().getSpeed() * dt;
 		boolean fy = Math.abs(y1 - y) >= context.getTarget().getSpeed() * dt;
@@ -29,11 +29,11 @@ public abstract class EnemyState extends State<EnemyStateMachine.state> {
 		context.getTarget().setTrigger("Right", right);
 		
 		if(!fx) {
-			context.getTarget().setX(x);
+			context.getTarget().setPositionX(x);
 		}
 		
 		if(!fy) {
-			context.getTarget().setY(y);
+			context.getTarget().setPositionY(y);
 		}
 		
 		return !(left || right || up || down);

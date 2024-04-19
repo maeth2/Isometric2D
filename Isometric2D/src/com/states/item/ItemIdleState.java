@@ -19,9 +19,8 @@ public class ItemIdleState extends ItemState{
 
 	@Override
 	public void enter() {	
-		this.context.getTarget().transform.pivot.y = 0f;
-		this.context.getTarget().transform.rotation.x = 0f;
-		this.context.getTarget().setDirty(true);
+		this.context.getTarget().setPivotY(0);
+		this.context.getTarget().setRotationX(0);;
 		if(context.getAnimation() != null) {
 			context.getAnimation().setCurrentAnimation(Item.states.Idle);
 		}

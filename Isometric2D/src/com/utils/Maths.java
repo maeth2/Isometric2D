@@ -12,10 +12,10 @@ public class Maths {
 	 */
 	public static Matrix4f createTransformationalMatrix(Transform transform){
 		Matrix4f matrix = new Matrix4f();
-		matrix.identity().translate(transform.position.x, transform.position.y, 0).
-        	rotateZ((float)Math.toRadians(transform.rotation.x)).
-        	rotateY((float)Math.toRadians(transform.rotation.y)).
-        	scale(transform.scale.x, transform.scale.y, 1);
+		matrix.identity().translate(transform.getPosition().x, transform.getPosition().y, 0).
+        	rotateZ((float)Math.toRadians(transform.getRotation().x)).
+        	rotateY((float)Math.toRadians(transform.getRotation().y)).
+        	scale(transform.getScale().x, transform.getScale().y, 1);
 		return matrix;
 	}
 	
@@ -27,9 +27,9 @@ public class Maths {
 	 */
 	public static Matrix4f createViewMatrix(Transform transform) {
 		Matrix4f matrix = new Matrix4f();
-		matrix = matrix.rotationZ((float)Math.toRadians(transform.rotation.x))
-		         .rotateY((float)Math.toRadians(transform.rotation.y))
-		         .translate(-transform.position.x, -transform.position.y, 0);
+		matrix = matrix.rotationZ((float)Math.toRadians(transform.getRotation().x))
+		         .rotateY((float)Math.toRadians(transform.getRotation().y))
+		         .translate(-transform.getPosition().x, -transform.getPosition().y, 0);
 		return matrix;
 	}
 	

@@ -40,7 +40,7 @@ public abstract class StatusEffect {
 	public abstract void exit();
 	
 	public abstract void update(float dt);
-	
+		
 	public abstract StatusEffect create(Entity target, float duration, float strength);
 	
 	public boolean checkDuration() {
@@ -54,5 +54,8 @@ public abstract class StatusEffect {
 	public void stack(float duration) {
 		this.startTime = Main.getTimeElapsed();
 		this.duration = duration;
+		renderParticles();
 	}
+	
+	protected void renderParticles() {}
 }

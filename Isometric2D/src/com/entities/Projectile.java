@@ -30,14 +30,11 @@ public abstract class Projectile extends GameObject {
 	public void update(float dt) {
 		updateComponents(dt);
 		
-		transform.position.x += trajectory.x * speed * dt;
-		transform.position.y += trajectory.y * speed * dt;
-		
-		Main.getScene().updateGrid(this);
-		
+		float dx = trajectory.x * speed * dt;
+		float dy = trajectory.y * speed * dt;
+		changePosition(dx, dy);
+				
 		checkCollision();
-		
-		setDirty(true);
 	}
 	
 	public void checkCollision() {

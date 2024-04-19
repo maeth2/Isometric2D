@@ -32,7 +32,6 @@ public class ParticleBatch {
 	private int vbos[] = new int[ATTRIBUTE_COUNT];
 	
 	private TextureComponent texture;
-	private boolean hasTexture;
 	
 	List<Particle> particles = new ArrayList<Particle>();
 	
@@ -48,7 +47,6 @@ public class ParticleBatch {
 	
 	public void init(TextureComponent texture) {
 		this.texture = texture;
-		hasTexture = texture.getColor().x == -1;
 		
 		vao = Helper.generateVAO();
 		for(int i = 0; i < ATTRIBUTE_COUNT; i++) {
@@ -78,7 +76,7 @@ public class ParticleBatch {
 	}
 	
 	public boolean add(Particle p) {
-		if(particles.size() > MAX_PARTICLES) {
+		if(particles.size() >= MAX_PARTICLES) {
 			return false;
 		}
 		
@@ -110,8 +108,10 @@ public class ParticleBatch {
 				colors[i * COLOR_SIZE + index * VERTEX_COUNT * COLOR_SIZE] = p.getTexture().getColor().x;
 				colors[i * COLOR_SIZE + index * VERTEX_COUNT * COLOR_SIZE + 1] = p.getTexture().getColor().y;
 				colors[i * COLOR_SIZE + index * VERTEX_COUNT * COLOR_SIZE + 2] = p.getTexture().getColor().z;
-				tex[i * TEX_SIZE + index * VERTEX_COUNT * TEX_SIZE] = p.getTexture().getSpritePosition().x;
-				tex[i * TEX_SIZE + index * VERTEX_COUNT * TEX_SIZE + 1] = p.getTexture().getSpritePosition().y;
+				if(texture.hasTexture()) {
+					tex[i * TEX_SIZE + index * VERTEX_COUNT * TEX_SIZE] = p.getTexture().getSpritePosition().x;
+					tex[i * TEX_SIZE + index * VERTEX_COUNT * TEX_SIZE + 1] = p.getTexture().getSpritePosition().y;
+				}
 			}
 		}
 	}
@@ -121,7 +121,9 @@ public class ParticleBatch {
 		Helper.storeDataInAttributeList(vao, vbos[1], POSITION_SIZE, 1, positions);
 		Helper.storeDataInAttributeList(vao, vbos[2], SCALE_SIZE, 2, scales); 
 		Helper.storeDataInAttributeList(vao, vbos[3], COLOR_SIZE, 3, colors); 
-		Helper.storeDataInAttributeList(vao, vbos[4], TEX_SIZE, 4, tex); 
+		if(texture.hasTexture()) {
+			Helper.storeDataInAttributeList(vao, vbos[4], TEX_SIZE, 4, tex);
+		}
 	}
 	
 	public int getTextureID() {
@@ -130,11 +132,11 @@ public class ParticleBatch {
 	
 	public void render(int shader) {		
 		glBindVertexArray(vao);
-		if(hasTexture) {
+		if(texture.hasTexture()) {
 			TextureLoader.bindTextureToShader(shader, "spriteSheet", 0);
 			TextureLoader.loadTextureToShader(shader, texture.getTexture().getID(), 0);
-			ShaderLoader.loadVector2f(shader, "dimensions", texture.getTexture().getDimensions());
 			ShaderLoader.loadVector2f(shader, "spriteDimensions", texture.getSpriteDimensions());
+			ShaderLoader.loadVector2f(shader, "dimensions", texture.getTexture().getDimensions());
 			ShaderLoader.loadBool(shader, "hasTexture", true);
 		}else {
 			ShaderLoader.loadBool(shader, "hasTexture", false);
@@ -152,5 +154,9 @@ public class ParticleBatch {
 		}
 		
 		glBindVertexArray(0);
+	}
+	
+	public boolean isEmpty() {
+		return particles.isEmpty();
 	}
 }

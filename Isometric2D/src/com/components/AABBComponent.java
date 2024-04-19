@@ -24,7 +24,7 @@ public class AABBComponent extends Component {
 	 */
 	public AABBComponent(GameObject o, Vector2f offset, Vector2f scale) {
 		this.offset = offset;
-		this.transform = new Transform(new Vector2f(o.transform.position.x + offset.x, o.transform.position.y + offset.y), scale);
+		this.transform = new Transform(new Vector2f(o.getTransform().getPosition().x + offset.x, o.getTransform().getPosition().y + offset.y), scale);
 		this.texture = new TextureComponent(HITBOX_TEXTURE);
 	}
 
@@ -35,8 +35,8 @@ public class AABBComponent extends Component {
 	 */
 	@Override
 	public void update(float dt) {
-		this.transform.position.x = this.gameObject.transform.position.x + offset.x;
-		this.transform.position.y = this.gameObject.transform.position.y + offset.y;
+		this.transform.getPosition().x = this.gameObject.getTransform().getPosition().x + offset.x;
+		this.transform.getPosition().y = this.gameObject.getTransform().getPosition().y + offset.y;
 	}
 	
 	/**
@@ -65,15 +65,15 @@ public class AABBComponent extends Component {
 		Transform t1 = this.getTransform();
 		Transform t2 = target.getTransform();
 		
-		float targetLeft = t2.position.x - (t2.scale.x / 2) - (t1.scale.x / 2);
-		float targetRight = t2.position.x + (t2.scale.x / 2) + (t1.scale.x / 2);
-		float targetTop = t2.position.y - (t2.scale.y / 2) - (t1.scale.y / 2);
-		float targetBot = t2.position.y + (t2.scale.y / 2) + (t1.scale.y / 2);
+		float targetLeft = t2.getPosition().x - (t2.getScale().x / 2) - (t1.getScale().x / 2);
+		float targetRight = t2.getPosition().x + (t2.getScale().x / 2) + (t1.getScale().x / 2);
+		float targetTop = t2.getPosition().y - (t2.getScale().y / 2) - (t1.getScale().y / 2);
+		float targetBot = t2.getPosition().y + (t2.getScale().y / 2) + (t1.getScale().y / 2);
 		
-		float nearX = (targetLeft - t1.position.x) / vel.x;
-		float farX = (targetRight - t1.position.x) / vel.x;
-		float nearY = (targetTop - t1.position.y) / vel.y;
-		float farY = (targetBot - t1.position.y) / vel.y;
+		float nearX = (targetLeft - t1.getPosition().x) / vel.x;
+		float farX = (targetRight - t1.getPosition().x) / vel.x;
+		float nearY = (targetTop - t1.getPosition().y) / vel.y;
+		float farY = (targetBot - t1.getPosition().y) / vel.y;
 	
 		if(farX < nearX) {
 			float temp = farX;
@@ -136,15 +136,15 @@ public class AABBComponent extends Component {
 		Transform t1 = this.getTransform();
 		Transform t2 = target.getTransform();
 		
-		Vector2f tl = new Vector2f(t1.position.x - (t1.scale.x / 2), t1.position.y - (t1.scale.y / 2));
-		Vector2f tr = new Vector2f(t1.position.x + (t1.scale.x / 2), t1.position.y - (t1.scale.y / 2));
-		Vector2f bl = new Vector2f(t1.position.x - (t1.scale.x / 2), t1.position.y + (t1.scale.y / 2));
-		Vector2f br = new Vector2f(t1.position.x + (t1.scale.x / 2), t1.position.y + (t1.scale.y / 2));
+		Vector2f tl = new Vector2f(t1.getPosition().x - (t1.getScale().x / 2), t1.getPosition().y - (t1.getScale().y / 2));
+		Vector2f tr = new Vector2f(t1.getPosition().x + (t1.getScale().x / 2), t1.getPosition().y - (t1.getScale().y / 2));
+		Vector2f bl = new Vector2f(t1.getPosition().x - (t1.getScale().x / 2), t1.getPosition().y + (t1.getScale().y / 2));
+		Vector2f br = new Vector2f(t1.getPosition().x + (t1.getScale().x / 2), t1.getPosition().y + (t1.getScale().y / 2));
 		
-		float targetLeft = t2.position.x - (t2.scale.x / 2);
-		float targetRight = t2.position.x + (t2.scale.x / 2);
-		float targetTop = t2.position.y - (t2.scale.y / 2);
-		float targetBot = t2.position.y + (t2.scale.y / 2);
+		float targetLeft = t2.getPosition().x - (t2.getScale().x / 2);
+		float targetRight = t2.getPosition().x + (t2.getScale().x / 2);
+		float targetTop = t2.getPosition().y - (t2.getScale().y / 2);
+		float targetBot = t2.getPosition().y + (t2.getScale().y / 2);
 
 		boolean tlCollision = tl.x >= targetLeft && tl.x <= targetRight && tl.y >= targetTop && tl.y <= targetBot;
 		boolean trCollision = tr.x >= targetLeft && tr.x <= targetRight && tr.y >= targetTop && tr.y <= targetBot;

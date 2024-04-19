@@ -62,14 +62,20 @@ public class Renderer {
 	 */
 	public void renderBatches(int shaderID) {
 		for(List<RenderBatch> r1 : this.renderBatches) {
-			for(RenderBatch r : r1) {
+			for(int i = 0; i < r1.size(); i++) {
+				RenderBatch r = r1.get(i);
 				r.render(shaderID);
+				if(r.isEmpty()) {
+					r1.remove(i);
+					continue;
+				}
 			}
 		}
 		if(toggleDebug) {
-			for(RenderBatch r : this.debugBatches) {
+			for(int i = 0; i < debugBatches.size(); i++) {
+				RenderBatch r = debugBatches.get(i);
 				r.render(shaderID);
-			}		
+			}	
 		}
 	}
 	

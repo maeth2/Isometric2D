@@ -29,10 +29,9 @@ public class SpecialStickAttackState extends ItemState{
 			context.getAnimation().setCurrentAnimation(Item.states.Use);
 		}
 		
-		context.getTarget().transform.scale.x *= 2;
-		context.getTarget().transform.scale.y *= 2;
-		context.getTarget().transform.pivot.y = 0f;
-		
+		context.getTarget().setScaleX(context.getTarget().getTransform().getScale().x * 2);
+		context.getTarget().setScaleY(context.getTarget().getTransform().getScale().y * 2);
+		context.getTarget().setPivotY(0f);
 		this.cooldown = 1f;
 	}
 
@@ -43,11 +42,10 @@ public class SpecialStickAttackState extends ItemState{
 	@Override
 	public void update(float dt) {
 		stickToEntity();
-		Vector2f direction = Maths.angleToDirectionVector(context.getTarget().transform.rotation.x + 90f);
-		float dx = direction.x * Math.abs(context.getTarget().transform.scale.x) * 0.2f;
-		float dy = direction.y * context.getTarget().transform.scale.y * 0.2f;
-		context.getTarget().transform.position.x += dx;
-		context.getTarget().transform.position.y += dy;
+		Vector2f direction = Maths.angleToDirectionVector(context.getTarget().getTransform().getRotation().x + 90f);
+		float dx = direction.x * Math.abs(context.getTarget().getTransform().getScale().x) * 0.2f;
+		float dy = direction.y * context.getTarget().getTransform().getScale().y * 0.2f;
+		context.getTarget().changePosition(dx, dy);
 		
 		if(context.getAnimation().getCurrentAnimation().inActionFrame(context.getAnimation().getCurrentFrame())) {
 			List<Entity> e = this.checkCollision();
@@ -55,8 +53,8 @@ public class SpecialStickAttackState extends ItemState{
 				for(Entity i : e) {
 					if(!contacted.contains(i)) {
 						contacted.add(i);
-//						Vector2f d = Maths.pointToPointDirectionVector(i.transform.position, context.getTarget().getEntity().transform.position);
-						i.onHit(context.getTarget().getEntity(), direction, 50f, 0f);
+//						Vector2f d = Maths.pointToPointDirectionVector(i.getTransform().position, context.getTarget().getEntity().getTransform().position);
+						i.onHit(context.getTarget().getEntity(), direction, 50f, 100f);
 						i.apply(StatusEffect.effects.Burn, 3f, 2f);
 						i.apply(effects.Slow, 0.5f, 2f);
 					}
@@ -64,11 +62,10 @@ public class SpecialStickAttackState extends ItemState{
 			}
 		}
 		
-		context.getTarget().setDirty(true);
 		
 		if(context.getAnimation().getCurrentFrame() == -1) {
-			context.getTarget().transform.scale.x /= 2;
-			context.getTarget().transform.scale.y /= 2;
+			context.getTarget().setScaleX(context.getTarget().getTransform().getScale().x / 2);
+			context.getTarget().setScaleY(context.getTarget().getTransform().getScale().y / 2);
 			this.nextState = ItemStateMachine.state.Picked;
 		}
 	}

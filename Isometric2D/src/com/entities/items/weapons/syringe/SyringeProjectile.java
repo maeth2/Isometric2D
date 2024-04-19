@@ -23,7 +23,7 @@ public class SyringeProjectile extends Projectile {
 	@Override
 	public void addComponents() {
 		addComponent(new TextureComponent(spriteSheet, false, new Vector2f(4, 0), new Vector2f(16, 16)));	
-		addComponent(new AABBComponent(this, new Vector2f(0, 0), transform.scale));
+		addComponent(new AABBComponent(this, new Vector2f(0, 0), transform.getScale()));
 	}
 	
 	@Override

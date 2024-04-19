@@ -11,7 +11,7 @@ public class ItemPickedState extends ItemState {
 
 	@Override
 	public void enter() {
-		context.getTarget().transform.pivot.y = -0.4f;
+		context.getTarget().setPivotY(-0.4f);
 		if(context.getAnimation() != null) {
 			context.getAnimation().setCurrentAnimation(Item.states.Picked);
 		}

@@ -30,8 +30,8 @@ public class ControllerComponent extends Component {
 			entity.getStateMachine(MovementStateMachine.class).onKnockback(100f, 0f);
 		}
 		entity.setTargetDestination(
-			MouseListener.getX() + Main.getScene().getCamera().transform.position.x, 
-			MouseListener.getY() + Main.getScene().getCamera().transform.position.y
+			MouseListener.getX() + Main.getScene().getCamera().getTransform().getPosition().x, 
+			MouseListener.getY() + Main.getScene().getCamera().getTransform().getPosition().y
 		);
 	}
 	

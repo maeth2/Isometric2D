@@ -53,7 +53,7 @@ public class RollingState extends MovementState {
 		dy = dy / length * distance;
 		
 		if(direction != 0) {
-			context.getTarget().transform.scale.x = Math.abs(context.getTarget().transform.scale.x) * direction;
+			context.getTarget().setScaleX(Math.abs(context.getTarget().getTransform().getScale().x) * direction);
 		}
 	}
 

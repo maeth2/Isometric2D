@@ -36,7 +36,7 @@ float map(float value, float min1, float max1, float min2, float max2) {
 }
 
 void main(){
-	fTexCoords = vec2(map(aVert.x, -0.5, 0.5, 0, 1), map(aVert.y, -0.5, 0.5, 0, 1));
+	fTexCoords = vec2(map(aVert.x, -0.5, 0.5, 0, 1), map(aVert.y, -0.5, 0.5, 1, 0));
 	fTexData = aTexData;
 	fColor = aColor;
 	vec4 pos = getTransformedPosition(aVert, aTranslation, aScale);

@@ -25,14 +25,13 @@ public abstract class MovementState extends State<MovementStateMachine.state>{
 	
 	public int pointToTarget() {
 		int direction = 0;
-		if(context.getTarget().getTargetDestination().x < context.getTarget().transform.position.x) {
-			context.getTarget().transform.scale.x = Math.abs(context.getTarget().transform.scale.x);
+		if(context.getTarget().getTargetDestination().x < context.getTarget().getTransform().getPosition().x) {
+			context.getTarget().setScaleX(Math.abs(context.getTarget().getTransform().getScale().x));
 			direction = 1;
 		}else {
-			context.getTarget().transform.scale.x = -Math.abs(context.getTarget().transform.scale.x);
+			context.getTarget().setScaleX(-Math.abs(context.getTarget().getTransform().getScale().x));
 			direction = -1;
 		}
-		context.getTarget().setDirty(true);
 		return direction;
 	}
 	

@@ -43,28 +43,25 @@ public abstract class ItemState extends State<ItemStateMachine.state> {
 	}
 	
 	public void pointToDestination() {
-		float sx = this.context.getTarget().transform.position.x;
-		float sy = this.context.getTarget().transform.position.y;
+		float sx = this.context.getTarget().getTransform().getPosition().x;
+		float sy = this.context.getTarget().getTransform().getPosition().y;
 		float mx = context.getTarget().getEntity().getTargetDestination().x;
-		float my = context.getTarget().getEntity().getTargetDestination().y - context.getTarget().transform.scale.y;
+		float my = context.getTarget().getEntity().getTargetDestination().y - context.getTarget().getTransform().getScale().y;
 		float angle = (float) Math.toDegrees(Math.atan2((my - sy), (mx - sx))) - 90f;
-		this.context.getTarget().transform.rotation.x = angle;
-
-		context.getTarget().transform.scale.x = Math.abs(context.getTarget().transform.scale.x) * (mx > sx ? -1 : 1);
+		context.getTarget().setRotationX(angle);
+		context.getTarget().setScaleX(Math.abs(context.getTarget().getTransform().getScale().x) * (mx > sx ? -1 : 1));
 		
-		this.context.getTarget().setDirty(true);
 	}
 	
 	public void stickToEntity() {
-		Vector2f entityPos = context.getTarget().getEntity().transform.position;
-		Vector2f entityScale = context.getTarget().getEntity().transform.scale;
+		Vector2f entityPos = context.getTarget().getEntity().getTransform().getPosition();
+		Vector2f entityScale = context.getTarget().getEntity().getTransform().getScale();
 		
-		this.context.getTarget().transform.position.x = entityPos.x - entityScale.x * 0.3f;
-		this.context.getTarget().transform.position.y = entityPos.y - entityScale.y * 0.2f;
-		this.context.getTarget().transform.zLayer = entityPos.y - entityScale.y * 0.001f;
+		this.context.getTarget().setPositionX(entityPos.x - entityScale.x * 0.3f);
+		this.context.getTarget().setPositionY(entityPos.y - entityScale.y * 0.2f);
+		this.context.getTarget().setZLayer(entityPos.y - entityScale.y * 0.001f);
 		
 		Main.getScene().updateGrid(context.getTarget());
-		this.context.getTarget().setDirty(true);
 	}
 	
 	public ItemState create(ItemContext context, ItemStateMachine.state stateKey) {

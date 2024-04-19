@@ -158,7 +158,7 @@ public abstract class Scene {
 	 * @return			Grid Position of Object
 	 */
 	public Vector2i getGridPosition(GameObject o) {
-		return new Vector2i((int)((o.transform.position.x + Math.abs(o.transform.scale.x / 2)) / UNIT_SIZE), (int)((o.transform.position.y) / UNIT_SIZE));
+		return new Vector2i((int)((o.getTransform().getPosition().x + Math.abs(o.getTransform().getScale().x / 2)) / UNIT_SIZE), (int)((o.getTransform().getPosition().y) / UNIT_SIZE));
 	}
 	
 	/**
@@ -180,8 +180,8 @@ public abstract class Scene {
 			o.start();
 		}
 		
-		int r = (int)(o.transform.position.y / UNIT_SIZE);
-		int c = (int)(o.transform.position.x / UNIT_SIZE);
+		int r = (int)(o.getTransform().getPosition().y / UNIT_SIZE);
+		int c = (int)(o.getTransform().getPosition().x / UNIT_SIZE);
 		if(r < 0 || r >= this.gridHeight || c < 0 || c >= this.gridWidth) return;
 		grid[r][c].add(o);
 		o.setGridPosition(c, r);
@@ -197,8 +197,8 @@ public abstract class Scene {
 		gameObjects.remove(o);
 		renderer.removeGameObject(o);
 
-		int r = (int)(o.transform.position.y / UNIT_SIZE);
-		int c = (int)(o.transform.position.x / UNIT_SIZE);
+		int r = (int)(o.getTransform().getPosition().y / UNIT_SIZE);
+		int c = (int)(o.getTransform().getPosition().x / UNIT_SIZE);
 		if(r < 0 || r >= this.gridHeight || c < 0 || c >= this.gridWidth) return;
 		grid[r][c].remove(o);
 	}

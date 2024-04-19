@@ -35,10 +35,10 @@ public class EnemyChaseState extends EnemyState {
 		elapsed += dt;
 		Vector2i nextCell = getNextCell();
 		float distance = Maths.getEuclideanDistance(
-				context.getTarget().transform.position.x, 
-				context.getTarget().transform.position.y, 
-				context.getTargetEntity().transform.position.x, 
-				context.getTargetEntity().transform.position.y
+				context.getTarget().getTransform().getPosition().x, 
+				context.getTarget().getTransform().getPosition().y, 
+				context.getTargetEntity().getTransform().getPosition().x, 
+				context.getTargetEntity().getTransform().getPosition().y
 		);
 		if(nextCell != null && distance >= chaseRadius) {
 			travelToTarget((float)nextCell.x * Scene.UNIT_SIZE, (float)nextCell.y * Scene.UNIT_SIZE, dt);

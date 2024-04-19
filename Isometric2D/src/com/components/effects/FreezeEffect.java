@@ -1,9 +1,13 @@
 package com.components.effects;
 
+import org.joml.Vector2f;
+import org.joml.Vector3f;
+
 import com.Main;
 import com.components.AnimationComponent;
 import com.components.TextureComponent;
 import com.entities.Entity;
+import com.scenes.Scene;
 
 public class FreezeEffect extends StatusEffect {
 
@@ -18,6 +22,7 @@ public class FreezeEffect extends StatusEffect {
 		target.getComponent(AnimationComponent.class).setFreeze(true);
 		target.setSpeedModifier(0f);
 		isHit = true;
+		renderParticles();
 	}
 	
 	@Override
@@ -41,10 +46,26 @@ public class FreezeEffect extends StatusEffect {
 		this.duration = Main.getTimeElapsed() - this.startTime + duration;
 		this.startTime = Main.getTimeElapsed();
 		isHit = true;
+		renderParticles();
 	}
 
 	@Override
 	public StatusEffect create(Entity target, float duration, float strength) {
 		return new FreezeEffect(target, duration, strength);
+	}
+	
+	@Override
+	protected void renderParticles() {
+		Main.getScene().getParticles().add(
+			"FROZEN", 
+			new Vector2f(
+				target.getTransform().getPosition().x + Main.random.nextFloat() * Scene.UNIT_SIZE / 4f, 
+				target.getTransform().getPosition().y + Main.random.nextFloat() * Scene.UNIT_SIZE / 4f
+			),
+			15f, 
+			new Vector2f(0, 50f),
+			0.5f,
+			new Vector3f(0, 206, 209)
+		);
 	}
 }

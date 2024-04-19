@@ -1,15 +1,13 @@
 package com.scenes;
 
-import java.util.Random;
-
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 
 import com.Camera;
 import com.GameObject;
+import com.Main;
 import com.Window;
-import com.components.AABBComponent;
 import com.components.ControllerComponent;
 import com.components.LightComponent;
 import com.components.shaders.LightShaderComponent;
@@ -23,7 +21,6 @@ import com.utils.LevelLoader;
 import com.utils.Maths;
 import com.utils.Transform;
 import com.states.ai.EnemyStateMachine;
-import com.components.TextureComponent;
 
 public class TestScene extends Scene {
 
@@ -39,9 +36,7 @@ public class TestScene extends Scene {
 		{2, 1, 1, 2, 0, 0, 2, 1, 1, 2},
 		{2, 2, 2, 2, 0, 0, 2, 2, 2, 2}
 	};
-	
-	Random rand;
-	
+		
 	float cooldown = 0.5f;
 
 	public TestScene(int width, int height) {
@@ -49,8 +44,6 @@ public class TestScene extends Scene {
 	}
 	
 	public void init() {
-		rand = new Random();
-
 		renderer.addComponent(new ShadowShaderComponent(Window.WIDTH, Window.HEIGHT));
 		
 		gridWidth = 10;
@@ -120,7 +113,7 @@ public class TestScene extends Scene {
 			Entity jaidyn = EntityList.get(EntityList.entity.Jaidyn).create(
 					"Jaidyn",
 					new Transform(
-						new Vector2f(rand.nextFloat() * 10 * UNIT_SIZE, rand.nextFloat() * 10 * UNIT_SIZE), 
+						new Vector2f(Main.random.nextFloat() * 10 * UNIT_SIZE, Main.random.nextFloat() * 10 * UNIT_SIZE), 
 						new Vector2f(UNIT_SIZE, UNIT_SIZE) 
 					)
 				);
@@ -141,7 +134,7 @@ public class TestScene extends Scene {
 				GameObject light = new GameObject(
 					"Light",
 					new Transform(
-							new Vector2f(camera.transform.position.x, camera.transform.position.y), new Vector2f(UNIT_SIZE, UNIT_SIZE)
+							new Vector2f(camera.getTransform().getPosition().x, camera.getTransform().getPosition().y), new Vector2f(UNIT_SIZE, UNIT_SIZE)
 					)
 				);
 				light.addComponent(new LightComponent(new Vector3f(227, 139, 89), 400, 1f, true));
@@ -160,16 +153,28 @@ public class TestScene extends Scene {
 			}
 		}
 		
-		if(KeyListener.isKeyPressed(GLFW.GLFW_KEY_U)) {
+		if(KeyListener.isKeyPressed(GLFW.GLFW_KEY_I)) {
 			if(cooldown < 0) {
 				particles.add(new Particle(
-					new Vector2f(camera.transform.position), 
+					new Vector2f(camera.getTransform().getPosition()), 
 					new Vector2f(UNIT_SIZE / 10f), 
-					new TextureComponent(AABBComponent.HITBOX_TEXTURE), 
-					Maths.angleToDirectionVector(rand.nextFloat() * 360f).mul(50f),
+					new Vector3f(0.5f, 0.5f, 0f), 
+					Maths.angleToDirectionVector(Main.random.nextFloat() * 360f).mul(50f),
 					0.5f
 				));
 				cooldown = 0.005f;
+			}
+		}
+		
+		if(KeyListener.isKeyPressed(GLFW.GLFW_KEY_U)) {
+			if(cooldown < 0) {
+				particles.add(
+					"TESTING. WORLD!",
+					new Vector2f(camera.getTransform().getPosition()),
+					30f,
+					10f
+				);
+				cooldown = 1f;
 			}
 		}
 		

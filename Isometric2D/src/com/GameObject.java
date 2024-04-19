@@ -19,7 +19,7 @@ public class GameObject {
 	protected List<Component> components = new ArrayList<Component>();
 	protected List<StateMachine<?, ?, ?>> stateMachines = new ArrayList<StateMachine<?, ?, ?>>();
 
-	public Transform transform;
+	protected Transform transform;
 	
 	/**
 	 * Initialize game object
@@ -289,8 +289,8 @@ public class GameObject {
 	 * @param dy
 	 */
 	public void changePosition(float dx, float dy) {
-		transform.position.x += dx;
-		transform.position.y += dy;
+		transform.getPosition().x += dx;
+		transform.getPosition().y += dy;
 		Main.getScene().updateGrid(this);
 		setDirty(true);
 	}
@@ -301,30 +301,109 @@ public class GameObject {
 	 * @param y
 	 */
 	public void setPosition(float x, float y) {
-		transform.position.x = x;
-		transform.position.y = y;
+		transform.getPosition().x = x;
+		transform.getPosition().y = y;
 		Main.getScene().updateGrid(this);
 		setDirty(true);
 	}
 	
-	/**
-	 * Set x position of object
-	 * @param x
-	 */
-	public void setX(float x) {
-		transform.position.x = x;
+	public void setPositionX(float x) {
+		transform.getPosition().x = x;
 		Main.getScene().updateGrid(this);
 		setDirty(true);
 	}
-		
-	/**
-	 * Set y position of object
-	 * @param y
-	 */
-	public void setY(float y) {
-		transform.position.y = y;
+	
+	public void setPositionY(float y) {
+		transform.getPosition().y = y;
 		Main.getScene().updateGrid(this);
 		setDirty(true);
+	}
+	
+	public void changePositionX(float x) {
+		transform.getPosition().x = x;
+		Main.getScene().updateGrid(this);
+		setDirty(true);
+	}
+	
+	public void changePositionY(float y) {
+		transform.getPosition().y = y;
+		Main.getScene().updateGrid(this);
+		setDirty(true);
+	}
+	
+	public void setScale(float x, float y) {
+		transform.getScale().x = x;
+		transform.getScale().y = y;
+		setDirty(true);
+	}
+	
+	public void setScaleX(float x) {
+		transform.getScale().x = x;
+		setDirty(true);
+	}
+	
+	public void setScaleY(float y) {
+		transform.getScale().y = y;
+		setDirty(true);
+	}
+	
+	public void changeScaleX(float x) {
+		transform.getScale().x += x;
+		setDirty(true);
+	}
+	
+	public void changeScaleY(float y) {
+		transform.getScale().y += y;
+		setDirty(true);
+	}
+	
+	public void setRotation(float x, float y) {
+		transform.getRotation().x = x;
+		transform.getRotation().y = y;
+		setDirty(true);
+	}
+	
+	public void setRotationX(float x) {
+		transform.getRotation().x = x;
+		setDirty(true);
+	}
+	
+	public void setRotationY(float y) {
+		transform.getRotation().y = y;
+		setDirty(true);
+	}
+	
+	public void changeRotationX(float x) {
+		transform.getRotation().x += x;
+		setDirty(true);
+	}
+	
+	public void changeRotationY(float y) {
+		transform.getRotation().y += y;
+		setDirty(true);
+	}
+	
+	public void setPivotX(float x) {
+		transform.getPivot().x = x;
+		setDirty(true);
+	}
+	
+	public void setPivotY(float y) {
+		transform.getPivot().y = y;
+		setDirty(true);
+	}
+	
+	public void setZLayer(float z) {
+		transform.setZLayer(z);
+		setDirty(true);
+	}
+	
+	/**
+	 * Get Transform
+	 * @return		GameObject transform
+	 */
+	public Transform getTransform() {
+		return this.transform;
 	}
 	
 	/**

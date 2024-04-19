@@ -29,10 +29,10 @@ public class SyringeAttackState extends ItemState{
 			context.getAnimation().setCurrentAnimation(Item.states.Use);
 		}
 		
-		Vector2f direction = Maths.angleToDirectionVector(context.getTarget().transform.rotation.x + 90f);
+		Vector2f direction = Maths.angleToDirectionVector(context.getTarget().getTransform().getRotation().x + 90f);
 		Vector2f position = new Vector2f(
-				context.getTarget().transform.position.x + direction.x * Math.abs(context.getTarget().transform.scale.x), 
-				context.getTarget().transform.position.y + direction.y * Math.abs(context.getTarget().transform.scale.y)
+				context.getTarget().getTransform().getPosition().x + direction.x * Math.abs(context.getTarget().getTransform().getScale().x), 
+				context.getTarget().getTransform().getPosition().y + direction.y * Math.abs(context.getTarget().getTransform().getScale().y)
 		);
 		Vector2f scale = new Vector2f(Scene.UNIT_SIZE * 0.25f, Scene.UNIT_SIZE * 0.25f);
 

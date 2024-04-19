@@ -52,7 +52,6 @@ public class RenderBatch {
 	private float[] colors;
 	private float[][] translations;
 
-	
 	public RenderBatch() {
 		this.vao = Helper.generateVAO();
 		
@@ -141,14 +140,14 @@ public class RenderBatch {
 		
 		int index = Helper.binarySearch(
 			texturedTransforms, 
-			tex.gameObject.transform, 
+			tex.gameObject.getTransform(), 
 			(a, b) -> {
 				return getLayer(a) <= getLayer(b);
 			}
 		);
 	
 		texturedObjects.add(index, tex);
-		texturedTransforms.add(index, tex.gameObject.transform);
+		texturedTransforms.add(index, tex.gameObject.getTransform());
 		
 		for(int i = index; i < texturedObjects.size(); i++){
 			updateVertices(texturedObjects.get(i), texturedTransforms.get(i), i);
@@ -210,7 +209,7 @@ public class RenderBatch {
 	}
 	
 	private float getLayer(Transform t) {
-		return t.zLayer != -1 ? t.zLayer : t.position.y;
+		return t.getZLayer() != -1 ? t.getZLayer() : t.getPosition().y;
 	}
 		
 	private void updateAttributePointers() {
@@ -236,14 +235,14 @@ public class RenderBatch {
 			colors[i * COLOR_SIZE + index * VERTEX_COUNT * COLOR_SIZE] = tex.getColor().x;
 			colors[i * COLOR_SIZE + index * VERTEX_COUNT * COLOR_SIZE + 1] = tex.getColor().y;
 			colors[i * COLOR_SIZE + index * VERTEX_COUNT * COLOR_SIZE + 2] = tex.getColor().z;
-			translations[0][i * POSITION_SIZE + index * VERTEX_COUNT * POSITION_SIZE] = transform.position.x;
-			translations[0][i * POSITION_SIZE + index * VERTEX_COUNT * POSITION_SIZE + 1] = transform.position.y;
-			translations[1][i * SCALE_SIZE + index * VERTEX_COUNT * SCALE_SIZE] = transform.scale.x;
-			translations[1][i * SCALE_SIZE + index * VERTEX_COUNT * SCALE_SIZE + 1] = transform.scale.y;
-			translations[2][i * ROTATION_SIZE + index * VERTEX_COUNT * ROTATION_SIZE] = transform.rotation.x;
-			translations[2][i * ROTATION_SIZE + index * VERTEX_COUNT * ROTATION_SIZE + 1] = transform.rotation.y;
-			translations[3][i * PIVOT_SIZE + index * VERTEX_COUNT * PIVOT_SIZE] = transform.pivot.x;
-			translations[3][i * PIVOT_SIZE + index * VERTEX_COUNT * PIVOT_SIZE + 1] = transform.pivot.y;
+			translations[0][i * POSITION_SIZE + index * VERTEX_COUNT * POSITION_SIZE] = transform.getPosition().x;
+			translations[0][i * POSITION_SIZE + index * VERTEX_COUNT * POSITION_SIZE + 1] = transform.getPosition().y;
+			translations[1][i * SCALE_SIZE + index * VERTEX_COUNT * SCALE_SIZE] = transform.getScale().x;
+			translations[1][i * SCALE_SIZE + index * VERTEX_COUNT * SCALE_SIZE + 1] = transform.getScale().y;
+			translations[2][i * ROTATION_SIZE + index * VERTEX_COUNT * ROTATION_SIZE] = transform.getRotation().x;
+			translations[2][i * ROTATION_SIZE + index * VERTEX_COUNT * ROTATION_SIZE + 1] = transform.getRotation().y;
+			translations[3][i * PIVOT_SIZE + index * VERTEX_COUNT * PIVOT_SIZE] = transform.getPivot().x;
+			translations[3][i * PIVOT_SIZE + index * VERTEX_COUNT * PIVOT_SIZE + 1] = transform.getPivot().y;
 		}
 	}
 	
@@ -298,5 +297,9 @@ public class RenderBatch {
 		}
 		
 		glBindVertexArray(0);
+	}
+	
+	public boolean isEmpty() {
+		return texturedObjects.isEmpty();
 	}
 }
