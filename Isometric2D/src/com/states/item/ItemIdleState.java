@@ -11,8 +11,10 @@ import com.components.shaders.LightShaderComponent;
 import com.entities.Entity;
 import com.entities.items.Item;
 
+/**
+ * Item idle ground state
+ */
 public class ItemIdleState extends ItemState{
-
 	public ItemIdleState(ItemContext context, ItemStateMachine.state stateKey) {
 		super(context, stateKey);
 	}
@@ -43,11 +45,13 @@ public class ItemIdleState extends ItemState{
 
 	@Override
 	public void update(float dt) {
+		if(context.getTarget().getEntity() != null) {
+			this.nextState = ItemStateMachine.state.Picked;
+		}
 		List<Entity> e = checkCollision();
 		for(Entity i : e) {
 			if(i.getTrigger("Use") && i.getInventory().getSelected() == null) {
-				context.getTarget().setEntity(i);
-				i.getInventory().setSelected(context.getTarget());
+				i.addItem(context.getTarget());
 				this.nextState = ItemStateMachine.state.Picked;
 				break;
 			}

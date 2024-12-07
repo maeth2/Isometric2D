@@ -3,6 +3,7 @@ package com.states.ai;
 import org.joml.Vector2f;
 
 import com.entities.Entity;
+import com.scenes.Scene;
 import com.states.Context;
 import com.states.movement.MovementStateMachine;
 
@@ -10,6 +11,8 @@ public class EnemyContext extends Context<Entity> {
 	protected Vector2f destination;
 	protected MovementStateMachine movement;
 	protected Entity targetEntity;
+	protected float chaseRadius = Scene.UNIT_SIZE * 0.5f;
+	protected float attackRadius = Scene.UNIT_SIZE * 0.5f;
 	
 	public EnemyContext(Entity target) {
 		super(target);

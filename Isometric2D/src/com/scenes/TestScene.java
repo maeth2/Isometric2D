@@ -14,6 +14,7 @@ import com.components.shaders.LightShaderComponent;
 import com.components.shaders.ShadowShaderComponent;
 import com.entities.Entity;
 import com.entities.EntityList;
+import com.entities.items.Item;
 import com.entities.items.ItemList;
 import com.listeners.KeyListener;
 import com.particles.Particle;
@@ -89,14 +90,16 @@ public class TestScene extends Scene {
 		camera.setTarget(brynn);
 		addGameObject(brynn);
 				
-		GameObject weapon = ItemList.get(ItemList.item.Syringe).create(
-				"Syringe",
+		Item weapon = ItemList.get(ItemList.item.SpecialStick).create(
+				"Stick",
 				new Transform(
 					new Vector2f(2.5f * UNIT_SIZE, 3.5f * UNIT_SIZE), 
 					new Vector2f(UNIT_SIZE / 1.5f, UNIT_SIZE / 1.5f) 
 				)
 			);
 		addGameObject(weapon);
+	
+		brynn.addItem(weapon);
 		
 		weapon = ItemList.get(ItemList.item.SpecialStick).create(
 				"Stick",
@@ -106,10 +109,20 @@ public class TestScene extends Scene {
 				)
 			);
 		addGameObject(weapon);
+		
+		jaidyn.addItem(weapon);
 	}
 	
 	private void stressTest(int num) {
 		for(int i = 0; i < num; i++) {
+			Item weapon = ItemList.get(ItemList.item.SpecialStick).create(
+					"Stick",
+					new Transform(
+						new Vector2f(2.5f * UNIT_SIZE, 8.5f * UNIT_SIZE), 
+						new Vector2f(UNIT_SIZE / 1.5f, UNIT_SIZE / 1.5f)
+					)
+				);
+			addGameObject(weapon);
 			Entity jaidyn = EntityList.get(EntityList.entity.Jaidyn).create(
 					"Jaidyn",
 					new Transform(
@@ -120,6 +133,7 @@ public class TestScene extends Scene {
 			jaidyn.setBaseSpeed(UNIT_SIZE);
 			jaidyn.addStateMachine(new EnemyStateMachine(jaidyn));
 			addGameObject(jaidyn);
+			jaidyn.addItem(weapon);
 		}
 	}
 	

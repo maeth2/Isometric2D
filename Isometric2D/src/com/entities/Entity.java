@@ -11,6 +11,7 @@ import com.Main;
 import com.components.InventoryComponent;
 import com.components.effects.StatusEffect;
 import com.components.effects.StatusEffectManagerComponent;
+import com.entities.items.Item;
 import com.scenes.Scene;
 import com.states.movement.MovementStateMachine;
 import com.states.ai.EnemyStateMachine;
@@ -60,7 +61,7 @@ public abstract class Entity extends GameObject{
 	}
 	
 	/**
-	 * Update funtion
+	 * Update function
 	 * 
 	 * @param dt		Delta time
 	 */
@@ -197,6 +198,12 @@ public abstract class Entity extends GameObject{
 		return this.baseSpeed * this.speedModifier;
 	}
 	
+	public void addItem(Item i) {
+		i.setEntity(this);
+		this.inventory.add(i);
+		this.inventory.setSelected(i);
+	}
+		
 	public InventoryComponent getInventory() {
 		return this.inventory;
 	}

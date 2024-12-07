@@ -17,6 +17,7 @@ public class EnemyRoamingState extends EnemyState{
 	@Override
 	public void enter() {
 		currentPoint = point1;
+		context.setTargetEntity(null);
 	}
 
 	@Override

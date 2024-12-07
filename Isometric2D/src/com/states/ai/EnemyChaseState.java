@@ -13,8 +13,7 @@ import com.utils.Maths;
 
 public class EnemyChaseState extends EnemyState {
 	private float elapsed;
-	private float chaseDuration = 30f;
-	private float chaseRadius = Scene.UNIT_SIZE * 0.5f;
+	private float chaseDuration = 5f;
 	
 	public EnemyChaseState(EnemyStateMachine.state stateKey, EnemyContext context) {
 		super(stateKey, context);
@@ -27,7 +26,6 @@ public class EnemyChaseState extends EnemyState {
 
 	@Override
 	public void exit() {
-		context.setTargetEntity(null);
 	}
 
 	@Override
@@ -40,10 +38,10 @@ public class EnemyChaseState extends EnemyState {
 				context.getTargetEntity().getTransform().getPosition().x, 
 				context.getTargetEntity().getTransform().getPosition().y
 		);
-		if(nextCell != null && distance >= chaseRadius) {
+		if(nextCell != null && distance >= this.context.chaseRadius) {
 			travelToTarget((float)nextCell.x * Scene.UNIT_SIZE, (float)nextCell.y * Scene.UNIT_SIZE, dt);
 		}else {
-			stop();
+			nextState = EnemyStateMachine.state.Attack;
 		}
 		
 		if(elapsed >= chaseDuration) {
@@ -139,6 +137,7 @@ public class EnemyChaseState extends EnemyState {
 			}
 		}
 		
+		//Find the next cell by traversing back from the final node to the initial node
 		if(parents[end.y][end.x][0] != -1 && parents[end.y][end.x][1] != -1) {
 			int x = end.x;
 			int y = end.y;

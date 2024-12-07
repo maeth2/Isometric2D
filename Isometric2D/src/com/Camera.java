@@ -53,6 +53,9 @@ public class Camera extends Entity{
 		this.transform.getPosition().y = position.y;
 	}
 	
+	/**
+	 * Toggle Free Camera Mode
+	 */
 	public void toggleFreeCam() {
 		if(freeCam) {
 			freeCam = false;

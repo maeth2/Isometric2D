@@ -7,7 +7,8 @@ public class EnemyStateMachine extends StateMachine<EnemyStateMachine.state, Ent
 	
 	public static enum state {
 		Roaming,
-		Chase
+		Chase,
+		Attack
 	}
 		
 	public EnemyStateMachine(Entity entity) {
@@ -18,6 +19,7 @@ public class EnemyStateMachine extends StateMachine<EnemyStateMachine.state, Ent
 	public void initialiseStates() {	
 		states.put(state.Roaming, new EnemyRoamingState(state.Roaming, getContext()));
 		states.put(state.Chase, new EnemyChaseState(state.Chase, getContext()));
+		states.put(state.Attack, new EnemyAttackState(state.Attack, getContext()));
 	}
 	
 	public void setTargetEntity(Entity e) {
